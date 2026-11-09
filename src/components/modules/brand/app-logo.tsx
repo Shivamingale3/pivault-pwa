@@ -1,4 +1,4 @@
-import { LOGO_SRC } from "@/constants/theme.constants";
+import { LOGO_SRC } from "@/constants/brand.constants";
 import { cn } from "@/lib/utils";
 
 interface AppLogoProps {

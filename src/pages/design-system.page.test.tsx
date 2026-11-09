@@ -1,10 +1,15 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { App } from "@/App";
 import { THEME_STORAGE_KEY } from "@/constants/theme.constants";
+import { runAsInstalledApp } from "@/test/pwa-environment";
 
 describe("Design system page (integration)", () => {
+  beforeEach(() => {
+    runAsInstalledApp();
+  });
+
   it("renders every section", () => {
     render(<App />);
     for (const name of [

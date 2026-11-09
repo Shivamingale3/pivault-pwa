@@ -1,9 +1,5 @@
-import {
-  DARK_CLASS,
-  PREFERS_DARK_QUERY,
-  THEME_COLOR,
-  THEME_STORAGE_KEY,
-} from "@/constants/theme.constants";
+import { THEME_COLOR } from "@/constants/brand.constants";
+import { DARK_CLASS, PREFERS_DARK_QUERY, THEME_STORAGE_KEY } from "@/constants/theme.constants";
 import { type ResolvedTheme, Theme } from "@/enums/theme.enum";
 
 const THEME_VALUES: readonly string[] = Object.values(Theme);

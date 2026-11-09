@@ -1,7 +1,12 @@
 import { AppLogo } from "@/components/modules/brand/app-logo";
 
-/** The dark brand card from the sign-in artboard, reused as the showcase header. */
-export function BrandHero() {
+interface BrandHeroProps {
+  /** Mono caption beside the logo, e.g. "Self-hosted on your Pi". */
+  eyebrow: string;
+}
+
+/** The dark brand card from the sign-in artboard. */
+export function BrandHero({ eyebrow }: BrandHeroProps) {
   return (
     <div className="relative isolate flex min-h-56 flex-col justify-end overflow-hidden rounded-2xl bg-hero p-5.5 text-hero-foreground">
       <span
@@ -15,7 +20,7 @@ export function BrandHero() {
       <div className="flex items-center gap-3">
         <AppLogo surface="dark" decorative className="size-11" />
         <span className="font-mono text-[0.59375rem] font-bold tracking-[0.22em] text-hero-foreground/50 uppercase">
-          Design system
+          {eyebrow}
         </span>
       </div>
       <h1 className="mt-3.5 text-[2.125rem] leading-none font-extrabold tracking-[-0.04em]">

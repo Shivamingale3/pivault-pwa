@@ -1,4 +1,4 @@
-import { BrandHero } from "@/components/modules/design-system/brand-hero";
+import { BrandHero } from "@/components/modules/brand/brand-hero";
 import { ButtonShowcase } from "@/components/modules/design-system/button-showcase";
 import { ColorPalette } from "@/components/modules/design-system/color-palette";
 import { FeedbackShowcase } from "@/components/modules/design-system/feedback-showcase";
@@ -16,7 +16,7 @@ export function DesignSystemPage() {
           <div className="flex justify-end">
             <ThemeToggle />
           </div>
-          <BrandHero />
+          <BrandHero eyebrow="Design system" />
         </div>
         <ColorPalette />
         <TypographyScale />
