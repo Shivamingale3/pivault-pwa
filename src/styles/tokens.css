@@ -1,0 +1,89 @@
+/*
+ * PiVault design tokens — sourced from the design artboards.
+ * Warm neutral ink on white (light), cool graphite surfaces (dark),
+ * rust for failure, teal for success. Values are oklch equivalents of the design hexes.
+ */
+
+:root {
+  color-scheme: light;
+
+  --background: oklch(1 0 0); /* #ffffff */
+  --foreground: oklch(0.173 0 0); /* #101010 ink */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.173 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.173 0 0);
+
+  --primary: oklch(0.173 0 0); /* #101010 */
+  --primary-foreground: oklch(0.997 0 0); /* #fefefe */
+  --secondary: oklch(0.967 0.004 91.4); /* #f5f4f1 */
+  --secondary-foreground: oklch(0.173 0 0);
+  --muted: oklch(0.967 0.004 91.4); /* #f5f4f1 input fill */
+  --muted-foreground: oklch(0.56 0.01 84.6); /* #77746e body copy */
+  --subtle: oklch(0.697 0.009 84.6); /* #a09d97 mono labels, placeholders */
+  --accent: oklch(0.967 0.004 91.4);
+  --accent-foreground: oklch(0.173 0 0);
+
+  --destructive: oklch(0.548 0.176 34.7); /* #c23c1a rust */
+  --destructive-foreground: oklch(0.439 0.139 34.7); /* #8f2b12 */
+  --destructive-surface: oklch(0.96 0.017 35.3); /* #fdeeea */
+  --success: oklch(0.525 0.097 174.1); /* #0e7c66 */
+  --success-foreground: oklch(0.997 0 0);
+  --success-surface: oklch(0.959 0.015 175.7); /* #e8f5f1 */
+
+  --hero: oklch(0.168 0.004 264.4); /* #0e0f11 brand card */
+  --hero-foreground: oklch(0.993 0 0); /* #fdfdfd */
+
+  --border: oklch(0.937 0.007 88.6); /* #eceae5 */
+  --border-strong: oklch(0.877 0.009 84.6); /* #d9d6d0 */
+  --input: oklch(0.967 0.004 91.4);
+  --ring: oklch(0.173 0 0);
+  --canvas: oklch(0.985 0.003 84.6); /* #fbfaf8 */
+  --overlay: oklch(0.919 0.007 88.6 / 72%); /* rgba(231,229,224,.72) scrim */
+
+  --radius: 1.125rem; /* 18px input radius; scale yields 14 / 18 / 25px */
+
+  --shadow-color: oklch(0.173 0 0 / 18%);
+  --shadow-sheet-color: oklch(0.173 0 0 / 14%);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --background: oklch(0.181 0.007 258.4); /* #101215 */
+  --foreground: oklch(0.958 0.004 91.4); /* #f2f1ee */
+  --card: oklch(0.209 0.009 264.4); /* #16181c */
+  --card-foreground: oklch(0.958 0.004 91.4);
+  --popover: oklch(0.209 0.009 264.4);
+  --popover-foreground: oklch(0.958 0.004 91.4);
+
+  --primary: oklch(0.958 0.004 91.4); /* #f2f1ee */
+  --primary-foreground: oklch(0.181 0.007 258.4); /* #101215 */
+  --secondary: oklch(0.238 0.009 255.6); /* #1c1f23 */
+  --secondary-foreground: oklch(0.958 0.004 91.4);
+  --muted: oklch(0.238 0.009 255.6); /* #1c1f23 input fill */
+  --muted-foreground: oklch(0.6 0.008 268.5); /* #7e8085 */
+  --subtle: oklch(0.693 0.007 277.1); /* #9b9ca1 */
+  --accent: oklch(0.238 0.009 255.6);
+  --accent-foreground: oklch(0.958 0.004 91.4);
+
+  --destructive: oklch(0.647 0.17 36.3); /* #e2603c */
+  --destructive-foreground: oklch(0.79 0.125 37.3); /* #ff9d80 */
+  --destructive-surface: oklch(0.25 0.043 38.5); /* #331a12 */
+  --success: oklch(0.708 0.116 173.1); /* #3fb89a */
+  --success-foreground: oklch(0.181 0.007 258.4);
+  --success-surface: oklch(0.262 0.035 176.9); /* #0f2a24 */
+
+  --hero: oklch(0.168 0.004 264.4);
+  --hero-foreground: oklch(0.993 0 0);
+
+  --border: oklch(0.303 0.011 254); /* #2b2f34 */
+  --border-strong: oklch(0.303 0.011 254);
+  --input: oklch(0.238 0.009 255.6);
+  --ring: oklch(0.958 0.004 91.4);
+  --canvas: oklch(0.168 0.004 264.4);
+  --overlay: oklch(0.155 0.004 264.4 / 74%); /* rgba(9,10,12,.74) scrim */
+
+  --shadow-color: oklch(0 0 0 / 55%);
+  --shadow-sheet-color: oklch(0 0 0 / 55%);
+}

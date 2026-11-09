@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { resolve } from "node:path";
 import { styleText } from "node:util";
 import react, { reactCompilerPreset } from "@vitejs/plugin-react";
@@ -27,6 +28,13 @@ export default defineConfig(({ mode }) => {
       alias: {
         "@": resolve(import.meta.dirname, "src"),
       },
+    },
+    test: {
+      environment: "jsdom",
+      setupFiles: ["./src/test/setup.ts"],
+      include: ["src/**/*.test.{ts,tsx}"],
+      restoreMocks: true,
+      css: true,
     },
   };
 });
