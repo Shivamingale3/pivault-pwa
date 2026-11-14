@@ -5,3 +5,6 @@ export interface PasswordRuleResult {
   label: string;
   passed: boolean;
 }
+
+/** Border feedback of a confirmation field: ink when equal, destructive when it can no longer match. */
+export type FieldMatch = "idle" | "match" | "mismatch";
