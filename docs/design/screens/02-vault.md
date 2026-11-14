@@ -58,10 +58,10 @@ All four list screens share the tab bar. Top padding is ~38 below the safe area,
 
 All three: title at the top as usual, then a centred block (icon tile, heading 19/800, body 13.5 muted, actions), tab bar at the bottom.
 
-| id | Heading | Body | Actions |
-| --- | --- | --- | --- |
-| e1-passwords-empty | "No passwords yet" | "Add your first login and it is encrypted here before it ever reaches your Pi." | Pill CTA "Add a password", link "Restore from Pi backup" |
-| e2-notes-empty | "No notes yet" | "Recovery codes, licence keys, anything you would not put in a plain notes app." | Pill CTA "Write a note" |
-| e3-media-empty | "No files yet" | "Import documents and photos, or make a folder first. Files are encrypted on this phone, and a copy goes to your Pi at the next sync." | Pill CTA "Import files", outline pill "New folder" |
+| id                 | Heading            | Body                                                                                                                                   | Actions                                                  |
+| ------------------ | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| e1-passwords-empty | "No passwords yet" | "Add your first login and it is encrypted here before it ever reaches your Pi."                                                        | Pill CTA "Add a password", link "Restore from Pi backup" |
+| e2-notes-empty     | "No notes yet"     | "Recovery codes, licence keys, anything you would not put in a plain notes app."                                                       | Pill CTA "Write a note"                                  |
+| e3-media-empty     | "No files yet"     | "Import documents and photos, or make a folder first. Files are encrypted on this phone, and a copy goes to your Pi at the next sync." | Pill CTA "Import files", outline pill "New folder"       |
 
 The pill CTA here is content width, h ~52, with `shadow-float`.

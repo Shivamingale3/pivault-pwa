@@ -74,6 +74,6 @@ Settings screens use `bg-canvas`, cards on `bg-card`, and no tab bar.
 
 - Icon tile, failure variant, sign-out icon.
 - "Sign out?" "Your vault is stored on this phone, so signing out removes it from here. The encrypted backup on pi.local is untouched."
-- Muted panel with three rows: "×  Session token cleared", "×  PIN removed from this phone", "✓  Vault untouched on pi.local".
+- Muted panel with three rows: "× Session token cleared", "× PIN removed from this phone", "✓ Vault untouched on pi.local".
 - Warning block: "You will need your password to sign in again, then a new PIN."
 - Buttons "Cancel" (outline) and "Sign out" (destructive filled).

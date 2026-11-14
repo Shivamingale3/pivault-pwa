@@ -6,24 +6,24 @@ All sizes are design px on a 402 px wide frame. Values without a mark come from 
 
 Never write these hexes in components. They are listed so a colour seen in a screenshot can be matched to its token in `src/styles/tokens.css`.
 
-| Role | Light | Dark | Token class |
-| --- | --- | --- | --- |
-| Screen background | `#ffffff` | `#101215` | `bg-background` |
-| Dashboard / settings background | `#fbfaf8` | `#0e0f11` | `bg-canvas` |
-| Raised card | `#ffffff` | `#16181c` | `bg-card` |
-| Field fill, chips, avatars | `#f5f4f1` | `#1c1f23` | `bg-muted` |
-| Ink, primary button | `#101010` | `#f2f1ee` | `text-foreground`, `bg-primary` |
-| Text on primary | `#fefefe` | `#101215` | `text-primary-foreground` |
-| Body copy | `#77746e` | `#7e8085` | `text-muted-foreground` |
-| Labels, placeholders, idle tabs | `#a09d97` | `#9b9ca1` | `text-subtle` |
-| Hairlines, card borders | `#eceae5` | `#2b2f34` | `border-border` |
-| Stronger outline | `#d9d6d0` | `#2b2f34` | `border-border-strong` |
-| Brand card, keypad, toast, viewer | `#0e0f11` | `#0e0f11` | `bg-hero`, `text-hero-foreground` |
-| Failure, filled | `#c23c1a` | `#e2603c` | `bg-destructive` |
-| Failure text | `#8f2b12` | `#ff9d80` | `text-destructive-foreground` |
-| Failure surface | `#fdeeea` | `#331a12` | `bg-destructive-surface` |
-| Success | `#0e7c66` | `#3fb89a` | `bg-success`, `text-success` |
-| Scrim behind sheets and dialogs | page tint 72% | near black 74% | `bg-overlay` |
+| Role                              | Light         | Dark           | Token class                       |
+| --------------------------------- | ------------- | -------------- | --------------------------------- |
+| Screen background                 | `#ffffff`     | `#101215`      | `bg-background`                   |
+| Dashboard / settings background   | `#fbfaf8`     | `#0e0f11`      | `bg-canvas`                       |
+| Raised card                       | `#ffffff`     | `#16181c`      | `bg-card`                         |
+| Field fill, chips, avatars        | `#f5f4f1`     | `#1c1f23`      | `bg-muted`                        |
+| Ink, primary button               | `#101010`     | `#f2f1ee`      | `text-foreground`, `bg-primary`   |
+| Text on primary                   | `#fefefe`     | `#101215`      | `text-primary-foreground`         |
+| Body copy                         | `#77746e`     | `#7e8085`      | `text-muted-foreground`           |
+| Labels, placeholders, idle tabs   | `#a09d97`     | `#9b9ca1`      | `text-subtle`                     |
+| Hairlines, card borders           | `#eceae5`     | `#2b2f34`      | `border-border`                   |
+| Stronger outline                  | `#d9d6d0`     | `#2b2f34`      | `border-border-strong`            |
+| Brand card, keypad, toast, viewer | `#0e0f11`     | `#0e0f11`      | `bg-hero`, `text-hero-foreground` |
+| Failure, filled                   | `#c23c1a`     | `#e2603c`      | `bg-destructive`                  |
+| Failure text                      | `#8f2b12`     | `#ff9d80`      | `text-destructive-foreground`     |
+| Failure surface                   | `#fdeeea`     | `#331a12`      | `bg-destructive-surface`          |
+| Success                           | `#0e7c66`     | `#3fb89a`      | `bg-success`, `text-success`      |
+| Scrim behind sheets and dialogs   | page tint 72% | near black 74% | `bg-overlay`                      |
 
 Screens that stay dark in both themes: media viewer, corrupted-file viewer, sync complete, and the "Signed in" / "Unlocked" success overlays. They use `bg-hero`.
 
@@ -31,23 +31,23 @@ Screens that stay dark in both themes: media viewer, corrupted-file viewer, sync
 
 Plus Jakarta Sans everywhere. Monospace (`font-mono`) only for eyebrow labels, metadata values, countdowns, the recovery key and generated passwords.
 
-| Style | Spec | Existing class |
-| --- | --- | --- |
-| Screen title | 27 / 800 / line 1.15 / -0.035em | `text-display` |
-| Centred gate title (PIN, Face ID, sync) | 23 / 800 / -0.035em | |
-| Sheet and dialog title | ~21 / 800 / -0.03em | "Sheet title" in design-system constants |
-| Row title | 15 / 700 / -0.01em | "Row title" |
-| Card title (home, settings rows) | 14.5 / 700 / -0.02em | |
-| Body | 14 / 500 / line 1.5, muted | "Body" |
-| Meta | 12.5 / 500, muted | "Meta" |
-| Field label (auth forms) | 12 / 600, ink | |
-| Eyebrow (section labels, form labels in CRUD) | mono 9.5 / 700 / 0.2em uppercase, subtle | `text-eyebrow` |
-| Input text | 16.5 / 500 | |
-| Primary button label | 16 / 700 | |
-| Small pill / link label | 11.5 to 13 / 700 | |
-| Tab label | 10 / 700 active, 10 / 600 idle | |
-| Countdown | mono 44 / 700 / tabular-nums | |
-| Keypad digit | 29 / 500 / -0.02em | |
+| Style                                         | Spec                                     | Existing class                           |
+| --------------------------------------------- | ---------------------------------------- | ---------------------------------------- |
+| Screen title                                  | 27 / 800 / line 1.15 / -0.035em          | `text-display`                           |
+| Centred gate title (PIN, Face ID, sync)       | 23 / 800 / -0.035em                      |                                          |
+| Sheet and dialog title                        | ~21 / 800 / -0.03em                      | "Sheet title" in design-system constants |
+| Row title                                     | 15 / 700 / -0.01em                       | "Row title"                              |
+| Card title (home, settings rows)              | 14.5 / 700 / -0.02em                     |                                          |
+| Body                                          | 14 / 500 / line 1.5, muted               | "Body"                                   |
+| Meta                                          | 12.5 / 500, muted                        | "Meta"                                   |
+| Field label (auth forms)                      | 12 / 600, ink                            |                                          |
+| Eyebrow (section labels, form labels in CRUD) | mono 9.5 / 700 / 0.2em uppercase, subtle | `text-eyebrow`                           |
+| Input text                                    | 16.5 / 500                               |                                          |
+| Primary button label                          | 16 / 700                                 |                                          |
+| Small pill / link label                       | 11.5 to 13 / 700                         |                                          |
+| Tab label                                     | 10 / 700 active, 10 / 600 idle           |                                          |
+| Countdown                                     | mono 44 / 700 / tabular-nums             |                                          |
+| Keypad digit                                  | 29 / 500 / -0.02em                       |                                          |
 
 ## 3. Layout
 
@@ -63,20 +63,20 @@ Each entry says which existing file to use or extend.
 
 ### Buttons (`ui/button.tsx`)
 
-| Pattern | Spec | Maps to |
-| --- | --- | --- |
-| Primary CTA | h 60, radius 30, `bg-primary`, 16/700, shadow `shadow-float`, pressed scale 0.985 | `size="xl"` + `shadow-float` |
-| Primary CTA, busy | 15 px spinner (2 px ring) before the label, label changes ("Signing in", "Verifying") | |
-| Primary CTA, disabled | `bg-muted`, `text-subtle`, no shadow. Not 50% opacity | add a variant or override `disabled:` |
-| Secondary outline | h ~52, full width, 1.5 border, 14.5/700 | `variant="outline"` default size |
-| Destructive filled | as primary, `bg-destructive` | `variant="destructive"` |
-| Destructive outline text ("Delete this password") | outline with `text-destructive-foreground` | `variant="outline"` + text class |
-| Small pill (Sort, Select, Edit, Retry, Cancel all) | h 38, radius 19, px 14, 1.5 border, 11.5/700, optional 13 px icon | `size="sm"` adjusted to full pill |
-| Text link ("Forgot password?") | 13/700, underline, offset 3, padding 14 x 4 | `variant="link"` |
-| Quiet text action ("Show PIN", "Sign out instead") | 12.5/700, muted, no underline | `variant="ghost"` |
-| Back button | 44 x 44, radius 14, `bg-muted` (on canvas screens: `bg-card` + border), chevron-left 18 | `size="icon-sm"` |
-| Row icon button (copy) | 44 x 44, radius 14, 1.5 border, icon 17 | `variant="outline" size="icon-sm"` |
-| FAB | ~56 circle, `bg-primary`, plus icon, `shadow-float`, 22 from the right edge, ~16 above the tab bar | |
+| Pattern                                            | Spec                                                                                               | Maps to                               |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| Primary CTA                                        | h 60, radius 30, `bg-primary`, 16/700, shadow `shadow-float`, pressed scale 0.985                  | `size="xl"` + `shadow-float`          |
+| Primary CTA, busy                                  | 15 px spinner (2 px ring) before the label, label changes ("Signing in", "Verifying")              |                                       |
+| Primary CTA, disabled                              | `bg-muted`, `text-subtle`, no shadow. Not 50% opacity                                              | add a variant or override `disabled:` |
+| Secondary outline                                  | h ~52, full width, 1.5 border, 14.5/700                                                            | `variant="outline"` default size      |
+| Destructive filled                                 | as primary, `bg-destructive`                                                                       | `variant="destructive"`               |
+| Destructive outline text ("Delete this password")  | outline with `text-destructive-foreground`                                                         | `variant="outline"` + text class      |
+| Small pill (Sort, Select, Edit, Retry, Cancel all) | h 38, radius 19, px 14, 1.5 border, 11.5/700, optional 13 px icon                                  | `size="sm"` adjusted to full pill     |
+| Text link ("Forgot password?")                     | 13/700, underline, offset 3, padding 14 x 4                                                        | `variant="link"`                      |
+| Quiet text action ("Show PIN", "Sign out instead") | 12.5/700, muted, no underline                                                                      | `variant="ghost"`                     |
+| Back button                                        | 44 x 44, radius 14, `bg-muted` (on canvas screens: `bg-card` + border), chevron-left 18            | `size="icon-sm"`                      |
+| Row icon button (copy)                             | 44 x 44, radius 14, 1.5 border, icon 17                                                            | `variant="outline" size="icon-sm"`    |
+| FAB                                                | ~56 circle, `bg-primary`, plus icon, `shadow-float`, 22 from the right edge, ~16 above the tab bar |                                       |
 
 ### Fields (`ui/input.tsx`, `ui/input-group.tsx`)
 

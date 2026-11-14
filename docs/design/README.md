@@ -4,16 +4,16 @@ Source: the "PiDrive PWA" design project (6 modules, 63 phone screens, light and
 
 ## Files
 
-| File | What it holds |
-| --- | --- |
-| `components.md` | Token mapping and exact sizes for every shared component. Read before building any screen. |
-| `screens/01-auth.md` | Sign in, lockouts, password reset, PIN, recovery key (13 screens) |
-| `screens/02-vault.md` | Home, passwords, notes, media, search, viewer, empty states (9) |
-| `screens/03-crud.md` | Detail and edit screens, sheets, dialogs (13) |
-| `screens/04-private-settings.md` | Private area, settings, sign out (9) |
-| `screens/05-states.md` | Failure screens, Face ID, sort/filter, grid/list (13) |
-| `screens/06-sync.md` | Sync screens and offline state (6) |
-| `screenshots/<module>/<id>.<theme>.jpg` | One image per screen per theme (126 files) |
+| File                                    | What it holds                                                                              |
+| --------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `components.md`                         | Token mapping and exact sizes for every shared component. Read before building any screen. |
+| `screens/01-auth.md`                    | Sign in, lockouts, password reset, PIN, recovery key (13 screens)                          |
+| `screens/02-vault.md`                   | Home, passwords, notes, media, search, viewer, empty states (9)                            |
+| `screens/03-crud.md`                    | Detail and edit screens, sheets, dialogs (13)                                              |
+| `screens/04-private-settings.md`        | Private area, settings, sign out (9)                                                       |
+| `screens/05-states.md`                  | Failure screens, Face ID, sort/filter, grid/list (13)                                      |
+| `screens/06-sync.md`                    | Sync screens and offline state (6)                                                         |
+| `screenshots/<module>/<id>.<theme>.jpg` | One image per screen per theme (126 files)                                                 |
 
 ## Rules for using this handoff
 
@@ -47,71 +47,71 @@ Source: the "PiDrive PWA" design project (6 modules, 63 phone screens, light and
 
 `id` is also the screenshot file name: `screenshots/<module>/<id>.light.jpg` and `.dark.jpg`.
 
-| Module | id | Screen |
-| --- | --- | --- |
-| auth | 01-login | Sign in |
-| auth | 02-login-blocked | Sign-in paused (password lockout) |
-| auth | 03-forgot-password | Reset password, enter email |
-| auth | 03b-otp-entry | Reset password, enter mailed code |
-| auth | 03c-new-password | Reset password, set new password |
-| auth | 04-unlock-pin | Unlock with PIN or Face ID |
-| auth | 05-pin-lockout | PIN entry paused |
-| auth | 06-set-up-pin | Set up PIN (enter, confirm, biometric offer) |
-| auth | 08-recovery-key-reveal | Recovery key shown once |
-| auth | 08b-recovery-key-confirm | Prove the key was saved |
-| auth | 09-recover-vault | Enter recovery key on a new phone |
-| auth | 09b-recovering | Rebuilding the vault |
-| auth | 10-settings-recovery-key | Settings, recovery key |
-| vault | 01-home-dashboard | Home dashboard |
-| vault | 02-passwords | Passwords list |
-| vault | 03-notes | Notes list |
-| vault | 04-media-file-manager | Media file manager |
-| vault | 05-search | Search |
-| vault | 06-media-viewer | Media viewer |
-| vault | e1-passwords-empty | Passwords, empty |
-| vault | e2-notes-empty | Notes, empty |
-| vault | e3-media-empty | Media, empty |
-| crud | 01-password-detail | Password detail |
-| crud | 02-password-form | Password form (autosave) |
-| crud | 03-generator-sheet | Password generator sheet |
-| crud | 04-note-read | Note, read |
-| crud | 05-note-editor | Note editor |
-| crud | 06-upload-pick-source | Upload, pick source sheet |
-| crud | 07-upload-progress | Upload progress |
-| crud | 08-action-sheet | File action sheet |
-| crud | 09-new-folder | New folder dialog |
-| crud | 10-rename | Rename dialog |
-| crud | 11-move-to-folder | Move to folder sheet |
-| crud | 12-delete-confirm | Delete confirm dialog |
-| crud | 13-sort-view | Sort and view sheet |
-| private-settings | priv-01-gate | Private area PIN gate |
-| private-settings | priv-02-browse | Private area browser |
-| private-settings | state-no-sync | Home when the server is unreachable |
-| private-settings | set-01-settings | Settings home |
-| private-settings | set-02-security | Security |
-| private-settings | set-03-change-password | Change password |
-| private-settings | set-04-change-pin | Change PIN |
-| private-settings | set-05-about | About |
-| private-settings | set-06-sign-out | Sign out dialog |
-| states | err-01-wrong-server-version | App newer than the Pi (full screen) |
-| states | err-02-session-expired | Session expired (sheet) |
-| states | err-03-decrypt-failure | Vault will not decrypt (full screen) |
-| states | err-04-request-timed-out | Request timed out (inline) |
-| states | err-05-pi-disk-full | Pi disk full (sheet) |
-| states | err-06-quota-reached | Account quota reached |
-| states | err-07-permission-denied | Permission denied, 403 |
-| states | err-08-corrupted-file | Corrupted file in viewer |
-| states | err-09-duplicate-name | Duplicate name (choice sheet) |
-| states | ext-01-face-id-unlock | Face ID unlock |
-| states | ext-02-face-id-failed | Face ID failed twice |
-| states | ext-03-sort-filter | Passwords with sort and filter tabs |
-| states | ext-04-grid-list | Media grid view |
-| sync | 01-syncing | Syncing on app open |
-| sync | 02-sync-failed | Sync failed |
-| sync | 03-sync-timed-out | Sync timed out |
-| sync | 04-offline | Offline pill on a list |
-| sync | 05-settings-sync | Settings, Sync |
-| sync | 06-sync-complete | Sync complete |
+| Module           | id                          | Screen                                       |
+| ---------------- | --------------------------- | -------------------------------------------- |
+| auth             | 01-login                    | Sign in                                      |
+| auth             | 02-login-blocked            | Sign-in paused (password lockout)            |
+| auth             | 03-forgot-password          | Reset password, enter email                  |
+| auth             | 03b-otp-entry               | Reset password, enter mailed code            |
+| auth             | 03c-new-password            | Reset password, set new password             |
+| auth             | 04-unlock-pin               | Unlock with PIN or Face ID                   |
+| auth             | 05-pin-lockout              | PIN entry paused                             |
+| auth             | 06-set-up-pin               | Set up PIN (enter, confirm, biometric offer) |
+| auth             | 08-recovery-key-reveal      | Recovery key shown once                      |
+| auth             | 08b-recovery-key-confirm    | Prove the key was saved                      |
+| auth             | 09-recover-vault            | Enter recovery key on a new phone            |
+| auth             | 09b-recovering              | Rebuilding the vault                         |
+| auth             | 10-settings-recovery-key    | Settings, recovery key                       |
+| vault            | 01-home-dashboard           | Home dashboard                               |
+| vault            | 02-passwords                | Passwords list                               |
+| vault            | 03-notes                    | Notes list                                   |
+| vault            | 04-media-file-manager       | Media file manager                           |
+| vault            | 05-search                   | Search                                       |
+| vault            | 06-media-viewer             | Media viewer                                 |
+| vault            | e1-passwords-empty          | Passwords, empty                             |
+| vault            | e2-notes-empty              | Notes, empty                                 |
+| vault            | e3-media-empty              | Media, empty                                 |
+| crud             | 01-password-detail          | Password detail                              |
+| crud             | 02-password-form            | Password form (autosave)                     |
+| crud             | 03-generator-sheet          | Password generator sheet                     |
+| crud             | 04-note-read                | Note, read                                   |
+| crud             | 05-note-editor              | Note editor                                  |
+| crud             | 06-upload-pick-source       | Upload, pick source sheet                    |
+| crud             | 07-upload-progress          | Upload progress                              |
+| crud             | 08-action-sheet             | File action sheet                            |
+| crud             | 09-new-folder               | New folder dialog                            |
+| crud             | 10-rename                   | Rename dialog                                |
+| crud             | 11-move-to-folder           | Move to folder sheet                         |
+| crud             | 12-delete-confirm           | Delete confirm dialog                        |
+| crud             | 13-sort-view                | Sort and view sheet                          |
+| private-settings | priv-01-gate                | Private area PIN gate                        |
+| private-settings | priv-02-browse              | Private area browser                         |
+| private-settings | state-no-sync               | Home when the server is unreachable          |
+| private-settings | set-01-settings             | Settings home                                |
+| private-settings | set-02-security             | Security                                     |
+| private-settings | set-03-change-password      | Change password                              |
+| private-settings | set-04-change-pin           | Change PIN                                   |
+| private-settings | set-05-about                | About                                        |
+| private-settings | set-06-sign-out             | Sign out dialog                              |
+| states           | err-01-wrong-server-version | App newer than the Pi (full screen)          |
+| states           | err-02-session-expired      | Session expired (sheet)                      |
+| states           | err-03-decrypt-failure      | Vault will not decrypt (full screen)         |
+| states           | err-04-request-timed-out    | Request timed out (inline)                   |
+| states           | err-05-pi-disk-full         | Pi disk full (sheet)                         |
+| states           | err-06-quota-reached        | Account quota reached                        |
+| states           | err-07-permission-denied    | Permission denied, 403                       |
+| states           | err-08-corrupted-file       | Corrupted file in viewer                     |
+| states           | err-09-duplicate-name       | Duplicate name (choice sheet)                |
+| states           | ext-01-face-id-unlock       | Face ID unlock                               |
+| states           | ext-02-face-id-failed       | Face ID failed twice                         |
+| states           | ext-03-sort-filter          | Passwords with sort and filter tabs          |
+| states           | ext-04-grid-list            | Media grid view                              |
+| sync             | 01-syncing                  | Syncing on app open                          |
+| sync             | 02-sync-failed              | Sync failed                                  |
+| sync             | 03-sync-timed-out           | Sync timed out                               |
+| sync             | 04-offline                  | Offline pill on a list                       |
+| sync             | 05-settings-sync            | Settings, Sync                               |
+| sync             | 06-sync-complete            | Sync complete                                |
 
 ## Assumed, not drawn
 
