@@ -25,24 +25,7 @@
     <link href="/src/index.css" rel="stylesheet" />
     <title>PiVault</title>
     <!-- Applies the saved theme before first paint. Keep in sync with constants/theme.constants.ts. -->
-    <script>
-      (function () {
-        var theme = "system";
-        try {
-          var stored = localStorage.getItem("pivault:theme");
-          if (stored === "light" || stored === "dark" || stored === "system") theme = stored;
-        } catch (e) {}
-        var dark =
-          theme === "dark" ||
-          (theme === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
-        var root = document.documentElement;
-        root.classList.toggle("dark", dark);
-        root.style.colorScheme = dark ? "dark" : "light";
-        document
-          .querySelector('meta[name="theme-color"]')
-          .setAttribute("content", dark ? "#101215" : "#ffffff");
-      })();
-    </script>
+    <script src="/theme-init.js"></script>
   </head>
   <body>
     <div id="root"></div>
