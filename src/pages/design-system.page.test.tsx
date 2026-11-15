@@ -3,11 +3,13 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
 import { App } from "@/App";
 import { THEME_STORAGE_KEY } from "@/constants/theme.constants";
+import { ROUTES } from "@/routes/route-paths";
 import { runAsInstalledApp } from "@/test/pwa-environment";
 
 describe("Design system page (integration)", () => {
   beforeEach(() => {
     runAsInstalledApp();
+    window.history.pushState(null, "", ROUTES.designSystem);
   });
 
   it("renders every section", () => {

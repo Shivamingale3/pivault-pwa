@@ -1,10 +1,12 @@
+import { IDBFactory } from "fake-indexeddb";
 import { setStandalone } from "@/test/match-media";
 
-/** jsdom lacks secure-context, service workers and IndexedDB; fake the capabilities the install gate checks. */
+/** jsdom lacks secure-context, service workers and IndexedDB; fake the capabilities the install gate checks
+ * (IndexedDB is a real in-memory one, fresh on every call, so the auth session can be stored). */
 export const installPwaCapabilities = (supported = true) => {
   if (supported) {
     Object.defineProperty(navigator, "serviceWorker", { configurable: true, value: {} });
-    Object.defineProperty(window, "indexedDB", { configurable: true, value: {} });
+    Object.defineProperty(window, "indexedDB", { configurable: true, value: new IDBFactory() });
     Object.defineProperty(window, "isSecureContext", { configurable: true, value: true });
   } else {
     Reflect.deleteProperty(window, "isSecureContext");

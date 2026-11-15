@@ -17,11 +17,13 @@ interface PasswordFieldProps {
   onChange: (value: string) => void;
   disabled?: boolean;
   autoFocus?: boolean;
+  /** `current-password` for sign in; a new password is the default. */
+  autoComplete?: "new-password" | "current-password";
   /** Border feedback for confirmation fields: ink when equal, destructive when it cannot match. */
   match?: FieldMatch;
 }
 
-/** Password input with a Show / Hide toggle. Never autofills an old password: it is always a new one. */
+/** Password input with a Show / Hide toggle. */
 export function PasswordField({
   id,
   label,
@@ -30,6 +32,7 @@ export function PasswordField({
   onChange,
   disabled,
   autoFocus,
+  autoComplete = "new-password",
   match = "idle",
 }: PasswordFieldProps) {
   const [visible, toggle] = useToggle();
@@ -46,7 +49,7 @@ export function PasswordField({
           id={id}
           name={id}
           type={visible ? "text" : "password"}
-          autoComplete="new-password"
+          autoComplete={autoComplete}
           autoCapitalize="none"
           autoCorrect="off"
           spellCheck={false}
