@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -110,7 +110,11 @@ describe("auth journey", () => {
     await user.type(await screen.findByLabelText("Enter your PIN"), "135792");
     expect(await heading(ROUTES.home)).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: /sign out/i }));
+    await user.click(screen.getByRole("link", { name: "Settings" }));
+    await user.click(await screen.findByRole("button", { name: "Sign out" }));
+    await user.click(
+      within(await screen.findByRole("dialog")).getByRole("button", { name: "Sign out" }),
+    );
     expect(await heading(ROUTES.login)).toBeInTheDocument();
   });
 });

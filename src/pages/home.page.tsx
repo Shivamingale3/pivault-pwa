@@ -14,7 +14,7 @@ import { useVaultScreen } from "@/hooks/use-vault-screen";
 
 /** The unlocked app: the user's passwords and notes. Composition only; logic is in the hooks. */
 export function HomePage() {
-  const { lock, signOut } = useAuth();
+  const { lock } = useAuth();
   const session = useSession();
   const vault = useVault();
   const filter = useVaultFilter(vault.entries);
@@ -28,7 +28,7 @@ export function HomePage() {
 
   return (
     <VaultScreenLayout
-      header={<VaultHeader email={session?.email ?? null} onLock={lock} onSignOut={signOut} />}
+      header={<VaultHeader email={session?.email ?? null} onLock={lock} />}
       toolbar={
         <VaultToolbar
           kind={filter.kind}

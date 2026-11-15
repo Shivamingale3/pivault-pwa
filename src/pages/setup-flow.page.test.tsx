@@ -292,7 +292,11 @@ describe("after setup", () => {
     const user = userEvent.setup();
     await user.click(await screen.findByRole("switch", { name: /I've saved my recovery key/ }));
     await user.click(screen.getByRole("button", { name: "Finish setup" }));
-    await user.click(await screen.findByRole("button", { name: /sign out/i }));
+    await user.click(await screen.findByRole("link", { name: "Settings" }));
+    await user.click(await screen.findByRole("button", { name: "Sign out" }));
+    await user.click(
+      within(await screen.findByRole("dialog")).getByRole("button", { name: "Sign out" }),
+    );
 
     expect(await heading("Welcome back")).toBeInTheDocument();
     await waitFor(async () => {
