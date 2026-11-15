@@ -58,7 +58,7 @@ describe("lock screen", () => {
     expect(await heading(LOCK_COPY.title)).toBeInTheDocument();
     await userEvent.setup().type(await pinBoxes(), PIN);
 
-    expect(await heading("Home")).toBeInTheDocument();
+    expect(await heading("Vault")).toBeInTheDocument();
     expect(isUnlocked()).toBe(true);
     expect(await screen.findByText(/jane@example\.com/)).toBeInTheDocument();
   });
@@ -74,7 +74,7 @@ describe("lock screen", () => {
     expect(await pinBoxes()).toHaveValue("");
 
     await user.type(await pinBoxes(), PIN);
-    expect(await heading("Home")).toBeInTheDocument();
+    expect(await heading("Vault")).toBeInTheDocument();
   });
 
   it("locks the PIN boxes with a countdown after too many wrong tries", async () => {
@@ -126,7 +126,7 @@ describe("lock screen", () => {
     it("prompts on open and unlocks when the device confirms", async () => {
       const verify = vi.spyOn(biometric, "verifyBiometric").mockResolvedValue(true);
       open();
-      expect(await heading("Home")).toBeInTheDocument();
+      expect(await heading("Vault")).toBeInTheDocument();
       expect(verify).toHaveBeenCalledWith("cred-1");
     });
 
@@ -144,7 +144,7 @@ describe("lock screen", () => {
       expect(screen.getByRole("heading", { name: LOCK_COPY.title })).toBeInTheDocument();
 
       await user.click(await screen.findByRole("button", { name: LOCK_COPY.biometricButton }));
-      expect(await heading("Home")).toBeInTheDocument();
+      expect(await heading("Vault")).toBeInTheDocument();
     });
 
     it("does not show the button on a device without biometrics", async () => {
