@@ -20,3 +20,8 @@ export const VAULT_MESSAGES = {
   unreadable: (count: number) =>
     `${String(count)} ${count === 1 ? "item" : "items"} couldn't be decrypted and ${count === 1 ? "is" : "are"} hidden.`,
 } as const;
+
+export const CLIPBOARD_MESSAGES = {
+  copied: (label: string) => `${label} copied. It clears from the clipboard in 30 seconds.`,
+  failed: "Couldn't copy. Select it and copy by hand.",
+} as const;

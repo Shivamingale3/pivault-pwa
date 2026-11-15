@@ -1,3 +1,4 @@
+import { removeVaultDb } from "@/db/vault.db";
 import { emptyResponseSchema, loginResponseSchema } from "@/schemas/auth.schema";
 import type { SessionRecord } from "@/schemas/session.schema";
 import { postJson } from "@/services/api.client";
@@ -58,7 +59,7 @@ export const markRecoveryKeyConfigured = async (signal?: AbortSignal): Promise<v
 
 /**
  * Signs out. The server session is ended first on a best-effort basis (sign out must work
- * offline), then EVERYTHING on this device goes: session, device key, vault key and PIN. The next
+ * offline), then EVERYTHING on this device goes: session, device key, vault key, PIN and every saved item. The next
  * login here starts from scratch (and asks for the recovery key), so a shared device never leaks
  * one account's key to the next.
  */
@@ -67,10 +68,16 @@ export async function signOut(): Promise<void> {
   await wipeDevice();
 }
 
-/** Removes the session, device key, vault key and PIN from this device, and locks memory. */
+/** Removes the session, keys, PIN and every saved item from this device, and locks memory. */
 export async function wipeDevice(): Promise<void> {
   clearUnlockedKey();
-  await Promise.all([clearSession(), clearLoginKeyPair(), clearVaultKey(), clearAppLock()]);
+  await Promise.all([
+    clearSession(),
+    clearLoginKeyPair(),
+    clearVaultKey(),
+    clearAppLock(),
+    removeVaultDb(),
+  ]);
 }
 
 /** Where the app should start: logged out, set up, or locked. Never throws. */
