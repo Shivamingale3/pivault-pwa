@@ -8,6 +8,8 @@ import { ApiError } from "@/services/api.error";
 interface PostOptions {
   /** Lets the caller cancel, e.g. when its component unmounts. */
   signal?: AbortSignal;
+  /** Extra request headers, e.g. the signed-session headers. */
+  headers?: Record<string, string>;
 }
 
 const withTimeout = (signal?: AbortSignal): AbortSignal => {
@@ -41,14 +43,14 @@ export async function postJson<S extends z.ZodType>(
   path: string,
   body: unknown,
   schema: S,
-  { signal }: PostOptions = {},
+  { signal, headers }: PostOptions = {},
 ): Promise<z.output<S>> {
   const url = new URL(`${API_PREFIX}${path}`, env.VITE_API_BASE_URL);
   let response: Response;
   try {
     response = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      headers: { "Content-Type": "application/json", Accept: "application/json", ...headers },
       body: JSON.stringify(body),
       credentials: "omit",
       cache: "no-store",
