@@ -79,6 +79,18 @@ describe("encrypted envelope", () => {
     }
   });
 
+  it("binds the blob to its aad: the same ciphertext fails under another record id", async () => {
+    const key = await importRecoveryKey(generateRecoveryKey());
+    const envelope = await encryptJson(key, VALUE, "record-1");
+    await expect(decryptJson(key, envelope, schema, "record-1")).resolves.toEqual(VALUE);
+    await expect(decryptJson(key, envelope, schema, "record-2")).rejects.toMatchObject({
+      kind: CryptoErrorKind.DecryptFailed,
+    });
+    await expect(decryptJson(key, envelope, schema)).rejects.toMatchObject({
+      kind: CryptoErrorKind.DecryptFailed,
+    });
+  });
+
   it("rejects a payload of the wrong shape", async () => {
     const key = await importRecoveryKey(generateRecoveryKey());
     const envelope = await encryptJson(key, { unexpected: true });

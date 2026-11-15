@@ -40,7 +40,7 @@ const SCREEN_TITLES = {
   [ROUTES.setupAppLock]: "Set up app lock",
   [ROUTES.setupRecoveryKey]: "Save your recovery key",
   [ROUTES.lock]: "PiVault is locked",
-  [ROUTES.home]: "Home",
+  [ROUTES.home]: "Vault",
 } as const;
 
 type GuardedPath = keyof typeof SCREEN_TITLES;

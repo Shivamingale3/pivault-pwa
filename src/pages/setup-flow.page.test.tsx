@@ -191,7 +191,7 @@ describe("recovery key step: first login", () => {
     await user.click(await screen.findByRole("switch", { name: /I've saved my recovery key/ }));
     await user.click(screen.getByRole("button", { name: "Finish setup" }));
 
-    expect(await heading("Home")).toBeInTheDocument();
+    expect(await heading("Vault")).toBeInTheDocument();
     expect(server).toHaveBeenCalledOnce();
     expect((await loadVaultKey())?.extractable).toBe(false);
     expect((await loadSession())?.setupDone).toBe(true);
@@ -248,7 +248,7 @@ describe("recovery key step: new device", () => {
     await user.type(await screen.findByLabelText("Recovery key"), key);
     await user.click(screen.getByRole("button", { name: "Unlock vault" }));
 
-    expect(await heading("Home")).toBeInTheDocument();
+    expect(await heading("Vault")).toBeInTheDocument();
     expect(server).not.toHaveBeenCalled();
     expect(await loadVaultKey()).not.toBeNull();
   });

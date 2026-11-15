@@ -2,6 +2,7 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
 import { afterEach, vi } from "vitest";
 import { closeAuthDb } from "@/db/idb";
+import { closeVaultDb } from "@/db/vault.db";
 import { installMatchMedia } from "@/test/match-media";
 import { installPwaCapabilities } from "@/test/pwa-environment";
 import { registerCalls } from "@/test/stubs/pwa-register";
@@ -13,6 +14,7 @@ Object.defineProperty(document, "elementFromPoint", { configurable: true, value:
 
 afterEach(async () => {
   cleanup();
+  await closeVaultDb();
   await closeAuthDb();
   window.localStorage.clear();
   document.documentElement.className = "";
