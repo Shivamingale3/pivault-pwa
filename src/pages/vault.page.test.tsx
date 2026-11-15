@@ -12,9 +12,12 @@ import { ROUTES } from "@/routes/route-paths";
 import { generateRecoveryKey, importRecoveryKey } from "@/services/crypto.service";
 import { clearUnlockedKey, setUnlockedKey } from "@/services/secure-memory.service";
 import { addEntry } from "@/services/vault.service";
+import { fakeSecret } from "@/test/fake-secret";
 import { freshIndexedDbPerTest } from "@/test/indexed-db";
 
 freshIndexedDbPerTest();
+
+const SECRET = fakeSecret();
 
 const render_ = () =>
   render(
@@ -30,7 +33,7 @@ const LOGIN = {
   kind: EntryKind.Password,
   title: "Bank",
   username: "jane",
-  password: "s3cret value",
+  password: SECRET,
   url: "https://bank.example",
   notes: "pin in the drawer",
 } as const;
@@ -99,14 +102,14 @@ describe("adding", () => {
     await user.type(within(dialog).getByLabelText("Title"), "Bank");
     expect(save).toBeDisabled();
     await user.type(within(dialog).getByLabelText("Username"), "jane");
-    await user.type(within(dialog).getByLabelText("Password"), "s3cret value");
+    await user.type(within(dialog).getByLabelText("Password"), SECRET);
     await user.type(within(dialog).getByLabelText("Website"), "https://bank.example");
     expect(save).toBeEnabled();
     await user.click(save);
 
     const row = within(await list()).getByRole("button", { name: /Bank/ });
     expect(row).toHaveTextContent("jane");
-    expect(row).not.toHaveTextContent("s3cret");
+    expect(row).not.toHaveTextContent(SECRET);
   });
 
   it("closes without saving on cancel", async () => {
@@ -149,14 +152,14 @@ describe("viewing", () => {
     await user.click(within(await list()).getByRole("button", { name: /Bank/ }));
     const dialog = await sheet();
 
-    expect(within(dialog).queryByText("s3cret value")).toBeNull();
+    expect(within(dialog).queryByText(SECRET)).toBeNull();
     await user.click(within(dialog).getByRole("button", { name: "Show password" }));
-    expect(within(dialog).getByText("s3cret value")).toBeInTheDocument();
+    expect(within(dialog).getByText(SECRET)).toBeInTheDocument();
     await user.click(within(dialog).getByRole("button", { name: "Hide password" }));
-    expect(within(dialog).queryByText("s3cret value")).toBeNull();
+    expect(within(dialog).queryByText(SECRET)).toBeNull();
 
     await user.click(within(dialog).getByRole("button", { name: "Copy password" }));
-    expect(await navigator.clipboard.readText()).toBe("s3cret value");
+    expect(await navigator.clipboard.readText()).toBe(SECRET);
   });
 
   it("links the website only for http(s) addresses", async () => {
@@ -236,7 +239,7 @@ describe("finding things", () => {
     await user.type(screen.getByRole("searchbox", { name: "Search" }), "jane");
     expect(await rows()).toHaveLength(1);
     await user.clear(screen.getByRole("searchbox", { name: "Search" }));
-    await user.type(screen.getByRole("searchbox", { name: "Search" }), "s3cret");
+    await user.type(screen.getByRole("searchbox", { name: "Search" }), SECRET);
     expect(await screen.findByText("No matches")).toBeInTheDocument();
   });
 });

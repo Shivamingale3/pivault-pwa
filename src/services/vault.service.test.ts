@@ -8,17 +8,20 @@ import type { EntryInput } from "@/schemas/vault.schema";
 import { generateRecoveryKey, importRecoveryKey } from "@/services/crypto.service";
 import { clearUnlockedKey, setUnlockedKey } from "@/services/secure-memory.service";
 import { addEntry, editEntry, removeEntry, watchEntries } from "@/services/vault.service";
+import { fakeSecret } from "@/test/fake-secret";
 import { freshIndexedDbPerTest } from "@/test/indexed-db";
 import type { VaultDocument } from "@/types/vault.types";
 
 freshIndexedDbPerTest();
+
+const SECRET = fakeSecret();
 
 const NOTE: EntryInput = { kind: EntryKind.Note, title: "Wifi codes", body: "router: hunter2-ish" };
 const LOGIN: EntryInput = {
   kind: EntryKind.Password,
   title: "Bank",
   username: "jane",
-  password: "s3cret value",
+  password: SECRET,
   url: "https://bank.example",
   notes: "pin is in the drawer",
 };
@@ -50,7 +53,7 @@ describe("adding entries", () => {
       "hunter2",
       "Bank",
       "jane",
-      "s3cret",
+      SECRET,
       "bank.example",
       "drawer",
     ]) {
