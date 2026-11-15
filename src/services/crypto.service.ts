@@ -19,6 +19,9 @@ import {
 } from "@/utils/bytes.utils";
 import { parseRecoveryKey } from "@/utils/recovery-key.utils";
 
+const additionalData = (aad?: string) =>
+  aad === undefined ? {} : { additionalData: new TextEncoder().encode(aad) };
+
 const subtle = (): SubtleCrypto => {
   // `crypto.subtle` only exists in secure contexts (HTTPS / localhost).
   if (typeof globalThis.crypto === "undefined" || !("subtle" in globalThis.crypto)) {
@@ -71,12 +74,24 @@ export async function exportPublicKey(publicKey: CryptoKey): Promise<string> {
   }
 }
 
-/** JSON -> UTF-8 -> AES-256-GCM with a fresh random IV, packed in a versioned envelope. */
-export async function encryptJson(key: CryptoKey, value: unknown): Promise<EncryptedEnvelope> {
+/**
+ * JSON -> UTF-8 -> AES-256-GCM with a fresh random IV, packed in a versioned envelope.
+ * `aad` (optional) is authenticated but not encrypted: decrypting only works with the same value,
+ * which binds a blob to the record it belongs to so a server can't swap blobs between records.
+ */
+export async function encryptJson(
+  key: CryptoKey,
+  value: unknown,
+  aad?: string,
+): Promise<EncryptedEnvelope> {
   try {
     const iv = globalThis.crypto.getRandomValues(new Uint8Array(AES_IV_BYTES));
     const plaintext = new TextEncoder().encode(JSON.stringify(value));
-    const ciphertext = await subtle().encrypt({ name: "AES-GCM", iv }, key, plaintext);
+    const ciphertext = await subtle().encrypt(
+      { name: "AES-GCM", iv, ...additionalData(aad) },
+      key,
+      plaintext,
+    );
     plaintext.fill(0);
     return {
       version: ENVELOPE_VERSION,
@@ -98,6 +113,7 @@ export async function decryptJson<S extends z.ZodType>(
   key: CryptoKey,
   envelope: unknown,
   schema: S,
+  aad?: string,
 ): Promise<z.output<S>> {
   const fail = (cause?: unknown) =>
     new CryptoError(CryptoErrorKind.DecryptFailed, CRYPTO_ERROR_MESSAGES.decryptFailed, cause);
@@ -105,7 +121,7 @@ export async function decryptJson<S extends z.ZodType>(
   if (!parsed.success) throw fail();
   try {
     const plaintext = await subtle().decrypt(
-      { name: "AES-GCM", iv: base64ToBytes(parsed.data.iv) },
+      { name: "AES-GCM", iv: base64ToBytes(parsed.data.iv), ...additionalData(aad) },
       key,
       base64ToBytes(parsed.data.ciphertext),
     );
