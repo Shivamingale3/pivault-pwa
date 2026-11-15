@@ -3,6 +3,7 @@ import { emptyResponseSchema, loginResponseSchema } from "@/schemas/auth.schema"
 import type { SessionRecord } from "@/schemas/session.schema";
 import { postJson } from "@/services/api.client";
 import { exportPublicKey, generateLoginKeyPair } from "@/services/crypto.service";
+import { clearSyncStats } from "@/services/sync-stats.service";
 import { clearAppLock } from "@/services/app-lock.service";
 import { postSigned } from "@/services/signed-api.client";
 import { clearLoginKeyPair, clearVaultKey, saveLoginKeyPair } from "@/services/key-store.service";
@@ -77,6 +78,7 @@ export async function wipeDevice(): Promise<void> {
     clearVaultKey(),
     clearAppLock(),
     removeVaultDb(),
+    clearSyncStats(),
   ]);
 }
 
