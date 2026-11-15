@@ -1,17 +1,23 @@
 import {
+  addRxPlugin,
   createRxDatabase,
   removeRxDatabase,
   type RxCollection,
   type RxDatabase,
   type RxStorage,
 } from "rxdb/plugins/core";
+import { RxDBLeaderElectionPlugin } from "rxdb/plugins/leader-election";
 import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
 import { STORAGE_ERROR_MESSAGES } from "@/constants/storage.constants";
 import { VAULT_DB_NAME } from "@/constants/vault.constants";
+import { lastWriteWins } from "@/db/vault.conflict";
 import { vaultSchema } from "@/db/vault.schema";
 import { StorageErrorKind } from "@/enums/storage.enum";
 import { StorageError } from "@/services/storage.error";
 import type { VaultDocument } from "@/types/vault.types";
+
+// With several tabs open, only one of them (the leader) runs the sync.
+addRxPlugin(RxDBLeaderElectionPlugin);
 
 export type VaultCollection = RxCollection<VaultDocument>;
 export type VaultDatabase = RxDatabase<{ entries: VaultCollection }>;
@@ -32,7 +38,9 @@ async function create(): Promise<VaultDatabase> {
       storage: storage(),
       multiInstance: typeof BroadcastChannel !== "undefined",
     });
-    await database.addCollections({ entries: { schema: vaultSchema } });
+    await database.addCollections({
+      entries: { schema: vaultSchema, conflictHandler: lastWriteWins },
+    });
     return database;
   } catch (error) {
     throw new StorageError(StorageErrorKind.Unavailable, STORAGE_ERROR_MESSAGES.unavailable, error);

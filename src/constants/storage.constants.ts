@@ -14,6 +14,7 @@ export const RecordId = {
   VaultKey: "vault-key",
   Session: "session",
   AppLock: "app-lock",
+  SyncStats: "sync-stats",
 } as const;
 
 export const STORAGE_ERROR_MESSAGES = {
