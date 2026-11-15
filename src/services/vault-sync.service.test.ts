@@ -1,6 +1,5 @@
 import { firstValueFrom } from "rxjs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ENTRY_AAD_PREFIX } from "@/constants/vault.constants";
 import { ApiErrorKind } from "@/enums/api.enum";
 import { EntryKind } from "@/enums/vault.enum";
 import type { SyncDocument } from "@/schemas/sync.schema";
@@ -14,6 +13,7 @@ import { addEntry, editEntry, removeEntry, watchEntries } from "@/services/vault
 import { FakeVaultServer } from "@/test/fake-vault-server";
 import { freshIndexedDbPerTest } from "@/test/indexed-db";
 import { newId } from "@/utils/id.utils";
+import { entryAad } from "@/utils/vault.utils";
 
 freshIndexedDbPerTest();
 
@@ -48,7 +48,7 @@ const fromOtherDevice = async (
   id,
   updatedAt,
   _deleted: deleted,
-  envelope: await encryptJson(key, payload, `${ENTRY_AAD_PREFIX}${id}`),
+  envelope: await encryptJson(key, payload, entryAad(id)),
 });
 
 beforeEach(async () => {

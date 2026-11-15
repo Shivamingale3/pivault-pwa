@@ -5,6 +5,9 @@ export const REPLICATION_ID = "pivault-vault-sync-v1";
 export const PULL_BATCH_SIZE = 50;
 export const PUSH_BATCH_SIZE = 5;
 
+/** Largest entry (its JSON as UTF-8) the app will encrypt: the server accepts about 67 KB per blob. */
+export const MAX_PAYLOAD_BYTES = 60_000;
+
 /** Periodic check for changes from other devices while the app is open and unlocked. */
 export const SYNC_INTERVAL_MS = 30_000;
 /** "Sync now" gives up waiting after this long (it keeps syncing in the background). */
