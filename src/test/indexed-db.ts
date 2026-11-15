@@ -1,6 +1,7 @@
-import { IDBFactory } from "fake-indexeddb";
+import { IDBFactory, IDBKeyRange } from "fake-indexeddb";
 import { afterEach, beforeEach } from "vitest";
 import { closeAuthDb } from "@/db/idb";
+import { closeVaultDb } from "@/db/vault.db";
 
 const install = (factory: IDBFactory | undefined) => {
   for (const target of [globalThis, window]) {
@@ -8,6 +9,11 @@ const install = (factory: IDBFactory | undefined) => {
       configurable: true,
       writable: true,
       value: factory,
+    });
+    Object.defineProperty(target, "IDBKeyRange", {
+      configurable: true,
+      writable: true,
+      value: factory ? IDBKeyRange : undefined,
     });
   }
 };
@@ -18,6 +24,7 @@ export const freshIndexedDbPerTest = () => {
     install(new IDBFactory());
   });
   afterEach(async () => {
+    await closeVaultDb();
     await closeAuthDb();
     install(undefined);
   });
