@@ -5,6 +5,8 @@ import { ForgotPasswordPage } from "@/pages/forgot-password.page";
 import { HomePage } from "@/pages/home.page";
 import { LockPage } from "@/pages/lock.page";
 import { LoginPage } from "@/pages/login.page";
+import { SettingsPage } from "@/pages/settings.page";
+import { SettingsSyncPage } from "@/pages/settings-sync.page";
 import { ResetPasswordPage } from "@/pages/reset-password.page";
 import { SetupAppLockPage } from "@/pages/setup-app-lock.page";
 import { SetupRecoveryKeyPage } from "@/pages/setup-recovery-key.page";
@@ -37,6 +39,8 @@ export function AppRoutes() {
       <Route element={<ZoneGuard allow={AuthStatus.Unlocked} />}>
         <Route element={<PrivateLayout />}>
           <Route path={ROUTES.home} element={<HomePage />} />
+          <Route path={ROUTES.settings} element={<SettingsPage />} />
+          <Route path={ROUTES.settingsSync} element={<SettingsSyncPage />} />
         </Route>
       </Route>
 

@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type * as AppLockConstants from "@/constants/app-lock.constants";
 import { ApiErrorKind } from "@/enums/api.enum";
 import { CryptoErrorKind } from "@/enums/crypto.enum";
@@ -6,7 +6,11 @@ import { ApiError } from "@/services/api.error";
 import { getBiometricCredentialId, hasPin, isBiometricEnabled } from "@/services/app-lock.service";
 import * as auth from "@/services/auth.service";
 import * as biometric from "@/services/biometric.service";
-import { generateRecoveryKey } from "@/services/crypto.service";
+import * as sync from "@/services/sync.api";
+import { EntryKind } from "@/enums/vault.enum";
+import { encryptJson, generateRecoveryKey, importRecoveryKey } from "@/services/crypto.service";
+import { newId } from "@/utils/id.utils";
+import { entryAad } from "@/utils/vault.utils";
 import { loadVaultKey } from "@/services/key-store.service";
 import { clearUnlockedKey, isUnlocked } from "@/services/secure-memory.service";
 import { loadSession, saveSession } from "@/services/session.service";
@@ -91,24 +95,80 @@ describe("finishSetupWithNewKey", () => {
 });
 
 describe("finishSetupWithEnteredKey", () => {
-  it("accepts a key in display format without calling the server", async () => {
+  const sealedEntry = async (key: CryptoKey) => {
+    const id = newId();
+    return {
+      id,
+      updatedAt: 1_000,
+      _deleted: false,
+      envelope: await encryptJson(
+        key,
+        { kind: EntryKind.Note, title: "Wifi", body: "x" },
+        entryAad(id),
+      ),
+    };
+  };
+  const serverHas = (documents: Awaited<ReturnType<typeof sealedEntry>>[]) =>
+    vi
+      .spyOn(sync, "pullChanges")
+      .mockResolvedValue({ documents, checkpoint: { seq: documents.length } });
+
+  beforeEach(async () => {
     await saveSession({ ...SESSION, recoveryKeyConfigured: true });
-    const server = vi.spyOn(auth, "markRecoveryKeyConfigured");
+  });
+
+  it("accepts the key that opens the server's vault, in display format, without telling the server", async () => {
     const hex = generateRecoveryKey();
+    const pull = serverHas([await sealedEntry(await importRecoveryKey(hex))]);
+    const server = vi.spyOn(auth, "markRecoveryKeyConfigured");
     await finishSetupWithEnteredKey(hex.replace(/(.{8})(?!$)/g, "$1-").toUpperCase());
 
+    expect(pull).toHaveBeenCalledOnce();
     expect(server).not.toHaveBeenCalled();
     expect(await loadVaultKey()).not.toBeNull();
     expect((await loadSession())?.setupDone).toBe(true);
     expect(isUnlocked()).toBe(true);
   });
 
-  it("refuses a malformed key and stores nothing", async () => {
-    await saveSession({ ...SESSION, recoveryKeyConfigured: true });
-    await expect(finishSetupWithEnteredKey("not a key")).rejects.toMatchObject({
+  it("refuses a well-formed key that does not open the server's vault, and stores nothing", async () => {
+    serverHas([await sealedEntry(await importRecoveryKey(generateRecoveryKey()))]);
+    await expect(finishSetupWithEnteredKey(generateRecoveryKey())).rejects.toMatchObject({
       kind: CryptoErrorKind.InvalidRecoveryKey,
+      message: expect.stringContaining("doesn't unlock this vault") as unknown,
+    });
+    await expect(loadVaultKey()).resolves.toBeNull();
+    expect((await loadSession())?.setupDone).toBe(false);
+    expect(isUnlocked()).toBe(false);
+  });
+
+  it("accepts the key when only some of the sampled entries open (one damaged entry is not a wrong key)", async () => {
+    const hex = generateRecoveryKey();
+    const good = await sealedEntry(await importRecoveryKey(hex));
+    const damaged = { ...(await sealedEntry(await importRecoveryKey(hex))), id: newId() };
+    serverHas([damaged, good]);
+    await expect(finishSetupWithEnteredKey(hex)).resolves.toBeUndefined();
+  });
+
+  it("accepts any well-formed key when the server's vault is empty", async () => {
+    serverHas([]);
+    await expect(finishSetupWithEnteredKey(generateRecoveryKey())).resolves.toBeUndefined();
+    expect(isUnlocked()).toBe(true);
+  });
+
+  it("needs a connection: offline it says so and stores nothing", async () => {
+    vi.spyOn(sync, "pullChanges").mockRejectedValue(new ApiError(ApiErrorKind.Network, "Offline"));
+    await expect(finishSetupWithEnteredKey(generateRecoveryKey())).rejects.toMatchObject({
+      kind: ApiErrorKind.Network,
     });
     await expect(loadVaultKey()).resolves.toBeNull();
     expect(isUnlocked()).toBe(false);
+  });
+
+  it("refuses a malformed key without asking the server", async () => {
+    const pull = vi.spyOn(sync, "pullChanges");
+    await expect(finishSetupWithEnteredKey("not a key")).rejects.toMatchObject({
+      kind: CryptoErrorKind.InvalidRecoveryKey,
+    });
+    expect(pull).not.toHaveBeenCalled();
   });
 });

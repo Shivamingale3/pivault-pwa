@@ -11,7 +11,10 @@ import type { SessionRecord } from "@/schemas/session.schema";
 import { ApiError } from "@/services/api.error";
 import { getBiometricCredentialId, hasPin, setPin } from "@/services/app-lock.service";
 import * as auth from "@/services/auth.service";
-import { generateRecoveryKey } from "@/services/crypto.service";
+import * as syncApi from "@/services/sync.api";
+import { encryptJson, generateRecoveryKey, importRecoveryKey } from "@/services/crypto.service";
+import { newId } from "@/utils/id.utils";
+import { entryAad } from "@/utils/vault.utils";
 import { loadVaultKey } from "@/services/key-store.service";
 import { isUnlocked } from "@/services/secure-memory.service";
 import { loadSession, saveSession } from "@/services/session.service";
@@ -240,7 +243,33 @@ describe("recovery key step: new device", () => {
     await expect(loadVaultKey()).resolves.toBeNull();
   });
 
+  it("explains a key that doesn't open the vault on the server", async () => {
+    const error = vi.spyOn(toast, "error");
+    const id = newId();
+    const other = await importRecoveryKey(generateRecoveryKey());
+    vi.spyOn(syncApi, "pullChanges").mockResolvedValue({
+      documents: [
+        {
+          id,
+          updatedAt: 1,
+          _deleted: false,
+          envelope: await encryptJson(other, { kind: "note", title: "t", body: "b" }, entryAad(id)),
+        },
+      ],
+      checkpoint: { seq: 1 },
+    });
+    open(ROUTES.setupRecoveryKey);
+    const user = userEvent.setup();
+    await user.type(await screen.findByLabelText("Recovery key"), generateRecoveryKey());
+    await user.click(screen.getByRole("button", { name: "Unlock vault" }));
+
+    expect(await screen.findByText(/doesn't unlock this vault/)).toBeInTheDocument();
+    expect(error).not.toHaveBeenCalled();
+    await expect(loadVaultKey()).resolves.toBeNull();
+  });
+
   it("accepts the saved key without calling the server, and opens the app", async () => {
+    vi.spyOn(syncApi, "pullChanges").mockResolvedValue({ documents: [], checkpoint: { seq: 0 } });
     const server = vi.spyOn(auth, "markRecoveryKeyConfigured");
     open(ROUTES.setupRecoveryKey);
     const user = userEvent.setup();
@@ -263,7 +292,11 @@ describe("after setup", () => {
     const user = userEvent.setup();
     await user.click(await screen.findByRole("switch", { name: /I've saved my recovery key/ }));
     await user.click(screen.getByRole("button", { name: "Finish setup" }));
-    await user.click(await screen.findByRole("button", { name: /sign out/i }));
+    await user.click(await screen.findByRole("link", { name: "Settings" }));
+    await user.click(await screen.findByRole("button", { name: "Sign out" }));
+    await user.click(
+      within(await screen.findByRole("dialog")).getByRole("button", { name: "Sign out" }),
+    );
 
     expect(await heading("Welcome back")).toBeInTheDocument();
     await waitFor(async () => {

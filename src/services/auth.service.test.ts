@@ -20,6 +20,7 @@ import {
   markRecoveryKeyConfigured,
 } from "@/services/auth.service";
 import { getVaultDb } from "@/db/vault.db";
+import { EMPTY_STATS, loadSyncStats, recordSent } from "@/services/sync-stats.service";
 import { EntryKind } from "@/enums/vault.enum";
 import { addEntry } from "@/services/vault.service";
 import { loadLoginKeyPair, loadVaultKey, saveVaultKey } from "@/services/key-store.service";
@@ -126,6 +127,7 @@ describe("signOut", () => {
     await saveVaultKey(await importRecoveryKey(generateRecoveryKey()));
     setUnlockedKey(await importRecoveryKey(generateRecoveryKey()));
     await addEntry({ kind: EntryKind.Note, title: "Wifi", body: "hunter2" });
+    await recordSent({ created: 3, updated: 0, deleted: 0 });
   };
 
   const expectWiped = async () => {
@@ -135,6 +137,7 @@ describe("signOut", () => {
     await expect(hasPin()).resolves.toBe(false);
     expect(isUnlocked()).toBe(false);
     expect(await (await getVaultDb()).entries.find().exec()).toHaveLength(0);
+    expect(await loadSyncStats()).toEqual(EMPTY_STATS);
   };
 
   it("ends the server session, then wipes everything on this device", async () => {

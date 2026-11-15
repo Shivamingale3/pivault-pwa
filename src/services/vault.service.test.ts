@@ -104,6 +104,23 @@ describe("adding entries", () => {
     expect(entry).toMatchObject({ title: "Bank", password: " pass word " });
   });
 
+  it("refuses an entry too large to sync, before saving anything", async () => {
+    const huge = { ...NOTE, body: "漢".repeat(25_000) };
+    await expect(addEntry(huge)).rejects.toMatchObject({
+      message: expect.stringContaining("too large") as unknown,
+    });
+    const small = await addEntry(NOTE);
+    await expect(editEntry(small.id, huge)).rejects.toMatchObject({
+      message: expect.stringContaining("too large") as unknown,
+    });
+    expect(await rawDocuments()).toHaveLength(1);
+  });
+
+  it("counts bytes, not characters, against the limit", async () => {
+    await expect(addEntry({ ...NOTE, body: "漢".repeat(25_000) })).rejects.toThrow();
+    await expect(addEntry({ ...NOTE, body: "漢".repeat(15_000) })).resolves.toBeDefined();
+  });
+
   it("can't add anything while locked", async () => {
     clearUnlockedKey();
     await expect(addEntry(NOTE)).rejects.toMatchObject({ kind: CryptoErrorKind.Locked });
