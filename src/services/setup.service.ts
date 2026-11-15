@@ -1,7 +1,13 @@
 import { enrollBiometric } from "@/services/biometric.service";
 import { markRecoveryKeyConfigured } from "@/services/auth.service";
 import { setBiometric, setPin } from "@/services/app-lock.service";
-import { importRecoveryKey } from "@/services/crypto.service";
+import { KEY_CHECK_SAMPLE, SYNC_MESSAGES } from "@/constants/sync.constants";
+import { CryptoErrorKind } from "@/enums/crypto.enum";
+import { entryPayloadSchema } from "@/schemas/vault.schema";
+import { CryptoError } from "@/services/crypto.error";
+import { decryptJson, importRecoveryKey } from "@/services/crypto.service";
+import { pullChanges } from "@/services/sync.api";
+import { entryAad } from "@/utils/vault.utils";
 import { saveVaultKey } from "@/services/key-store.service";
 import { setUnlockedKey } from "@/services/secure-memory.service";
 import { loadSession, markSetupDone } from "@/services/session.service";
@@ -44,9 +50,32 @@ export async function finishSetupWithNewKey(recoveryKey: string, signal?: AbortS
 }
 
 /**
- * Returning user on a new device: the typed recovery key is kept as is. It can't be checked
- * against the vault until the vault exists, so the first vault download must verify it.
+ * A typed recovery key must open the vault that is already on the server: the first few entries
+ * are pulled and at least one has to decrypt. An empty vault accepts any well-formed key. Needs a
+ * connection; offline, the error says so and nothing is stored.
+ */
+async function verifyAgainstServer(key: CryptoKey): Promise<void> {
+  const { documents } = await pullChanges(null, KEY_CHECK_SAMPLE);
+  if (documents.length === 0) return;
+  const opened = await Promise.all(
+    documents.map((document) =>
+      decryptJson(key, document.envelope, entryPayloadSchema, entryAad(document.id)).then(
+        () => true,
+        () => false,
+      ),
+    ),
+  );
+  if (!opened.some(Boolean)) {
+    throw new CryptoError(CryptoErrorKind.InvalidRecoveryKey, SYNC_MESSAGES.keyMismatch);
+  }
+}
+
+/**
+ * Returning user on a new device: the typed recovery key is checked against the server's vault
+ * (see `verifyAgainstServer`) before it is kept on this device.
  */
 export async function finishSetupWithEnteredKey(input: string): Promise<void> {
-  await adoptRecoveryKey(await importRecoveryKey(input));
+  const key = await importRecoveryKey(input);
+  await verifyAgainstServer(key);
+  await adoptRecoveryKey(key);
 }
