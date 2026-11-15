@@ -13,3 +13,8 @@ export interface SyncState {
   error: string | null;
   stats: SyncStats;
 }
+
+export interface SyncContextValue extends SyncState {
+  /** Syncs now. Resolves when this device and the server agree, or when it fails. */
+  syncNow: () => Promise<void>;
+}
