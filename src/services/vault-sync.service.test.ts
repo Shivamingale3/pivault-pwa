@@ -8,7 +8,8 @@ import { ApiError } from "@/services/api.error";
 import { encryptJson, generateRecoveryKey, importRecoveryKey } from "@/services/crypto.service";
 import { clearUnlockedKey, setUnlockedKey } from "@/services/secure-memory.service";
 import * as api from "@/services/sync.api";
-import { type VaultSync, startVaultSync } from "@/services/vault-sync.service";
+import type * as SyncModule from "@/services/vault-sync.service";
+import type { VaultSync } from "@/services/vault-sync.service";
 import { addEntry, editEntry, removeEntry, watchEntries } from "@/services/vault.service";
 import { FakeVaultServer } from "@/test/fake-vault-server";
 import { freshIndexedDbPerTest } from "@/test/indexed-db";
@@ -24,7 +25,11 @@ let key: CryptoKey;
 let sync: VaultSync | null;
 let online: boolean;
 
+/** The real replication (the global test setup replaces it with a stub everywhere else). */
 const start = async () => {
+  const { startVaultSync } = await vi.importActual<typeof SyncModule>(
+    "@/services/vault-sync.service",
+  );
   sync = await startVaultSync({ retryMs: 20 });
   return sync;
 };
