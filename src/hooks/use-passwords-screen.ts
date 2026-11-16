@@ -6,7 +6,7 @@ import { useSync } from "@/hooks/use-sync";
 import { useUsage } from "@/hooks/use-usage";
 import { useVault } from "@/hooks/use-vault";
 import { EntryKind } from "@/enums/vault.enum";
-import { ROUTES } from "@/routes/route-paths";
+import { ROUTES, entryPath } from "@/routes/route-paths";
 import type { PasswordEntry } from "@/types/vault.types";
 import { isWeak } from "@/utils/password-strength.utils";
 
@@ -15,8 +15,6 @@ export type SortTab = "recent" | "az" | "weak";
 interface LocationState {
   /** Set by the Sort pill: shows the sort state. A plain visit to the tab doesn't have it. */
   sort?: boolean;
-  /** Open this entry's details straight away (from a recently opened row). */
-  open?: string;
 }
 
 const matches = (entry: PasswordEntry, needle: string): boolean =>
@@ -83,14 +81,16 @@ export function usePasswordsScreen() {
       touch(entry.id, EntryKind.Password);
       return copy(entry.password, "Password");
     },
-    opened: (entry: PasswordEntry) => {
-      touch(entry.id, EntryKind.Password);
+    open: (entry: PasswordEntry) => {
+      void navigate(entryPath.password(entry.id));
+    },
+    add: () => {
+      void navigate(ROUTES.passwordNew);
     },
     /** Empty-state action: ask the Pi for a backup (sync pulls it down). */
     restore: async () => {
       toast.info("Checking your Pi for a backup…");
       await syncNow();
     },
-    openId: state.open,
   };
 }

@@ -9,35 +9,21 @@ import { PasswordRow } from "@/components/modules/vault/password-row";
 import { PasswordsEmpty } from "@/components/modules/vault/passwords-empty";
 import { SortTabs } from "@/components/modules/vault/sort-tabs";
 import { VaultLoading } from "@/components/modules/vault/vault-loading";
-import { VaultOverlays } from "@/components/modules/vault/vault-overlays";
 import { VaultEmpty } from "@/components/modules/vault/vault-empty";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { LIST_COPY } from "@/constants/vault-design.constants";
-import { EntryKind } from "@/enums/vault.enum";
 import { usePasswordsScreen } from "@/hooks/use-passwords-screen";
-import { useVaultScreen } from "@/hooks/use-vault-screen";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/routes/route-paths";
 
 /** Passwords: most recent first, filterable, reveal and copy per row; Sort switches to Recent / A-Z / Weak. */
 export function PasswordsPage() {
   const screen = usePasswordsScreen();
-  const overlays = useVaultScreen(screen.openId);
-  const open = (id: string) => {
-    overlays.show(id);
-  };
 
   const body = () => {
     if (screen.status === "loading") return <VaultLoading />;
     if (screen.total === 0)
-      return (
-        <PasswordsEmpty
-          onAdd={() => {
-            overlays.create(EntryKind.Password);
-          }}
-          onRestore={() => void screen.restore()}
-        />
-      );
+      return <PasswordsEmpty onAdd={screen.add} onRestore={() => void screen.restore()} />;
     if (screen.visible.length === 0) {
       const weak = screen.sorting && screen.tab === "weak" && !screen.filtering;
       return (
@@ -59,20 +45,14 @@ export function PasswordsPage() {
               key={entry.id}
               entry={entry}
               lastUsedAt={screen.lastUsedAt(entry)}
-              onOpen={(picked) => {
-                screen.opened(picked);
-                open(picked.id);
-              }}
+              onOpen={screen.open}
             />
           ) : (
             <PasswordRow
               key={entry.id}
               entry={entry}
               revealed={screen.isRevealed(entry.id)}
-              onOpen={(picked) => {
-                screen.opened(picked);
-                open(picked.id);
-              }}
+              onOpen={screen.open}
               onToggleReveal={screen.toggleReveal}
               onCopy={(picked) => void screen.copyPassword(picked)}
             />
@@ -128,15 +108,9 @@ export function PasswordsPage() {
         )}
         <div className="flex flex-1 flex-col">{body()}</div>
         {screen.status === "ready" && screen.total > 0 && (
-          <Fab
-            label={LIST_COPY.addPassword}
-            onClick={() => {
-              overlays.create(EntryKind.Password);
-            }}
-          />
+          <Fab label={LIST_COPY.addPassword} onClick={screen.add} />
         )}
       </div>
-      <VaultOverlays screen={overlays} />
     </main>
   );
 }

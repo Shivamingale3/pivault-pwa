@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { EntryKind } from "@/enums/vault.enum";
 import { useVault } from "@/hooks/use-vault";
-import { ROUTES } from "@/routes/route-paths";
+import { entryPath } from "@/routes/route-paths";
 import { recentSearches, rememberSearch } from "@/services/search-history.service";
 import type { NoteEntry, PasswordEntry, VaultEntry } from "@/types/vault.types";
 
@@ -40,12 +40,12 @@ export function useSearch() {
     results,
     nothingFound: results.passwords.length + results.notes.length === 0,
     recent,
-    /** Opens the item on its own list and remembers what was searched for. */
+    /** Opens the item and remembers what was searched for. */
     open: (entry: VaultEntry) => {
       setRecent(rememberSearch(query));
-      void navigate(entry.kind === EntryKind.Password ? ROUTES.passwords : ROUTES.notes, {
-        state: { open: entry.id },
-      });
+      void navigate(
+        entry.kind === EntryKind.Password ? entryPath.password(entry.id) : entryPath.note(entry.id),
+      );
     },
     done: () => {
       void navigate(-1);

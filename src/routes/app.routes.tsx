@@ -3,6 +3,10 @@ import { AuthStatus } from "@/enums/auth.enum";
 import { DesignSystemPage } from "@/pages/design-system.page";
 import { ForgotPasswordPage } from "@/pages/forgot-password.page";
 import { HomePage } from "@/pages/home.page";
+import { NoteEditPage, NoteNewPage } from "@/pages/note-editor.page";
+import { NoteReadPage } from "@/pages/note-read.page";
+import { PasswordDetailPage } from "@/pages/password-detail.page";
+import { PasswordEditPage, PasswordNewPage } from "@/pages/password-form.page";
 import { NotesPage } from "@/pages/notes.page";
 import { PasswordsPage } from "@/pages/passwords.page";
 import { SearchPage } from "@/pages/search.page";
@@ -58,6 +62,12 @@ export function AppRoutes() {
             <Route path={ROUTES.passwords} element={<PasswordsPage />} />
             <Route path={ROUTES.notes} element={<NotesPage />} />
           </Route>
+          <Route path={ROUTES.passwordNew} element={<PasswordNewPage />} />
+          <Route path={ROUTES.passwordDetail} element={<PasswordDetailPage />} />
+          <Route path={ROUTES.passwordEdit} element={<PasswordEditPage />} />
+          <Route path={ROUTES.noteNew} element={<NoteNewPage />} />
+          <Route path={ROUTES.noteDetail} element={<NoteReadPage />} />
+          <Route path={ROUTES.noteEdit} element={<NoteEditPage />} />
           <Route path={ROUTES.search} element={<SearchPage />} />
           <Route path={ROUTES.settings} element={<SettingsPage />} />
           <Route path={ROUTES.settingsSync} element={<SettingsSyncPage />} />
