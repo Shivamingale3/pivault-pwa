@@ -34,8 +34,8 @@ describe("notes", () => {
     renderUnlocked(ROUTES.notes);
     expect(await screen.findByRole("heading", { name: "No notes yet" })).toBeInTheDocument();
     await userEvent.setup().click(screen.getByRole("button", { name: "Write a note" }));
-    const dialog = await screen.findByRole("dialog");
-    expect(within(dialog).queryByRole("button", { name: "Password" })).toBeNull();
+    expect(await screen.findByRole("textbox", { name: "Title" })).toBeInTheDocument();
+    expect(screen.getByRole("toolbar", { name: "Formatting" })).toBeInTheDocument();
   });
 
   it("lists notes with a count, filters by title and opens one", async () => {
@@ -48,7 +48,8 @@ describe("notes", () => {
     const list = await screen.findByRole("list", { name: "Notes" });
     expect(within(list).getAllByRole("listitem")).toHaveLength(1);
     await user.click(within(list).getByRole("button", { name: /Wifi codes/ }));
-    expect(await screen.findByRole("dialog")).toHaveTextContent("Wifi codes");
+    expect(await screen.findByRole("heading", { name: "Wifi codes" })).toBeInTheDocument();
+    expect(screen.getByText(/Body stays encrypted/)).toBeInTheDocument();
   });
 });
 
@@ -80,7 +81,7 @@ describe("search", () => {
     await user.click(
       within(await screen.findByRole("region", { name: "Passwords" })).getByRole("button"),
     );
-    expect(await screen.findByRole("dialog")).toHaveTextContent("Bank");
+    expect(await screen.findByRole("heading", { name: "Bank" })).toBeInTheDocument();
     const { recentSearches } = await import("@/services/search-history.service");
     expect(recentSearches()).toEqual(["bank"]);
   });

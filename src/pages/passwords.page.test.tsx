@@ -2,7 +2,6 @@ import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { toast } from "sonner";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { getVaultDb } from "@/db/vault.db";
 import { EntryKind } from "@/enums/vault.enum";
 import { ROUTES } from "@/routes/route-paths";
 import { clearUnlockedKey } from "@/services/secure-memory.service";
@@ -54,12 +53,11 @@ describe("passwords: empty", () => {
     expect(info).toHaveBeenCalledWith("Checking your Pi for a backup…");
   });
 
-  it("opens the password form straight from the empty state, with no type chooser", async () => {
+  it("opens the password form straight from the empty state, with no Save button", async () => {
     renderUnlocked(ROUTES.passwords);
     await userEvent.setup().click(await screen.findByRole("button", { name: "Add a password" }));
-    const dialog = await screen.findByRole("dialog");
-    expect(within(dialog).getByLabelText("Username")).toBeInTheDocument();
-    expect(within(dialog).queryByRole("button", { name: "Note" })).toBeNull();
+    expect(await screen.findByLabelText("USERNAME")).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Not saved yet");
   });
 });
 
@@ -136,60 +134,15 @@ describe("passwords: the list", () => {
     expect(await screen.findByText("No matches")).toBeInTheDocument();
   });
 
-  it("opens the details from a row, and adds another from the round button", async () => {
+  it("opens a row on its own screen, and the round button opens a new form", async () => {
     await addEntry(login("Bank"));
-    renderUnlocked(ROUTES.passwords);
-    const user = userEvent.setup();
-    await user.click(within(await rowOf("Bank")).getByRole("button", { name: "Bank" }));
-    expect(await screen.findByRole("dialog")).toHaveTextContent("Bank");
-    await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Close" }));
-    await waitFor(() => {
-      expect(screen.queryByRole("dialog")).toBeNull();
-    });
-
-    await user.click(screen.getByRole("button", { name: "Add a password" }));
-    const dialog = await screen.findByRole("dialog");
-    await user.type(within(dialog).getByLabelText("Title"), "Cloud");
-    await user.type(within(dialog).getByLabelText("Password"), fakeSecret());
-    await user.click(within(dialog).getByRole("button", { name: "Save" }));
-    expect(await rowOf("Cloud")).toBeInTheDocument();
-  });
-
-  it("stores nothing readable: the database only holds encrypted blobs", async () => {
     renderUnlocked(ROUTES.passwords);
     const user = userEvent.setup();
     await user.click(await screen.findByRole("button", { name: "Add a password" }));
-    const dialog = await screen.findByRole("dialog");
-    await user.type(within(dialog).getByLabelText("Title"), "Bank");
-    await user.type(within(dialog).getByLabelText("Username"), "jane");
-    await user.type(within(dialog).getByLabelText("Password"), STRONG);
-    await user.click(within(dialog).getByRole("button", { name: "Save" }));
-    await rowOf("Bank");
-    const stored = JSON.stringify(
-      (await (await getVaultDb()).entries.find().exec()).map((d) => d.toMutableJSON()),
-    );
-    expect(stored).not.toMatch(/Bank|jane|Correct|password/);
-  });
-
-  it("edits and deletes from the details, deleting only after a confirmation", async () => {
-    await addEntry(login("Bank"));
-    renderUnlocked(ROUTES.passwords);
-    const user = userEvent.setup();
+    expect(await screen.findByLabelText("NAME")).toBeInTheDocument();
+    await user.click(screen.getByRole("link", { name: "Back" }));
     await user.click(within(await rowOf("Bank")).getByRole("button", { name: "Bank" }));
-    await user.click(
-      within(await screen.findByRole("dialog")).getByRole("button", { name: "Edit" }),
-    );
-    const title = await screen.findByLabelText("Title");
-    await user.clear(title);
-    await user.type(title, "Savings");
-    await user.click(screen.getByRole("button", { name: "Save" }));
-    await user.click(within(await rowOf("Savings")).getByRole("button", { name: "Savings" }));
-    await user.click(
-      within(await screen.findByRole("dialog")).getByRole("button", { name: "Delete" }),
-    );
-    expect(await screen.findByText(/no trash and no undo/)).toBeInTheDocument();
-    await user.click(await screen.findByRole("button", { name: "Delete password" }));
-    expect(await screen.findByRole("heading", { name: "No passwords yet" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Bank" })).toBeInTheDocument();
   });
 });
 

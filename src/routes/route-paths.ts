@@ -4,7 +4,13 @@ import { AuthStatus } from "@/enums/auth.enum";
 export const ROUTES = {
   home: "/",
   passwords: "/passwords",
+  passwordNew: "/passwords/new",
+  passwordDetail: "/passwords/:id",
+  passwordEdit: "/passwords/:id/edit",
   notes: "/notes",
+  noteNew: "/notes/new",
+  noteDetail: "/notes/:id",
+  noteEdit: "/notes/:id/edit",
   search: "/search",
   settings: "/settings",
   settingsSync: "/settings/sync",
@@ -29,3 +35,11 @@ export const STATUS_HOME: Record<AuthStatus, string> = {
   [AuthStatus.Locked]: ROUTES.lock,
   [AuthStatus.Unlocked]: ROUTES.home,
 };
+
+/** Paths for one entry. */
+export const entryPath = {
+  password: (id: string): string => `/passwords/${id}`,
+  passwordEdit: (id: string): string => `/passwords/${id}/edit`,
+  note: (id: string): string => `/notes/${id}`,
+  noteEdit: (id: string): string => `/notes/${id}/edit`,
+} as const;

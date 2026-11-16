@@ -6,19 +6,13 @@ import { NoteRow } from "@/components/modules/vault/note-row";
 import { NotesEmpty } from "@/components/modules/vault/notes-empty";
 import { VaultEmpty } from "@/components/modules/vault/vault-empty";
 import { VaultLoading } from "@/components/modules/vault/vault-loading";
-import { VaultOverlays } from "@/components/modules/vault/vault-overlays";
 import { LIST_COPY } from "@/constants/vault-design.constants";
-import { EntryKind } from "@/enums/vault.enum";
 import { useNotesScreen } from "@/hooks/use-notes-screen";
-import { useVaultScreen } from "@/hooks/use-vault-screen";
 
 /** Notes: title rows with chevrons, a filter, and a button to write a new one. */
 export function NotesPage() {
   const screen = useNotesScreen();
-  const overlays = useVaultScreen(screen.openId);
-  const write = () => {
-    overlays.create(EntryKind.Note);
-  };
+  const write = screen.write;
 
   const body = () => {
     if (screen.status === "loading") return <VaultLoading />;
@@ -27,14 +21,7 @@ export function NotesPage() {
     return (
       <ul aria-label="Notes" className="flex flex-col">
         {screen.visible.map((note) => (
-          <NoteRow
-            key={note.id}
-            entry={note}
-            onOpen={(picked) => {
-              screen.opened(picked);
-              overlays.show(picked.id);
-            }}
-          />
+          <NoteRow key={note.id} entry={note} onOpen={screen.open} />
         ))}
       </ul>
     );
@@ -56,7 +43,6 @@ export function NotesPage() {
           <Fab label={LIST_COPY.addNote} onClick={write} />
         )}
       </div>
-      <VaultOverlays screen={overlays} />
     </main>
   );
 }

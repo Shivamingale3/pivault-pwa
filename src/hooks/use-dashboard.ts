@@ -5,7 +5,7 @@ import { useSession } from "@/hooks/use-session";
 import { useStorageEstimate } from "@/hooks/use-storage-estimate";
 import { useUsage } from "@/hooks/use-usage";
 import { useVault } from "@/hooks/use-vault";
-import { ROUTES } from "@/routes/route-paths";
+import { entryPath } from "@/routes/route-paths";
 
 export interface RecentItem {
   id: string;
@@ -45,11 +45,11 @@ export function useDashboard() {
     recents,
     storage,
     clearRecents: clear,
-    /** Opens the item on its own list (the list shows its details). */
+    /** Opens the item's own screen. */
     openRecent: (item: RecentItem) => {
-      void navigate(item.kind === EntryKind.Password ? ROUTES.passwords : ROUTES.notes, {
-        state: { open: item.id },
-      });
+      void navigate(
+        item.kind === EntryKind.Password ? entryPath.password(item.id) : entryPath.note(item.id),
+      );
     },
   };
 }

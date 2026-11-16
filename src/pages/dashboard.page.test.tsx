@@ -39,7 +39,9 @@ describe("home dashboard", () => {
     expect(await screen.findByRole("heading", { name: "Hello, Jane" })).toBeInTheDocument();
     expect(screen.getByText("VAULT UNLOCKED")).toBeInTheDocument();
     const main = within(await screen.findByRole("main"));
-    expect(await main.findByRole("link", { name: /Passwords/ })).toHaveTextContent("2 items");
+    await waitFor(() => {
+      expect(main.getByRole("link", { name: /Passwords/ })).toHaveTextContent("2 items");
+    });
     expect(main.getByRole("link", { name: /Notes/ })).toHaveTextContent("1 note");
     expect(screen.getByRole("link", { name: "Search passwords, notes" })).toHaveAttribute(
       "href",
@@ -76,7 +78,7 @@ describe("home dashboard", () => {
     ).toBeInTheDocument();
   });
 
-  it("lists recently opened items, newest first, and opens one on its list", async () => {
+  it("lists recently opened items, newest first, and opens one on its own screen", async () => {
     const bank = await addEntry(login("Bank"));
     const note = await addEntry({ kind: EntryKind.Note, title: "Wifi", body: "x" });
     await recordUse(bank.id, EntryKind.Password, Date.now() - 12 * 60_000);
@@ -96,9 +98,8 @@ describe("home dashboard", () => {
     const target = rows[1];
     if (!target) throw new Error("expected two recent rows");
     await userEvent.setup().click(within(target).getByRole("button"));
-    expect(await screen.findByRole("dialog")).toHaveTextContent("Bank");
-    // The open sheet hides the page behind it from assistive tech, so look past that.
-    expect(screen.getByRole("heading", { name: "Passwords", hidden: true })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Bank" })).toBeInTheDocument();
+    expect(screen.getByText("PASSWORD")).toBeInTheDocument();
   });
 
   it("forgets the recent items on Clear", async () => {
