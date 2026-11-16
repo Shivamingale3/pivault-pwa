@@ -2,6 +2,9 @@
 export const SETTINGS_COPY = {
   title: "Settings",
   sync: "Sync",
+  groupAccount: "ACCOUNT",
+  lockNow: "Lock now",
+  lockMeta: "Asks for your PIN to open again",
   groupServer: "SERVER",
   syncRow: "Sync",
   signOut: "Sign out",

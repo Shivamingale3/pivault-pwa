@@ -23,12 +23,14 @@ const isKind = (value: unknown): value is EntryKind =>
 interface EntryEditorProps {
   /** The entry being edited, or null to create a new one. */
   entry: VaultEntry | null;
+  /** When creating: the kind to make, and no chooser. Without it the user picks. */
+  kind?: EntryKind;
   onClose: () => void;
 }
 
 /** Bottom sheet to add or edit an item. Saves encrypted to this device, then closes. */
-export function EntryEditor({ entry, onClose }: EntryEditorProps) {
-  const { form, submit, pending, error } = useEntryEditor(entry, onClose);
+export function EntryEditor({ entry, kind, onClose }: EntryEditorProps) {
+  const { form, submit, pending, error } = useEntryEditor(entry, onClose, kind);
   const creating = entry === null;
 
   const handleSubmit = (event: SubmitEvent) => {
@@ -51,7 +53,7 @@ export function EntryEditor({ entry, onClose }: EntryEditorProps) {
             <DrawerDescription>Encrypted on this device before it is saved.</DrawerDescription>
           </DrawerHeader>
           <div className="flex flex-col gap-4 overflow-y-auto px-6">
-            {creating && (
+            {creating && kind === undefined && (
               <ToggleGroup
                 aria-label="Type"
                 value={[form.kind]}

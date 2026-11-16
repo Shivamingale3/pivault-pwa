@@ -234,7 +234,7 @@ describe("first sign in: the recovery key", () => {
     expect(finish).toBeEnabled();
     await user.click(finish);
 
-    expect(await heading("Vault")).toBeInTheDocument();
+    expect(await heading("Hello, Jane")).toBeInTheDocument();
     expect(server).toHaveBeenCalledOnce();
     expect((await loadVaultKey())?.extractable).toBe(false);
     expect((await loadSession())?.setupDone).toBe(true);
@@ -347,11 +347,8 @@ describe("new phone: recover the vault", () => {
     expect(await heading("Set your app PIN", 5000)).toBeInTheDocument();
 
     await setUpPin(user);
-    expect(await heading("Vault")).toBeInTheDocument();
-    const list = await screen.findByRole("list", { name: "Vault items" });
-    await waitFor(() => {
-      expect(within(list).getAllByRole("button")).toHaveLength(3);
-    });
+    expect(await heading("Hello, Jane")).toBeInTheDocument();
+    expect(await screen.findByText("3 notes")).toBeInTheDocument();
     expect((await loadSession())?.setupDone).toBe(true);
     expect(isUnlocked()).toBe(true);
   });
@@ -383,7 +380,7 @@ describe("new phone: recover the vault", () => {
     await saveVaultKey(await importRecoveryKey(hex));
     await setPin(PIN);
     open();
-    expect(await heading("Vault")).toBeInTheDocument();
+    expect(await heading("Hello, Jane")).toBeInTheDocument();
     expect((await loadSession())?.setupDone).toBe(true);
   });
 });

@@ -273,27 +273,29 @@ describe("Settings › Sync", () => {
 });
 
 describe("sync in the unlocked zone", () => {
-  it("shows the status pill on the vault screen, and offline is a pill, not a screen", async () => {
-    open(ROUTES.home);
-    expect(await screen.findByRole("status", { name: "Sync status: Synced" })).toBeInTheDocument();
+  it("shows offline as a pill under the list header, never as a screen", async () => {
+    open(ROUTES.passwords);
+    expect(await screen.findByRole("heading", { name: "Passwords" })).toBeInTheDocument();
+    expect(screen.queryByRole("status", { name: /Sync status/ })).toBeNull();
     state$.next(stateWith({ status: "offline" }));
     expect(
       await screen.findByRole("status", { name: "Sync status: Offline · changes will sync later" }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Add item" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Passwords" })).toBeInTheDocument();
   });
 
   it("starts once when unlocked, keeps running between screens, and stops on lock", async () => {
     open(ROUTES.home);
     const user = userEvent.setup();
-    await screen.findByRole("status", { name: "Sync status: Synced" });
-    await user.click(screen.getByRole("link", { name: "Settings" }));
+    await user.click(await screen.findByRole("link", { name: "Settings" }));
     await screen.findByRole("heading", { name: "Settings" });
     await user.click(screen.getByRole("link", { name: "Back" }));
+    await screen.findByRole("heading", { name: /^Hello/ });
     expect(startVaultSync).toHaveBeenCalledTimes(1);
     expect(stop).not.toHaveBeenCalled();
 
-    await user.click(await screen.findByRole("button", { name: "Lock" }));
+    await user.click(screen.getByRole("link", { name: "Settings" }));
+    await user.click(await screen.findByRole("button", { name: /Lock now/ }));
     expect(await screen.findByRole("heading", { name: /Welcome back/ })).toBeInTheDocument();
     await waitFor(() => {
       expect(stop).toHaveBeenCalled();
@@ -307,8 +309,5 @@ describe("sync in the unlocked zone", () => {
     await waitFor(() => {
       expect(error).toHaveBeenCalledWith("Something went wrong. Try again.");
     });
-    expect(
-      await screen.findByRole("status", { name: "Sync status: Sync problem" }),
-    ).toBeInTheDocument();
   });
 });

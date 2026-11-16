@@ -32,3 +32,14 @@ export function formatWhen(epochMs: number, now: number = Date.now()): string {
   );
   return `${date} at ${timeOfDay(epochMs)}`;
 }
+
+/** "just now", "12 min ago", "3 h ago", "yesterday", "2 days ago": how long ago something was opened. */
+export function formatOpened(epochMs: number, now: number = Date.now()): string {
+  const days = Math.round((startOfDay(now) - startOfDay(epochMs)) / DAY_MS);
+  const elapsed = Math.max(0, now - epochMs);
+  if (elapsed < MINUTE_MS) return "just now";
+  if (elapsed < HOUR_MS) return `${String(Math.floor(elapsed / MINUTE_MS))} min ago`;
+  if (days === 0) return `${String(Math.floor(elapsed / HOUR_MS))} h ago`;
+  if (days === 1) return "yesterday";
+  return `${String(days)} days ago`;
+}

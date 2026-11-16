@@ -15,6 +15,7 @@ export const RecordId = {
   Session: "session",
   AppLock: "app-lock",
   SyncStats: "sync-stats",
+  Usage: "usage",
 } as const;
 
 export const STORAGE_ERROR_MESSAGES = {
