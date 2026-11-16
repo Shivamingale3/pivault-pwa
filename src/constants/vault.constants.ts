@@ -10,6 +10,9 @@ export const ENTRY_LIMITS = {
   password: 1024,
   url: 2048,
   notes: 10_000,
+  fieldLabel: 60,
+  fieldValue: 1024,
+  fields: 20,
 } as const;
 
 export const VAULT_MESSAGES = {
