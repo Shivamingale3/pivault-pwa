@@ -13,6 +13,8 @@ interface RecoveryKeyInputsProps {
   disabled?: boolean;
   /** Changing this replays the shake. */
   shakeKey?: number;
+  /** Enter pressed in any box (a disabled submit button can't be pressed implicitly). */
+  onEnter?: () => void;
 }
 
 /**
@@ -25,6 +27,7 @@ export function RecoveryKeyInputs({
   invalid,
   disabled,
   shakeKey = 0,
+  onEnter,
 }: RecoveryKeyInputsProps) {
   const refs = useRef<(HTMLInputElement | null)[]>([]);
   const groupAt = (index: number): string =>
@@ -46,8 +49,12 @@ export function RecoveryKeyInputs({
   };
 
   const onKeyDown = (index: number, event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Backspace" && groupAt(index) === "" && index > 0)
+    if (event.key === "Enter") {
+      event.preventDefault();
+      onEnter?.();
+    } else if (event.key === "Backspace" && groupAt(index) === "" && index > 0) {
       refs.current[index - 1]?.focus();
+    }
   };
 
   const onPaste = (index: number, event: ClipboardEvent<HTMLInputElement>) => {

@@ -21,6 +21,6 @@ export const KEY_CHECK_SAMPLE = 5;
 
 export const SYNC_MESSAGES = {
   ended: "Your session ended, probably because you signed in on another device.",
-  keyMismatch: "That recovery key doesn't unlock this vault. Check it and try again.",
+  keyMismatch: "That key does not match any vault on this server.",
   tooLarge: "This item is too large to sync. Shorten it and try again.",
 } as const;

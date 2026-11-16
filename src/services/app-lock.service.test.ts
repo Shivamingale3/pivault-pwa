@@ -68,16 +68,22 @@ describe("PIN", () => {
     const now = vi.spyOn(Date, "now").mockReturnValue(1_000_000);
     await setPin(PIN);
     await miss(4);
-    await expect(verifyPin("000000")).resolves.toEqual({
+    await expect(verifyPin("000000")).resolves.toMatchObject({
       ok: false,
       reason: "locked-out",
       retryAfterMs: 30_000,
+      attempt: 5,
+      attemptsPerRound: 5,
+      nextWaitMs: 300_000,
     });
     now.mockReturnValue(1_010_000);
-    await expect(verifyPin(PIN)).resolves.toEqual({
+    await expect(verifyPin(PIN)).resolves.toMatchObject({
       ok: false,
       reason: "locked-out",
       retryAfterMs: 20_000,
+      attempt: 5,
+      attemptsPerRound: 5,
+      nextWaitMs: 300_000,
     });
     now.mockReturnValue(1_031_000);
     await expect(verifyPin(PIN)).resolves.toEqual({ ok: true });

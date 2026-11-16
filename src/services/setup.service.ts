@@ -8,7 +8,10 @@ import { CryptoError } from "@/services/crypto.error";
 import { decryptJson, importRecoveryKey } from "@/services/crypto.service";
 import { pullChanges } from "@/services/sync.api";
 import { entryAad } from "@/utils/vault.utils";
-import { saveVaultKey } from "@/services/key-store.service";
+import { loadVaultKey, saveVaultKey } from "@/services/key-store.service";
+import { LOCK_MESSAGES } from "@/constants/lock.constants";
+import { StorageErrorKind } from "@/enums/storage.enum";
+import { StorageError } from "@/services/storage.error";
 import { setUnlockedKey } from "@/services/secure-memory.service";
 import { loadSession, markSetupDone } from "@/services/session.service";
 
@@ -71,11 +74,20 @@ async function verifyAgainstServer(key: CryptoKey): Promise<void> {
 }
 
 /**
- * Returning user on a new device: the typed recovery key is checked against the server's vault
- * (see `verifyAgainstServer`) before it is kept on this device.
+ * New phone: the typed recovery key is checked against the server's vault (see `verifyAgainstServer`)
+ * and, if it opens it, kept on this device. Setup is not finished yet: the vault is rebuilt and a
+ * PIN set first.
  */
-export async function finishSetupWithEnteredKey(input: string): Promise<void> {
+export async function recoverVaultKey(input: string): Promise<void> {
   const key = await importRecoveryKey(input);
   await verifyAgainstServer(key);
-  await adoptRecoveryKey(key);
+  await saveVaultKey(key);
+}
+
+/** New phone, last step: the PIN is set and the vault is down, so mark setup done and unlock. */
+export async function finishRecoveredSetup(): Promise<void> {
+  const key = await loadVaultKey();
+  if (!key) throw new StorageError(StorageErrorKind.Corrupted, LOCK_MESSAGES.vaultKeyMissing);
+  await markSetupDone();
+  setUnlockedKey(key);
 }

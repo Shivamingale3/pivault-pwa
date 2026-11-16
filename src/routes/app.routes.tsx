@@ -8,10 +8,15 @@ import { LoginPage } from "@/pages/login.page";
 import { SettingsPage } from "@/pages/settings.page";
 import { SettingsSyncPage } from "@/pages/settings-sync.page";
 import { ResetPasswordPage } from "@/pages/reset-password.page";
-import { SetupAppLockPage } from "@/pages/setup-app-lock.page";
+import { SetupEntryPage } from "@/pages/setup-entry.page";
+import { SetupPinPage } from "@/pages/setup-pin.page";
+import { SetupRecoverPage } from "@/pages/setup-recover.page";
+import { SetupRecoveringPage } from "@/pages/setup-recovering.page";
+import { SetupRecoveryConfirmPage } from "@/pages/setup-recovery-confirm.page";
 import { SetupRecoveryKeyPage } from "@/pages/setup-recovery-key.page";
 import { PrivateLayout } from "@/routes/private-layout";
 import { ROUTES } from "@/routes/route-paths";
+import { SetupLayout } from "@/routes/setup-layout";
 import { StatusRedirect } from "@/routes/status-redirect";
 import { ZoneGuard } from "@/routes/zone-guard";
 
@@ -28,8 +33,14 @@ export function AppRoutes() {
       </Route>
 
       <Route element={<ZoneGuard allow={AuthStatus.NeedsSetup} />}>
-        <Route path={ROUTES.setupAppLock} element={<SetupAppLockPage />} />
-        <Route path={ROUTES.setupRecoveryKey} element={<SetupRecoveryKeyPage />} />
+        <Route element={<SetupLayout />}>
+          <Route path={ROUTES.setup} element={<SetupEntryPage />} />
+          <Route path={ROUTES.setupAppLock} element={<SetupPinPage />} />
+          <Route path={ROUTES.setupRecoveryKey} element={<SetupRecoveryKeyPage />} />
+          <Route path={ROUTES.setupRecoveryConfirm} element={<SetupRecoveryConfirmPage />} />
+          <Route path={ROUTES.setupRecover} element={<SetupRecoverPage />} />
+          <Route path={ROUTES.setupRecovering} element={<SetupRecoveringPage />} />
+        </Route>
       </Route>
 
       <Route element={<ZoneGuard allow={AuthStatus.Locked} />}>
