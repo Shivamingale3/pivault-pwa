@@ -53,3 +53,52 @@ export const SEARCH_COPY = {
   none: "Nothing found",
   noneBody: "Notes are matched on their title, because the text stays encrypted.",
 } as const;
+
+export const CRUD_COPY = {
+  edit: "Edit",
+  more: "More",
+  back: "Back",
+  username: "USERNAME",
+  password: "PASSWORD",
+  website: "WEBSITE",
+  notes: "NOTES",
+  name: "NAME",
+  created: "CREATED",
+  modified: "MODIFIED",
+  savedOnPhone: "Saved on this phone · backed up at next sync",
+  savedJustNow: "Saved just now",
+  saving: "Saving…",
+  notSaved: "Not saved yet",
+  saveFailed: "Couldn't save",
+  customFields: "CUSTOM FIELDS",
+  addField: "+ Add field",
+  fieldLabel: "Label",
+  fieldValue: "Value",
+  deletePassword: "Delete this password",
+  deleteNote: "Delete this note",
+  reroll: "Reroll",
+  generatorTitle: "Generate password",
+  length: "Length",
+  usePassword: "Use this password",
+  bodyEncrypted: "Body stays encrypted — search only sees the title",
+  noteSaved: "Saved · encrypted",
+  noteTitle: "Title",
+  noteBody: "Write your note",
+  updated: (when: string, words: number): string =>
+    `Updated ${when} · ${String(words)} ${words === 1 ? "word" : "words"}`,
+  deleteTitle: (kind: string): string => `Delete this ${kind}?`,
+  deleteBody:
+    "This is permanent. It goes from this phone now and from your Pi at the next sync, and there is no trash to restore from.",
+  cancel: "Cancel",
+  delete: "Delete",
+  gone: "That item no longer exists.",
+} as const;
+
+export const GENERATOR_TOGGLES = [
+  { key: "uppercase", title: "Uppercase letters", meta: "A–Z" },
+  { key: "numbers", title: "Numbers", meta: "2–9" },
+  { key: "symbols", title: "Symbols", meta: "!@#$%" },
+  { key: "lookAlikes", title: "Allow look-alikes", meta: "l 1 I O 0" },
+] as const;
+
+export const STRENGTH_LABELS = ["Very weak", "Weak", "Fair", "Strong", "Very strong"] as const;
