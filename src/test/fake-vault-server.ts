@@ -28,9 +28,11 @@ export class FakeVaultServer {
       .filter((entry) => entry.seq > after)
       .sort((a, b) => a.seq - b.seq)
       .slice(0, limit);
+    const seq = documents.at(-1)?.seq ?? after;
     return {
       documents: documents.map(strip),
-      checkpoint: { seq: documents.at(-1)?.seq ?? after },
+      checkpoint: { seq },
+      remaining: [...this.entries.values()].filter((entry) => entry.seq > seq).length,
     };
   }
 

@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+import { useState } from "react";
 import { useToggle } from "@/hooks/use-toggle";
 import { Label } from "@/components/ui/label";
 import {
@@ -19,6 +21,11 @@ interface PasswordFieldProps {
   autoFocus?: boolean;
   /** `current-password` for sign in; a new password is the default. */
   autoComplete?: "new-password" | "current-password";
+  /** A leading icon, e.g. a lock. */
+  icon?: ReactNode;
+  /** Shows "Caps lock is on" under the field while it is. */
+  capsLockHint?: boolean;
+  onBlur?: () => void;
   /** Border feedback for confirmation fields: ink when equal, destructive when it cannot match. */
   match?: FieldMatch;
 }
@@ -33,9 +40,13 @@ export function PasswordField({
   disabled,
   autoFocus,
   autoComplete = "new-password",
+  icon,
+  capsLockHint = false,
+  onBlur,
   match = "idle",
 }: PasswordFieldProps) {
   const [visible, toggle] = useToggle();
+  const [capsLock, setCapsLock] = useState(false);
   return (
     <div className="flex flex-col gap-2">
       <Label htmlFor={id}>{label}</Label>
@@ -45,6 +56,7 @@ export function PasswordField({
           match === "mismatch" && "border-destructive",
         )}
       >
+        {icon && <InputGroupAddon align="inline-start">{icon}</InputGroupAddon>}
         <InputGroupInput
           id={id}
           name={id}
@@ -58,6 +70,13 @@ export function PasswordField({
           disabled={disabled}
           autoFocus={autoFocus}
           aria-invalid={match === "mismatch"}
+          onBlur={onBlur}
+          onKeyDown={(event) => {
+            if (capsLockHint) setCapsLock(event.getModifierState("CapsLock"));
+          }}
+          onKeyUp={(event) => {
+            if (capsLockHint) setCapsLock(event.getModifierState("CapsLock"));
+          }}
           onChange={(event) => {
             onChange(event.target.value);
           }}
@@ -74,6 +93,11 @@ export function PasswordField({
           </InputGroupButton>
         </InputGroupAddon>
       </InputGroup>
+      {capsLockHint && capsLock && (
+        <p role="status" className="text-[0.71875rem] font-semibold text-muted-foreground">
+          Caps lock is on
+        </p>
+      )}
     </div>
   );
 }

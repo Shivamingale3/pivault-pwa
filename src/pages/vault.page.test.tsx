@@ -252,7 +252,7 @@ describe("locking and signing out", () => {
     await within(await list()).findByRole("button", { name: /Bank/ });
     await user.click(screen.getByRole("button", { name: "Lock" }));
 
-    expect(await screen.findByRole("heading", { name: "PiVault is locked" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /Welcome back/ })).toBeInTheDocument();
     expect(screen.queryByText(/Bank/)).toBeNull();
   });
 

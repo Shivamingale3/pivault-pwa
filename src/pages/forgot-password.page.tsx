@@ -4,6 +4,7 @@ import { ForgotPasswordForm } from "@/components/modules/auth/forgot-password-fo
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { RESET_LINK_MINUTES } from "@/constants/auth.constants";
+import { FORGOT_COPY } from "@/constants/forgot.constants";
 import { useForgotPasswordForm } from "@/hooks/use-forgot-password-form";
 import { ROUTES } from "@/routes/route-paths";
 
@@ -26,8 +27,9 @@ export function ForgotPasswordPage() {
 
   return (
     <AuthScreenLayout
-      title="Forgot password"
-      description="Enter your email and we'll send you a link to set a new password."
+      title={FORGOT_COPY.title}
+      description={FORGOT_COPY.body}
+      backTo={ROUTES.login}
     >
       <ForgotPasswordForm
         email={form.email}

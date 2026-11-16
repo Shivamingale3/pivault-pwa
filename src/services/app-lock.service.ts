@@ -1,6 +1,7 @@
 import {
   APP_LOCK_MESSAGES,
   PBKDF2_ITERATIONS,
+  PIN_ATTEMPTS_PER_TIER,
   PIN_HASH_BITS,
   PIN_PATTERN,
   PIN_SALT_BYTES,
@@ -12,7 +13,12 @@ import type { PinResult } from "@/interfaces/app-lock.interface";
 import { type AppLockRecord, appLockRecordSchema } from "@/schemas/app-lock.schema";
 import { StorageError } from "@/services/storage.error";
 import { base64ToBytes, bytesToBase64, constantTimeEqual } from "@/utils/bytes.utils";
-import { attemptsUntilLockout, lockoutDurationMs } from "@/utils/app-lock.utils";
+import {
+  attemptInRound,
+  attemptsUntilLockout,
+  lockoutDurationMs,
+  nextWaitMs,
+} from "@/utils/app-lock.utils";
 
 /** Salted PBKDF2-SHA256 of the PIN. The PIN itself is never stored. */
 async function hashPin(pin: string, salt: Uint8Array<ArrayBuffer>, iterations: number) {
@@ -78,13 +84,22 @@ export async function setPin(pin: string): Promise<void> {
   });
 }
 
+const lockedOut = (retryAfterMs: number, failedAttempts: number): PinResult => ({
+  ok: false,
+  reason: "locked-out",
+  retryAfterMs,
+  attempt: attemptInRound(failedAttempts),
+  attemptsPerRound: PIN_ATTEMPTS_PER_TIER,
+  nextWaitMs: nextWaitMs(failedAttempts),
+});
+
 /** Checks a PIN. Counts wrong guesses and refuses checks during a lockout. */
 export const verifyPin = (pin: string): Promise<PinResult> =>
   serialize(async () => {
     const record = await requireRecord();
     const now = Date.now();
     if (now < record.lockedUntil) {
-      return { ok: false, reason: "locked-out", retryAfterMs: record.lockedUntil - now };
+      return lockedOut(record.lockedUntil - now, record.failedAttempts);
     }
     const expected = base64ToBytes(record.hash);
     const actual = await hashPin(pin, base64ToBytes(record.salt), record.iterations);
@@ -96,7 +111,7 @@ export const verifyPin = (pin: string): Promise<PinResult> =>
     const lockout = lockoutDurationMs(failedAttempts);
     await saveRecord({ ...record, failedAttempts, lockedUntil: lockout > 0 ? now + lockout : 0 });
     return lockout > 0
-      ? { ok: false, reason: "locked-out", retryAfterMs: lockout }
+      ? lockedOut(lockout, failedAttempts)
       : { ok: false, reason: "wrong", attemptsLeft: attemptsUntilLockout(failedAttempts) };
   });
 

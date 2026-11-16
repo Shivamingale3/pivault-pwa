@@ -20,6 +20,7 @@ vi.mock("@/services/vault-sync.service", async (importOriginal) => ({
     Promise.resolve({
       state$: of({
         status: "synced" as const,
+        progress: null,
         error: null,
         stats: {
           sent: { created: 0, updated: 0, deleted: 0 },

@@ -64,7 +64,13 @@ export async function postJson<S extends z.ZodType>(
   const envelope = await readEnvelope(response);
   if (!response.ok) {
     const message = envelope?.message ?? API_ERROR_MESSAGES.fallback;
-    throw new ApiError(ApiErrorKind.Http, message, response.status);
+    throw new ApiError(
+      ApiErrorKind.Http,
+      message,
+      response.status,
+      undefined,
+      envelope?.data ?? null,
+    );
   }
   const data = envelope?.success ? schema.safeParse(envelope.data) : null;
   if (!data?.success) {

@@ -58,6 +58,7 @@ export function SettingsPage() {
       {confirming && (
         <SignOutDialog
           host={host}
+          mayLoseChanges={status !== "synced"}
           onClose={() => {
             setConfirming(false);
           }}

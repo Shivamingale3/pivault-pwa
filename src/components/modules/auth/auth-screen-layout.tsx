@@ -1,4 +1,8 @@
+import { ChevronLeftIcon } from "lucide-react";
 import type { ReactNode } from "react";
+import { Link } from "react-router";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface AuthScreenLayoutProps {
   title: string;
@@ -8,6 +12,8 @@ interface AuthScreenLayoutProps {
   children?: ReactNode;
   /** Pinned to the bottom, e.g. the primary action. */
   footer?: ReactNode;
+  /** Shows the 44 px back button above the title and goes here. */
+  backTo?: string;
 }
 
 /** Full-height single-column layout shared by the auth screens (title, content, pinned action). */
@@ -17,11 +23,24 @@ export function AuthScreenLayout({
   icon,
   children,
   footer,
+  backTo,
 }: AuthScreenLayoutProps) {
   return (
     <main className="flex min-h-full w-full justify-center bg-background">
       <div className="flex w-full max-w-md flex-1 flex-col gap-6 px-6.5 pt-[max(--spacing(10),env(safe-area-inset-top))] pb-[max(--spacing(6.5),env(safe-area-inset-bottom))]">
         <header className="flex animate-rise flex-col gap-2.5">
+          {backTo && (
+            <Link
+              to={backTo}
+              aria-label="Back"
+              className={cn(
+                buttonVariants({ variant: "ghost", size: "icon-sm" }),
+                "mb-2 -ml-1 w-fit bg-muted",
+              )}
+            >
+              <ChevronLeftIcon />
+            </Link>
+          )}
           {icon && (
             <div
               aria-hidden="true"

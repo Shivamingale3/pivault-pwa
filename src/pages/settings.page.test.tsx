@@ -35,6 +35,7 @@ const SESSION: SessionRecord = {
 const FOUR_MINUTES = 4 * 60_000;
 const stateWith = (overrides: Partial<SyncState> = {}): SyncState => ({
   status: "synced",
+  progress: null,
   error: null,
   stats: {
     sent: { created: 4, updated: 2, deleted: 1 },
@@ -164,7 +165,7 @@ describe("Sign out dialog", () => {
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new TypeError("offline"));
     const { user, dialog } = await openDialog();
     await user.click(within(dialog).getByRole("button", { name: "Sign out" }));
-    expect(await screen.findByRole("heading", { name: "Welcome back" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Sign in" })).toBeInTheDocument();
   });
 });
 
@@ -293,7 +294,7 @@ describe("sync in the unlocked zone", () => {
     expect(stop).not.toHaveBeenCalled();
 
     await user.click(await screen.findByRole("button", { name: "Lock" }));
-    expect(await screen.findByRole("heading", { name: "PiVault is locked" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /Welcome back/ })).toBeInTheDocument();
     await waitFor(() => {
       expect(stop).toHaveBeenCalled();
     });

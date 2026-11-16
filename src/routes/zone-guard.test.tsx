@@ -35,11 +35,11 @@ beforeEach(async () => {
 });
 
 const SCREEN_TITLES = {
-  [ROUTES.login]: "Welcome back",
-  [ROUTES.forgotPassword]: "Forgot password",
-  [ROUTES.setupAppLock]: "Set up app lock",
-  [ROUTES.setupRecoveryKey]: "Save your recovery key",
-  [ROUTES.lock]: "PiVault is locked",
+  [ROUTES.login]: "Sign in",
+  [ROUTES.forgotPassword]: "Reset password",
+  [ROUTES.setupAppLock]: "Set your app PIN",
+  [ROUTES.setupRecoveryKey]: "Your recovery key",
+  [ROUTES.lock]: "Welcome back, Jane",
   [ROUTES.home]: "Vault",
 } as const;
 
@@ -95,19 +95,24 @@ describe("route zones", () => {
 });
 
 describe("auth journey", () => {
-  it("walks unlock -> home -> lock -> unlock -> sign out", async () => {
+  const press = async (user: ReturnType<typeof userEvent.setup>, pin: string) => {
+    for (const digit of pin) await user.click(await screen.findByRole("button", { name: digit }));
+  };
+
+  it("walks unlock -> vault -> lock -> unlock -> settings -> sign out", async () => {
     await setPin("135792");
     await saveVaultKey(await importRecoveryKey(generateRecoveryKey()));
     const user = userEvent.setup();
     renderAt(AuthStatus.Locked, ROUTES.lock);
 
-    await user.type(await screen.findByLabelText("Enter your PIN"), "135792");
+    await heading(ROUTES.lock);
+    await press(user, "135792");
     expect(await heading(ROUTES.home)).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: /^lock/i }));
     expect(await heading(ROUTES.lock)).toBeInTheDocument();
 
-    await user.type(await screen.findByLabelText("Enter your PIN"), "135792");
+    await press(user, "135792");
     expect(await heading(ROUTES.home)).toBeInTheDocument();
 
     await user.click(screen.getByRole("link", { name: "Settings" }));
