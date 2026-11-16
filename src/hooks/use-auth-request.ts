@@ -57,5 +57,9 @@ export function useAuthRequest() {
     [],
   );
 
-  return { pending, error, run };
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+
+  return { pending, error, run, clearError };
 }
