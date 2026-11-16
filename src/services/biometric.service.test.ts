@@ -77,15 +77,28 @@ describe("enrollBiometric", () => {
 });
 
 describe("verifyBiometric", () => {
+  class FakeAssertion {
+    authenticatorData: ArrayBuffer;
+    constructor(flags: number) {
+      const data = new Uint8Array(37);
+      data[32] = flags;
+      this.authenticatorData = data.buffer;
+    }
+  }
+  /** Flags: 0x01 user present, 0x04 user verified. */
+  const assertion = (flags: number) =>
+    Object.assign(new FakeCredential(), { response: new FakeAssertion(flags) });
+
   const installGet = (get: () => Promise<unknown>) => {
     vi.stubGlobal("PublicKeyCredential", FakeCredential);
+    vi.stubGlobal("AuthenticatorAssertionResponse", FakeAssertion);
     const spy = vi.fn(get);
     Object.defineProperty(navigator, "credentials", { configurable: true, value: { get: spy } });
     return spy;
   };
 
   it("asks for the enrolled credential with user verification and is true when confirmed", async () => {
-    const get = installGet(() => Promise.resolve(new FakeCredential()));
+    const get = installGet(() => Promise.resolve(assertion(0x05)));
     await expect(verifyBiometric("-__-")).resolves.toBe(true);
     const options = (
       get.mock.calls[0] as unknown as [{ publicKey: PublicKeyCredentialRequestOptions }]
@@ -101,6 +114,13 @@ describe("verifyBiometric", () => {
     installGet(() => Promise.reject(new DOMException("no", "NotAllowedError")));
     await expect(verifyBiometric("-__-")).resolves.toBe(false);
     installGet(() => Promise.resolve(null));
+    await expect(verifyBiometric("-__-")).resolves.toBe(false);
+  });
+
+  it("is false when the device was present but did not verify the user", async () => {
+    installGet(() => Promise.resolve(assertion(0x01)));
+    await expect(verifyBiometric("-__-")).resolves.toBe(false);
+    installGet(() => Promise.resolve(new FakeCredential()));
     await expect(verifyBiometric("-__-")).resolves.toBe(false);
   });
 });
