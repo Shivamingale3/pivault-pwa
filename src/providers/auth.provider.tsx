@@ -51,7 +51,8 @@ export function AuthProvider({ children, initialStatus }: AuthProviderProps) {
       },
       lock: () => {
         clearUnlockedKey();
-        setStatus(AuthStatus.Locked);
+        // Only an unlocked app can lock: a stray call must not move a signed-out or half-set-up one.
+        setStatus((current) => (current === AuthStatus.Unlocked ? AuthStatus.Locked : current));
       },
       signOut: () => {
         setStatus(AuthStatus.LoggedOut);
