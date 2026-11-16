@@ -37,6 +37,8 @@ async function countReceived(
 export interface TransferReports {
   received: (counts: SyncCounts) => Promise<void>;
   sent: (counts: SyncCounts) => Promise<void>;
+  /** Each pulled page: how many entries it held and how many changes are still waiting. */
+  page?: (info: { documents: number; remaining: number }) => void;
 }
 
 /**
@@ -52,6 +54,7 @@ export function createTransfer(
     const response = await pullChanges(checkpoint ?? null, batchSize);
     const counts = await countReceived(collection, response.documents, echoes);
     if (total(counts) > 0) await reports.received(counts);
+    reports.page?.({ documents: response.documents.length, remaining: response.remaining });
     return {
       documents: response.documents.map(toDocument) as WithDeleted<VaultDocument>[],
       checkpoint: response.checkpoint,

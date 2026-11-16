@@ -6,7 +6,7 @@ import { EMPTY_STATS } from "@/services/sync-stats.service";
 import { type VaultSync, startVaultSync } from "@/services/vault-sync.service";
 import { errorMessage } from "@/utils/error-message.utils";
 
-const STARTING: SyncState = { status: "syncing", error: null, stats: EMPTY_STATS };
+const STARTING: SyncState = { status: "syncing", progress: null, error: null, stats: EMPTY_STATS };
 
 /**
  * Runs the sync while the app is unlocked and stops it on lock or sign out. Replication only moves
@@ -33,7 +33,12 @@ export function SyncProvider({ children }: { children: ReactNode }) {
       })
       .catch((error: unknown) => {
         toast.error(errorMessage(error));
-        setState({ status: "error", error: errorMessage(error), stats: EMPTY_STATS });
+        setState({
+          status: "error",
+          progress: null,
+          error: errorMessage(error),
+          stats: EMPTY_STATS,
+        });
       });
 
     return () => {

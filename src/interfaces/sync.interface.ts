@@ -7,8 +7,16 @@ import type { SyncStats } from "@/schemas/sync.schema";
  */
 export type SyncStatus = "syncing" | "synced" | "offline" | "error" | "ended";
 
+/** How far a pull has got: entries received so far, and in all (so far + still waiting). */
+export interface SyncProgress {
+  pulled: number;
+  total: number;
+}
+
 export interface SyncState {
   status: SyncStatus;
+  /** Set while a pull is running; null when idle. Drives "Rebuilding your vault". */
+  progress: SyncProgress | null;
   /** A message safe to show, for `error` and `ended`. */
   error: string | null;
   stats: SyncStats;

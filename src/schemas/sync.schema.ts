@@ -15,6 +15,8 @@ export const syncCheckpointSchema = z.object({ seq: z.number().int().nonnegative
 export const pullResponseSchema = z.object({
   documents: z.array(syncDocumentSchema),
   checkpoint: syncCheckpointSchema,
+  /** Changes still waiting after this page. Older servers don't send it. */
+  remaining: z.number().int().nonnegative().default(0),
 });
 
 const countsSchema = z.object({

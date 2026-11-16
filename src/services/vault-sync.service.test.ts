@@ -164,6 +164,23 @@ describe("receiving changes", () => {
     expect(server.pulls).toBeGreaterThanOrEqual(3);
   });
 
+  it("reports how far a pull has got, then clears it when everything is in", async () => {
+    for (let i = 0; i < 120; i += 1)
+      server.put(await fromOtherDevice({ ...NOTE, title: `p${String(i)}` }));
+    const seen: { pulled: number; total: number }[] = [];
+    const handle = await start();
+    const subscription = handle.state$.subscribe((current) => {
+      if (current.progress) seen.push({ ...current.progress });
+    });
+    await synced();
+    subscription.unsubscribe();
+
+    expect(seen.length).toBeGreaterThan(0);
+    expect(seen.every((p) => p.total === 120)).toBe(true);
+    expect(seen.at(-1)).toEqual({ pulled: 120, total: 120 });
+    expect((await state()).progress).toBeNull();
+  });
+
   it("resumes where it stopped after a restart, without receiving anything twice", async () => {
     server.put(await fromOtherDevice(NOTE));
     await start();

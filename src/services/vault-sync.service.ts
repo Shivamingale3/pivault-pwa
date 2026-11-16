@@ -44,6 +44,7 @@ export async function startVaultSync({
   const collection = database.entries;
   const state$ = new BehaviorSubject<SyncState>({
     status: navigator.onLine ? "syncing" : "offline",
+    progress: null,
     error: null,
     stats: await loadSyncStats().catch(() => EMPTY_STATS),
   });
@@ -74,7 +75,12 @@ export async function startVaultSync({
     }
   };
 
+  let pulledSoFar = 0;
   const transfer = createTransfer(collection, {
+    page: ({ documents, remaining }) => {
+      pulledSoFar += documents;
+      set({ progress: { pulled: pulledSoFar, total: pulledSoFar + remaining } });
+    },
     received: async (counts) => {
       set({ stats: await recordReceived(counts) });
     },
@@ -102,7 +108,8 @@ export async function startVaultSync({
   const markSynced = async () => {
     if (hasFailed() || state$.value.status === "ended") return;
     const stats = await recordSynced(Date.now());
-    if (!hasFailed()) set({ status: "synced", error: null, stats });
+    pulledSoFar = 0;
+    if (!hasFailed()) set({ status: "synced", error: null, progress: null, stats });
   };
 
   // Errors from our own handlers are already classified; this catches anything else (e.g. storage).
