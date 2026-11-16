@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatRelative, formatWhen } from "@/utils/time.utils";
+import { formatOpened, formatRelative, formatWhen } from "@/utils/time.utils";
 
 const NOW = new Date("2026-11-15T10:00:00").getTime();
 const at = (iso: string) => new Date(iso).getTime();
@@ -28,5 +28,17 @@ describe("formatWhen", () => {
 
   it("gives the date for anything older", () => {
     expect(formatWhen(at("2026-11-10T08:01:00"), NOW)).toMatch(/(Nov 10|10 Nov) at 08:01/);
+  });
+});
+
+describe("formatOpened", () => {
+  it.each([
+    [NOW - 20_000, "just now"],
+    [NOW - 12 * 60_000, "12 min ago"],
+    [NOW - 3 * 3_600_000, "3 h ago"],
+    [new Date("2026-11-14T23:00:00").getTime(), "yesterday"],
+    [new Date("2026-11-13T09:00:00").getTime(), "2 days ago"],
+  ])("%d is %s", (when, expected) => {
+    expect(formatOpened(when, NOW)).toBe(expected);
   });
 });
