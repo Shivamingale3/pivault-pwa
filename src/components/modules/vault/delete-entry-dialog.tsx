@@ -20,8 +20,10 @@ interface DeleteEntryDialogProps {
   onClose: () => void;
   /** Called after the entry is gone. Defaults to closing. */
   onDeleted?: () => void;
-  /** Runs just before deleting (an editor stops its autosave here). */
-  onBeforeDelete?: () => void;
+  /** Waited for before deleting (an editor pauses its autosave here). */
+  onBeforeDelete?: () => Promise<void>;
+  /** The delete failed (the editor resumes its autosave). */
+  onDeleteFailed?: () => void;
 }
 
 /** Permanent delete, confirmed first: no trash, no undo. Names what is going. */
@@ -30,8 +32,12 @@ export function DeleteEntryDialog({
   onClose,
   onDeleted,
   onBeforeDelete,
+  onDeleteFailed,
 }: DeleteEntryDialogProps) {
-  const { confirm, pending, error } = useDeleteEntry(entry.id, onDeleted ?? onClose);
+  const { confirm, pending, error } = useDeleteEntry(entry.id, onDeleted ?? onClose, {
+    before: onBeforeDelete,
+    failed: onDeleteFailed,
+  });
 
   return (
     <Dialog
@@ -56,14 +62,7 @@ export function DeleteEntryDialog({
           <DialogClose render={<Button variant="outline" disabled={pending} />}>
             {CRUD_COPY.cancel}
           </DialogClose>
-          <Button
-            variant="destructive"
-            disabled={pending}
-            onClick={() => {
-              onBeforeDelete?.();
-              void confirm();
-            }}
-          >
+          <Button variant="destructive" disabled={pending} onClick={() => void confirm()}>
             {CRUD_COPY.delete}
           </Button>
         </DialogFooter>

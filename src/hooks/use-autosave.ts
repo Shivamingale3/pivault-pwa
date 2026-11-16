@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { useVault } from "@/hooks/use-vault";
+import { errorMessage } from "@/utils/error-message.utils";
 import type { EntryInput } from "@/schemas/vault.schema";
 
 export type SaveStatus = "idle" | "saving" | "saved" | "error";
@@ -40,15 +42,26 @@ export function useAutosave(initialId: string | null, input: EntryInput, valid: 
         saved.current = nextSnapshot;
         if (mounted.current)
           setStatus(latest.current.snapshot === nextSnapshot ? "saved" : "saving");
-      } catch {
-        if (mounted.current) setStatus("error");
+      } catch (error) {
+        if (mounted.current) {
+          setStatus("error");
+          toast.error(errorMessage(error));
+        }
       }
     });
     return queue.current;
   }, [add, edit]);
 
   useEffect(() => {
-    if (!valid || snapshot === saved.current) return;
+    // Back to what is saved (typed and undone), or not saveable yet: nothing is pending.
+    if (snapshot === saved.current) {
+      setStatus(id.current ? "saved" : "idle");
+      return;
+    }
+    if (!valid) {
+      setStatus("idle");
+      return;
+    }
     setStatus("saving");
     const timer = setTimeout(() => void flush(), AUTOSAVE_DELAY_MS);
     return () => {
@@ -70,9 +83,14 @@ export function useAutosave(initialId: string | null, input: EntryInput, valid: 
     id: savedId,
     /** Writes any pending change now. */
     flush,
-    /** Stops saving for good (the entry is being deleted). */
-    stop: () => {
+    /** Stops saving and waits for a save that is already running (the entry is about to be deleted). */
+    pause: (): Promise<void> => {
       stopped.current = true;
+      return queue.current;
+    },
+    /** Saving carries on (the delete didn't happen). */
+    resume: () => {
+      stopped.current = false;
     },
   };
 }

@@ -76,7 +76,8 @@ export function NoteEditor({ entry }: { entry: NoteEntry | null }) {
           onClose={() => {
             editor.setDeleting(false);
           }}
-          onBeforeDelete={editor.save.stop}
+          onBeforeDelete={editor.save.pause}
+          onDeleteFailed={editor.save.resume}
           onDeleted={() => void navigate(ROUTES.notes, { replace: true })}
         />
       )}

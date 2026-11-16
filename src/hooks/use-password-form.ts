@@ -9,6 +9,8 @@ import {
   generatePassword,
 } from "@/utils/password-generator.utils";
 
+const UNNAMED_FIELD = "Other";
+
 type Text = "title" | "username" | "password" | "url";
 
 const start = (entry: PasswordEntry | null): PasswordInput => ({
@@ -28,10 +30,12 @@ export function usePasswordForm(entry: PasswordEntry | null) {
   const [sheet, setSheet] = useState<"none" | "generator" | "delete">("none");
   const fields = values.fields ?? [];
 
-  // A custom field with no label yet is kept on screen but not saved.
+  // An empty row is not saved; a value with no label yet is saved under a plain name, never dropped.
   const input: PasswordInput = {
     ...values,
-    fields: fields.filter((field) => field.label.trim() !== ""),
+    fields: fields
+      .filter((field) => field.label.trim() !== "" || field.value !== "")
+      .map((field) => (field.label.trim() === "" ? { ...field, label: UNNAMED_FIELD } : field)),
   };
   const save = useAutosave(entry?.id ?? null, input, entryPayloadSchema.safeParse(input).success);
 
