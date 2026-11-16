@@ -11,20 +11,19 @@ import {
 } from "@/components/ui/dialog";
 import { SIGN_OUT_COPY } from "@/constants/settings.constants";
 import { useAuth } from "@/hooks/use-auth";
-import { useSync } from "@/hooks/use-sync";
 
 interface SignOutDialogProps {
   host: string;
+  /** Changes that haven't reached the server would be lost: adds a line saying so. */
+  mayLoseChanges: boolean;
   onClose: () => void;
 }
 
 const ROW = "flex items-center gap-3 px-3.5 py-3 text-[0.8125rem] font-semibold [&_svg]:size-3";
 
 /** What signing out removes from this phone, and what stays on the server. */
-export function SignOutDialog({ host, onClose }: SignOutDialogProps) {
+export function SignOutDialog({ host, mayLoseChanges, onClose }: SignOutDialogProps) {
   const { signOut } = useAuth();
-  const { status } = useSync();
-  const mayLoseChanges = status !== "synced";
 
   return (
     <Dialog
