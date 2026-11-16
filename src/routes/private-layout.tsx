@@ -1,6 +1,9 @@
+import { useEffect } from "react";
 import { Outlet } from "react-router";
 import { useAutoLock } from "@/hooks/use-auto-lock";
+import { UsageProvider } from "@/providers/usage.provider";
 import { SyncProvider } from "@/providers/sync.provider";
+import { clearSearchHistory } from "@/services/search-history.service";
 import { VaultProvider } from "@/providers/vault.provider";
 
 /**
@@ -9,10 +12,14 @@ import { VaultProvider } from "@/providers/vault.provider";
  */
 export function PrivateLayout() {
   useAutoLock();
+  // Search terms can reveal what is in the vault: gone when the app locks or the user signs out.
+  useEffect(() => clearSearchHistory, []);
   return (
     <VaultProvider>
       <SyncProvider>
-        <Outlet />
+        <UsageProvider>
+          <Outlet />
+        </UsageProvider>
       </SyncProvider>
     </VaultProvider>
   );

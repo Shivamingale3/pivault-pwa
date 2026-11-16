@@ -1,4 +1,4 @@
-import { LogOutIcon, RefreshCwIcon } from "lucide-react";
+import { LockIcon, LogOutIcon, RefreshCwIcon } from "lucide-react";
 import { useState } from "react";
 import { ProfileCard } from "@/components/modules/settings/profile-card";
 import { SettingsGroup } from "@/components/modules/settings/settings-group";
@@ -7,6 +7,7 @@ import { SettingsLayout } from "@/components/modules/settings/settings-layout";
 import { SettingsRow } from "@/components/modules/settings/settings-row";
 import { SignOutDialog } from "@/components/modules/settings/sign-out-dialog";
 import { SETTINGS_COPY, SYNC_COPY } from "@/constants/settings.constants";
+import { useAuth } from "@/hooks/use-auth";
 import { useSession } from "@/hooks/use-session";
 import { useSync } from "@/hooks/use-sync";
 import { ROUTES } from "@/routes/route-paths";
@@ -22,6 +23,7 @@ const STATUS: Record<string, string> = {
 
 /** Settings home: who is signed in, the server group (Sync) and Sign out as the last row. */
 export function SettingsPage() {
+  const { lock } = useAuth();
   const session = useSession();
   const { status, stats } = useSync();
   const [confirming, setConfirming] = useState(false);
@@ -32,6 +34,14 @@ export function SettingsPage() {
     <SettingsLayout>
       <SettingsHeader title={SETTINGS_COPY.title} backTo={ROUTES.home} />
       <ProfileCard session={session} />
+      <SettingsGroup label={SETTINGS_COPY.groupAccount}>
+        <SettingsRow
+          title={SETTINGS_COPY.lockNow}
+          meta={SETTINGS_COPY.lockMeta}
+          icon={<LockIcon aria-hidden="true" />}
+          onClick={lock}
+        />
+      </SettingsGroup>
       <SettingsGroup label={SETTINGS_COPY.groupServer}>
         <SettingsRow
           title={SETTINGS_COPY.syncRow}

@@ -1,50 +1,44 @@
-import { PrimaryCta } from "@/components/modules/auth/primary-cta";
-import { EntryList } from "@/components/modules/vault/entry-list";
-import { VaultEmpty } from "@/components/modules/vault/vault-empty";
-import { VaultHeader } from "@/components/modules/vault/vault-header";
-import { VaultLoading } from "@/components/modules/vault/vault-loading";
-import { VaultOverlays } from "@/components/modules/vault/vault-overlays";
-import { VaultScreenLayout } from "@/components/modules/vault/vault-screen-layout";
-import { VaultToolbar } from "@/components/modules/vault/vault-toolbar";
-import { useAuth } from "@/hooks/use-auth";
-import { useSession } from "@/hooks/use-session";
-import { useVault } from "@/hooks/use-vault";
-import { useVaultFilter } from "@/hooks/use-vault-filter";
-import { useVaultScreen } from "@/hooks/use-vault-screen";
+import { KeyRoundIcon, NotebookTextIcon } from "lucide-react";
+import { CategoryCard } from "@/components/modules/vault/category-card";
+import { HomeHeader } from "@/components/modules/vault/home-header";
+import { RecentsSection } from "@/components/modules/vault/recents-section";
+import { SearchPill } from "@/components/modules/vault/search-pill";
+import { StorageCard } from "@/components/modules/vault/storage-card";
+import { HOME_COPY } from "@/constants/vault-design.constants";
+import { countLabel } from "@/constants/settings.constants";
+import { useDashboard } from "@/hooks/use-dashboard";
+import { ROUTES } from "@/routes/route-paths";
 
-/** The unlocked app: the user's passwords and notes. Composition only; logic is in the hooks. */
+/** Home: a greeting, search, the counts, what is on this phone, and recently opened items. */
 export function HomePage() {
-  const { lock } = useAuth();
-  const session = useSession();
-  const vault = useVault();
-  const filter = useVaultFilter(vault.entries);
-  const screen = useVaultScreen();
-
-  const renderList = () => {
-    if (vault.status === "loading") return <VaultLoading />;
-    if (filter.visible.length === 0) return <VaultEmpty filtering={filter.filtering} />;
-    return <EntryList entries={filter.visible} onOpen={screen.show} />;
-  };
+  const dashboard = useDashboard();
 
   return (
-    <VaultScreenLayout
-      header={<VaultHeader email={session?.email ?? null} onLock={lock} />}
-      toolbar={
-        <VaultToolbar
-          kind={filter.kind}
-          onKindChange={filter.setKind}
-          query={filter.query}
-          onQueryChange={filter.setQuery}
+    <main className="flex flex-1 justify-center bg-canvas">
+      <div className="flex w-full max-w-md flex-col gap-5 px-5.5 pt-[max(--spacing(9.5),env(safe-area-inset-top))] pb-6">
+        <HomeHeader firstName={dashboard.firstName} />
+        <SearchPill />
+        <div className="grid grid-cols-2 gap-2.5">
+          <CategoryCard
+            to={ROUTES.passwords}
+            icon={<KeyRoundIcon />}
+            title={HOME_COPY.passwords}
+            count={countLabel(dashboard.passwords, "item", "items")}
+          />
+          <CategoryCard
+            to={ROUTES.notes}
+            icon={<NotebookTextIcon />}
+            title={HOME_COPY.notes}
+            count={countLabel(dashboard.notes, "note", "notes")}
+          />
+          <StorageCard estimate={dashboard.storage} />
+        </div>
+        <RecentsSection
+          items={dashboard.recents}
+          onOpen={dashboard.openRecent}
+          onClear={dashboard.clearRecents}
         />
-      }
-      footer={
-        <PrimaryCta disabled={vault.status !== "ready"} onClick={screen.create}>
-          Add item
-        </PrimaryCta>
-      }
-    >
-      {renderList()}
-      <VaultOverlays screen={screen} />
-    </VaultScreenLayout>
+      </div>
+    </main>
   );
 }
