@@ -23,12 +23,12 @@ const EMPTY: Fields = {
   notes: "",
 };
 
-const fromEntry = (entry: VaultEntry | null): Fields =>
-  entry === null ? EMPTY : { ...EMPTY, ...entry };
+const fromEntry = (entry: VaultEntry | null, kind?: EntryKind): Fields =>
+  entry === null ? { ...EMPTY, kind: kind ?? EMPTY.kind } : { ...EMPTY, ...entry };
 
 /** Field state for the create / edit sheet, and the validated payload to save. */
-export function useEntryForm(entry: VaultEntry | null) {
-  const [fields, setFields] = useState<Fields>(() => fromEntry(entry));
+export function useEntryForm(entry: VaultEntry | null, kind?: EntryKind) {
+  const [fields, setFields] = useState<Fields>(() => fromEntry(entry, kind));
 
   const set = <K extends keyof Fields>(key: K, value: Fields[K]) => {
     setFields((current) => ({ ...current, [key]: value }));

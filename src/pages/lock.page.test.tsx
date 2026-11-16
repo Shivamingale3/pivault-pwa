@@ -64,14 +64,14 @@ describe("PIN unlock", () => {
 
     expect(await screen.findByText("Unlocked")).toBeInTheDocument();
     expect(isUnlocked()).toBe(true);
-    expect(await heading("Vault")).toBeInTheDocument();
+    expect(await heading("Hello, Jane")).toBeInTheDocument();
   });
 
   it("also takes digits from a physical keyboard", async () => {
     open();
     await heading("Welcome back, Jane");
     await userEvent.setup().keyboard(PIN);
-    expect(await heading("Vault")).toBeInTheDocument();
+    expect(await heading("Hello, Jane")).toBeInTheDocument();
   });
 
   it("masks the digits until Show PIN is on", async () => {
@@ -99,7 +99,7 @@ describe("PIN unlock", () => {
     expect(isUnlocked()).toBe(false);
 
     await press(user, PIN);
-    expect(await heading("Vault")).toBeInTheDocument();
+    expect(await heading("Hello, Jane")).toBeInTheDocument();
   });
 
   it("pauses PIN entry after five wrong PINs, with a live wait and a dead keypad", async () => {
@@ -189,7 +189,7 @@ describe("Face ID first", () => {
     open();
     expect(await screen.findByText("Unlocked")).toBeInTheDocument();
     expect(verify).toHaveBeenCalledWith("cred-1");
-    expect(await heading("Vault")).toBeInTheDocument();
+    expect(await heading("Hello, Jane")).toBeInTheDocument();
   });
 
   it("shows the invitation and the session chip while it waits for a tap", async () => {
@@ -229,7 +229,7 @@ describe("Face ID first", () => {
     await user.click(await screen.findByRole("button", { name: "Enter PIN instead" }));
     expect(await heading("Welcome back, Jane")).toBeInTheDocument();
     await press(user, PIN);
-    expect(await heading("Vault")).toBeInTheDocument();
+    expect(await heading("Hello, Jane")).toBeInTheDocument();
   });
 
   it("does not offer Face ID on a device without it", async () => {

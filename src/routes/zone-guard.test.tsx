@@ -40,7 +40,7 @@ const SCREEN_TITLES = {
   [ROUTES.setupAppLock]: "Set your app PIN",
   [ROUTES.setupRecoveryKey]: "Your recovery key",
   [ROUTES.lock]: "Welcome back, Jane",
-  [ROUTES.home]: "Vault",
+  [ROUTES.home]: "Hello, Jane",
 } as const;
 
 type GuardedPath = keyof typeof SCREEN_TITLES;
@@ -109,7 +109,8 @@ describe("auth journey", () => {
     await press(user, "135792");
     expect(await heading(ROUTES.home)).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: /^lock/i }));
+    await user.click(screen.getByRole("link", { name: "Settings" }));
+    await user.click(await screen.findByRole("button", { name: /Lock now/ }));
     expect(await heading(ROUTES.lock)).toBeInTheDocument();
 
     await press(user, "135792");

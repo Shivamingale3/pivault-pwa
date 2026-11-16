@@ -6,7 +6,8 @@ import type { useVaultScreen } from "@/hooks/use-vault-screen";
 /** Whichever sheet the vault screen currently has open. */
 export function VaultOverlays({ screen }: { screen: ReturnType<typeof useVaultScreen> }) {
   const { open, target, close } = screen;
-  if (open === "create") return <EntryEditor key="new" entry={null} onClose={close} />;
+  if (open === "create")
+    return <EntryEditor key="new" entry={null} kind={screen.createKind} onClose={close} />;
   if (!target) return null;
   switch (open) {
     case "edit":
