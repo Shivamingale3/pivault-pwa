@@ -7,13 +7,14 @@ interface CopyButtonProps {
   label: string;
 }
 
+/** The row copy button (44 px, bordered). Copies with a toast and the 30 second clipboard clear. */
 export function CopyButton({ value, label }: CopyButtonProps) {
   const copy = useCopy();
   return (
     <Button
       type="button"
-      variant="ghost"
-      size="icon-xs"
+      variant="outline"
+      size="icon-sm"
       aria-label={`Copy ${label.toLowerCase()}`}
       onClick={() => void copy(value, label)}
     >
