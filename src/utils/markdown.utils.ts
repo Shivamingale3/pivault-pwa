@@ -31,7 +31,7 @@ export function parseInline(text: string): Inline[] {
 }
 
 export function parseMarkdown(source: string): Block[] {
-  const lines = source.split("\n");
+  const lines = source.split(/\r?\n/);
   const blocks: Block[] = [];
   let index = 0;
   while (index < lines.length) {
@@ -82,9 +82,12 @@ export function parseMarkdown(source: string): Block[] {
 /** Ticks or unticks the checklist item on `line`. Any other line is left alone. */
 export function toggleCheck(source: string, line: number): string {
   const lines = source.split("\n");
-  const match = CHECK.exec(lines[line] ?? "");
+  const raw = lines[line] ?? "";
+  // Notes pasted from Windows keep their carriage returns: put it back after the change.
+  const ending = raw.endsWith("\r") ? "\r" : "";
+  const match = CHECK.exec(ending ? raw.slice(0, -1) : raw);
   if (!match) return source;
-  lines[line] = `- [${match[1] === " " ? "x" : " "}] ${match[2] ?? ""}`;
+  lines[line] = `- [${match[1] === " " ? "x" : " "}] ${match[2] ?? ""}${ending}`;
   return lines.join("\n");
 }
 
