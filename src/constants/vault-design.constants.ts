@@ -10,6 +10,11 @@ export const HOME_COPY = {
   recent: "RECENTLY OPENED",
   clear: "Clear",
   opened: (when: string): string => `Opened ${when}`,
+  add: "Add",
+  addTitle: "Add new",
+  addPassword: "Password",
+  addNote: "Note",
+  cancel: "Cancel",
 } as const;
 
 export const LIST_COPY = {
@@ -62,6 +67,9 @@ export const CRUD_COPY = {
   modified: "MODIFIED",
   customFields: "CUSTOM FIELDS",
   addField: "+ Add field",
+  addUsername: "Username",
+  addWebsite: "Website",
+  addCustomField: "Custom field",
   fieldLabel: "Label",
   fieldValue: "Value",
   deletePassword: "Delete this password",

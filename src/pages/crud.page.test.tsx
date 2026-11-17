@@ -130,6 +130,7 @@ describe("password form", () => {
     expect(await stored()).not.toMatch(/Bank|Correct/);
     expect(screen.getByRole("img", { name: /Strength:/ })).toBeInTheDocument();
 
+    await user.click(screen.getByRole("button", { name: "Add username" }));
     await user.type(screen.getByLabelText("USERNAME"), "jane");
     await chip(/^(Synced|Not synced yet)$/);
     expect(await count()).toBe(1);
@@ -168,12 +169,44 @@ describe("password form", () => {
     });
     renderUnlocked(entryPath.passwordEdit(entry.id));
     const user = userEvent.setup();
-    await user.click(await screen.findByRole("button", { name: "+ Add field" }));
+    await user.click(await screen.findByRole("button", { name: "Add custom field" }));
     await user.type(screen.getByLabelText("Field 1 value"), "blue");
     await chip(/^(Synced|Not synced yet)$/);
     await user.click(screen.getByRole("button", { name: "Back" }));
     expect(await screen.findByText("OTHER")).toBeInTheDocument();
     expect(screen.getByText("blue")).toBeInTheDocument();
+  });
+
+  it("shows only name and password until the others are asked for", async () => {
+    renderUnlocked(ROUTES.passwordNew);
+    const user = userEvent.setup();
+    expect(await screen.findByLabelText("NAME")).toHaveFocus();
+    expect(screen.getByLabelText("PASSWORD")).toBeInTheDocument();
+    expect(screen.queryByLabelText("USERNAME")).toBeNull();
+    expect(screen.queryByLabelText("WEBSITE")).toBeNull();
+    expect(screen.queryByRole("region", { name: "Custom fields" })).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: "Add website" }));
+    expect(screen.getByLabelText("WEBSITE")).toHaveFocus();
+    expect(screen.queryByRole("button", { name: "Add website" })).toBeNull();
+    await user.click(screen.getByRole("button", { name: "Add custom field" }));
+    expect(screen.getByLabelText("Field 1 label")).toHaveFocus();
+    expect(screen.getByRole("button", { name: "+ Add field" })).toBeInTheDocument();
+  });
+
+  it("opens an existing password with the fields it has", async () => {
+    const entry = await addEntry({
+      kind: EntryKind.Password,
+      title: "Mail",
+      username: "jane",
+      password: fakeSecret(),
+      url: "",
+      notes: "",
+    });
+    renderUnlocked(entryPath.passwordEdit(entry.id));
+    expect(await screen.findByLabelText("USERNAME")).toHaveValue("jane");
+    expect(screen.queryByLabelText("WEBSITE")).toBeNull();
+    expect(screen.getByRole("button", { name: "Add website" })).toBeInTheDocument();
   });
 
   it("rolls a password with the dice, and takes one from the generator sheet", async () => {
@@ -209,7 +242,7 @@ describe("password form", () => {
     });
     renderUnlocked(entryPath.passwordEdit(entry.id));
     const user = userEvent.setup();
-    await user.click(await screen.findByRole("button", { name: "+ Add field" }));
+    await user.click(await screen.findByRole("button", { name: "Add custom field" }));
     await user.type(screen.getByLabelText("Field 1 label"), "Hint");
     await user.type(screen.getByLabelText("Field 1 value"), "blue");
     await chip(/^(Synced|Not synced yet)$/);
