@@ -33,6 +33,12 @@ export async function deleteDocument(id: string): Promise<boolean> {
   return true;
 }
 
+/** Every live entry, once (no watching). */
+export async function allDocuments(): Promise<VaultDocument[]> {
+  const found = await (await getVaultDb()).entries.find().exec();
+  return found.map((entry) => entry.toMutableJSON());
+}
+
 /** Every live entry, newest change first, re-emitted whenever something changes. */
 export const watchDocuments = (): Observable<VaultDocument[]> =>
   from(getVaultDb()).pipe(

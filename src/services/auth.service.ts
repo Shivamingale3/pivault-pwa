@@ -11,7 +11,12 @@ import { clearUsage } from "@/services/usage.service";
 import { clearSyncStats } from "@/services/sync-stats.service";
 import { clearAppLock } from "@/services/app-lock.service";
 import { postSigned } from "@/services/signed-api.client";
-import { clearLoginKeyPair, clearVaultKey, saveLoginKeyPair } from "@/services/key-store.service";
+import {
+  clearLoginKeyPair,
+  clearPendingVaultKey,
+  clearVaultKey,
+  saveLoginKeyPair,
+} from "@/services/key-store.service";
 import { clearUnlockedKey } from "@/services/secure-memory.service";
 import { clearSession, loadSession, saveSession } from "@/services/session.service";
 import { AuthStatus } from "@/enums/auth.enum";
@@ -118,6 +123,7 @@ export async function wipeDevice(): Promise<void> {
     clearSession(),
     clearLoginKeyPair(),
     clearVaultKey(),
+    clearPendingVaultKey(),
     clearAppLock(),
     removeVaultDb(),
     clearSyncStats(),

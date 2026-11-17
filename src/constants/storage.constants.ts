@@ -12,6 +12,8 @@ export type StoreName = (typeof StoreName)[keyof typeof StoreName];
 export const RecordId = {
   LoginKeyPair: "login-key-pair",
   VaultKey: "vault-key",
+  /** A new recovery key that is replacing `VaultKey` (only while the replacement runs). */
+  PendingVaultKey: "pending-vault-key",
   Session: "session",
   AppLock: "app-lock",
   SyncStats: "sync-stats",

@@ -31,6 +31,16 @@ export const opensKeyCheck = (key: CryptoKey, check: EncryptedEnvelope): Promise
     () => false,
   );
 
+/** A new recovery key replaced the old one: the server now checks typed keys against this one. */
+export async function replaceKeyCheck(
+  check: EncryptedEnvelope,
+  signal?: AbortSignal,
+): Promise<void> {
+  await postSigned("/auth/recovery-key-check/replace", { keyCheck: check }, z.undefined(), {
+    signal,
+  });
+}
+
 /**
  * Accounts set up before the check existed have none on the server. Once unlocked (so the key is
  * known to be the working one), store it, once. Best effort: a failure is retried on the next unlock.

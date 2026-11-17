@@ -70,6 +70,19 @@ export async function saveVaultKey(key: CryptoKey): Promise<void> {
 
 export const clearVaultKey = () => idbDelete(StoreName.Keys, RecordId.VaultKey);
 
+/**
+ * A new recovery key's CryptoKey while it replaces the vault key. Kept until the vault is
+ * re-encrypted and on the server, so a crash halfway can carry on instead of losing anything.
+ */
+export const loadPendingVaultKey = () => loadChecked(RecordId.PendingVaultKey, isVaultKeyValue);
+
+export async function savePendingVaultKey(key: CryptoKey): Promise<void> {
+  assertSafeToStore(isVaultKey(asKey(key)));
+  await idbPut(StoreName.Keys, RecordId.PendingVaultKey, key);
+}
+
+export const clearPendingVaultKey = () => idbDelete(StoreName.Keys, RecordId.PendingVaultKey);
+
 export const loadLoginKeyPair = () => loadChecked(RecordId.LoginKeyPair, isLoginPair);
 
 export async function saveLoginKeyPair(pair: CryptoKeyPair): Promise<void> {

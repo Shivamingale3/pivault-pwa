@@ -3,7 +3,7 @@ import { StorageErrorKind } from "@/enums/storage.enum";
 import type { PinResult } from "@/interfaces/app-lock.interface";
 import { getBiometricCredentialId, verifyPin } from "@/services/app-lock.service";
 import { verifyBiometric } from "@/services/biometric.service";
-import { loadVaultKey } from "@/services/key-store.service";
+import { loadPendingVaultKey, loadVaultKey } from "@/services/key-store.service";
 import { setUnlockedKey } from "@/services/secure-memory.service";
 import { StorageError } from "@/services/storage.error";
 
@@ -11,7 +11,10 @@ import { StorageError } from "@/services/storage.error";
 async function openVault(): Promise<void> {
   const key = await loadVaultKey();
   if (!key) throw new StorageError(StorageErrorKind.Corrupted, LOCK_MESSAGES.vaultKeyMissing);
-  setUnlockedKey(key);
+  // A recovery-key replacement that hasn't finished: the new key writes, the old one still opens.
+  const pending = await loadPendingVaultKey().catch(() => null);
+  if (pending) setUnlockedKey(pending, key);
+  else setUnlockedKey(key);
 }
 
 /** Checks the PIN (counting wrong guesses) and, when right, unlocks the vault in memory. */
