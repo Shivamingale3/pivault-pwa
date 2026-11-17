@@ -51,18 +51,14 @@ describe("home dashboard", () => {
     expect(screen.queryByText(/Media/)).toBeNull();
   });
 
-  it("shows the tab bar with Home current", async () => {
+  it("has no tab bar, and the user's initial opens Settings", async () => {
     renderUnlocked(ROUTES.home);
-    const tabs = await screen.findByRole("navigation", { name: "Main" });
-    expect(
-      within(tabs)
-        .getAllByRole("link")
-        .map((l) => l.textContent),
-    ).toEqual(["Home", "Passwords", "Notes"]);
-    expect(within(tabs).getByRole("link", { name: "Home" })).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
+    const settings = await screen.findByRole("link", { name: "Settings" });
+    expect(settings).toHaveAttribute("href", ROUTES.settings);
+    await waitFor(() => {
+      expect(settings).toHaveTextContent("J");
+    });
+    expect(screen.queryByRole("navigation", { name: "Main" })).toBeNull();
   });
 
   it("shows how much space the vault takes on this phone", async () => {

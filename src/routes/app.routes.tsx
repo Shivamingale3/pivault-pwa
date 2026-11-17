@@ -28,7 +28,6 @@ import { SetupRecoveryKeyPage } from "@/pages/setup-recovery-key.page";
 import { PrivateLayout } from "@/routes/private-layout";
 import { ROUTES } from "@/routes/route-paths";
 import { SetupLayout } from "@/routes/setup-layout";
-import { TabsLayout } from "@/routes/tabs-layout";
 import { StatusRedirect } from "@/routes/status-redirect";
 import { ZoneGuard } from "@/routes/zone-guard";
 
@@ -61,11 +60,9 @@ export function AppRoutes() {
 
       <Route element={<ZoneGuard allow={AuthStatus.Unlocked} />}>
         <Route element={<PrivateLayout />}>
-          <Route element={<TabsLayout />}>
-            <Route path={ROUTES.home} element={<HomePage />} />
-            <Route path={ROUTES.passwords} element={<PasswordsPage />} />
-            <Route path={ROUTES.notes} element={<NotesPage />} />
-          </Route>
+          <Route path={ROUTES.home} element={<HomePage />} />
+          <Route path={ROUTES.passwords} element={<PasswordsPage />} />
+          <Route path={ROUTES.notes} element={<NotesPage />} />
           <Route path={ROUTES.passwordNew} element={<PasswordNewPage />} />
           <Route path={ROUTES.passwordDetail} element={<PasswordDetailPage />} />
           <Route path={ROUTES.passwordEdit} element={<PasswordEditPage />} />

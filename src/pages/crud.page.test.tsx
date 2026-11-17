@@ -240,6 +240,18 @@ describe("notes", () => {
     });
   });
 
+  it("puts the title, then the formatting row, then the body, which scrolls inside itself", async () => {
+    renderUnlocked(ROUTES.noteNew);
+    const title = await screen.findByRole("textbox", { name: "Title" });
+    const toolbar = screen.getByRole("toolbar", { name: "Formatting" });
+    const body = screen.getByRole("textbox", { name: "Write your note" });
+    const follows = (a: Element, b: Element) =>
+      (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+    expect(follows(title, toolbar)).toBe(true);
+    expect(follows(toolbar, body)).toBe(true);
+    expect(body).toHaveClass("flex-1", "overflow-y-auto");
+  });
+
   it("writes a note that saves itself, with formatting and undo", async () => {
     renderUnlocked(ROUTES.noteNew);
     const user = userEvent.setup();

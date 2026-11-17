@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { CRUD_COPY } from "@/constants/vault-design.constants";
 import { ENTRY_LIMITS } from "@/constants/vault.constants";
 import { EntryKind } from "@/enums/vault.enum";
-import { useAutoGrow } from "@/hooks/use-auto-grow";
 import { useNoteEditor } from "@/hooks/use-note-editor";
 import { ROUTES, entryPath } from "@/routes/route-paths";
 import type { NoteEntry } from "@/types/vault.types";
@@ -20,11 +19,12 @@ export function NoteEditor({ entry }: { entry: NoteEntry | null }) {
   const navigate = useNavigate();
   const area = useRef<HTMLTextAreaElement>(null);
   const { id } = editor.save;
-  useAutoGrow(area, editor.body);
 
   return (
-    <main className="flex flex-1 justify-center bg-background">
-      <div className="flex w-full max-w-md flex-col gap-4 px-5.5 pt-[max(--spacing(9.5),env(safe-area-inset-top))] pb-[env(safe-area-inset-bottom)]">
+    // Exactly one screen tall (shrinks with the keyboard): header, title and toolbar keep their
+    // height, the body takes the rest and scrolls inside itself.
+    <main className="flex h-dvh justify-center overflow-hidden bg-background">
+      <div className="flex min-h-0 w-full max-w-md flex-col gap-4 px-5.5 pt-[max(--spacing(9.5),env(safe-area-inset-top))] pb-[max(--spacing(4),env(safe-area-inset-bottom))]">
         <ScreenHeader backTo={entry ? entryPath.note(entry.id) : ROUTES.notes}>
           <SaveChip status={editor.status} saved={CRUD_COPY.noteSaved} />
           {id && (
@@ -48,21 +48,9 @@ export function NoteEditor({ entry }: { entry: NoteEntry | null }) {
           maxLength={ENTRY_LIMITS.title}
           autoFocus={!entry}
           autoComplete="off"
-          className="bg-transparent text-[1.4375rem] font-extrabold tracking-tight outline-none placeholder:text-subtle"
+          className="shrink-0 bg-transparent text-[1.4375rem] font-extrabold tracking-tight outline-none placeholder:text-subtle"
           onChange={(event) => {
             editor.setTitle(event.target.value);
-          }}
-        />
-        <textarea
-          ref={area}
-          aria-label={CRUD_COPY.noteBody}
-          placeholder={CRUD_COPY.noteBody}
-          value={editor.body}
-          maxLength={ENTRY_LIMITS.body}
-          // Grows with the text (useAutoGrow) and fills the space when short: the page scrolls, never the box.
-          className="min-h-40 grow resize-none overflow-hidden bg-transparent text-[0.9375rem] leading-[1.55] font-medium outline-none placeholder:text-subtle"
-          onChange={(event) => {
-            editor.type(event.target.value);
           }}
         />
         <NoteToolbar
@@ -71,6 +59,17 @@ export function NoteEditor({ entry }: { entry: NoteEntry | null }) {
           }}
           onUndo={editor.undo}
           canUndo={editor.canUndo}
+        />
+        <textarea
+          ref={area}
+          aria-label={CRUD_COPY.noteBody}
+          placeholder={CRUD_COPY.noteBody}
+          value={editor.body}
+          maxLength={ENTRY_LIMITS.body}
+          className="min-h-0 flex-1 resize-none overflow-y-auto bg-transparent text-[0.9375rem] leading-[1.55] font-medium outline-none placeholder:text-subtle"
+          onChange={(event) => {
+            editor.type(event.target.value);
+          }}
         />
       </div>
       {editor.deleting && id && (

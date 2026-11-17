@@ -16,13 +16,13 @@ interface NoteToolbarProps {
   canUndo: boolean;
 }
 
-/** The formatting row above the keyboard: muted buttons (radius 12). Attach is left out: no media. */
+/** The formatting row between the title and the body: muted buttons (radius 12). Attach is left out: no media. */
 export function NoteToolbar({ onFormat, onUndo, canUndo }: NoteToolbarProps) {
   return (
     <div
       role="toolbar"
       aria-label="Formatting"
-      className="sticky bottom-0 flex gap-2 bg-background py-2.5"
+      className="flex shrink-0 gap-2 overflow-x-auto border-y border-border py-2.5"
     >
       {FORMATS.map(({ format, label, icon: Icon }) => (
         <Button

@@ -40,6 +40,8 @@ export function useDashboard() {
 
   return {
     firstName: session?.firstName ?? "",
+    /** For the avatar: the full name, or the email when there is none. */
+    name: `${session?.firstName ?? ""} ${session?.lastName ?? ""}`.trim() || (session?.email ?? ""),
     passwords,
     notes: entries.length - passwords,
     recents,
