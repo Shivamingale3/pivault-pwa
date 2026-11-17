@@ -258,6 +258,16 @@ describe("RecoveryKeyInputs", () => {
     expect(group(8)).toHaveFocus();
   });
 
+  it("takes a whole key from a phone keyboard's paste, which arrives as typing, not as a paste", () => {
+    render(<Harness />);
+    const key = Array.from({ length: 8 }, (_, i) => String(i).repeat(8)).join("-");
+    // The browser cuts typed text at maxLength: there must be room for the hyphens too.
+    expect((group(1) as HTMLInputElement).maxLength).toBeGreaterThanOrEqual(key.length);
+    fireEvent.change(group(1), { target: { value: key } });
+    expect(screen.getByTestId("value")).toHaveTextContent(key.replaceAll("-", ""));
+    expect(group(8)).toHaveValue("77777777");
+  });
+
   it("goes back a box on backspace in an empty one", async () => {
     render(<Harness />);
     const user = userEvent.setup();

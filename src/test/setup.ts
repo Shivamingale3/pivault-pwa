@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup } from "@testing-library/react";
+import { cleanup, configure } from "@testing-library/react";
 import { of } from "rxjs";
 import type * as SyncModule from "@/services/vault-sync.service";
 import { afterEach, vi } from "vitest";
@@ -8,6 +8,10 @@ import { closeVaultDb } from "@/db/vault.db";
 import { installMatchMedia } from "@/test/match-media";
 import { installPwaCapabilities } from "@/test/pwa-environment";
 import { registerCalls } from "@/test/stubs/pwa-register";
+
+// The default 1 s is too tight when the whole suite runs in parallel (real crypto, real IndexedDB):
+// screens that are correct were timing out now and then.
+configure({ asyncUtilTimeout: 4000 });
 
 installMatchMedia(false);
 

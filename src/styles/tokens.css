@@ -50,21 +50,28 @@
 .dark {
   color-scheme: dark;
 
-  --background: oklch(0.181 0.007 258.4); /* #101215 */
+  /*
+   * These differ from the design's dark hex values on purpose: on a real phone the original steps
+   * between canvas, background, card and fill were too small to tell apart, and the borders were
+   * nearly invisible. Same hues, wider steps. Lines reach about 2:1 against their surface, the
+   * strong border 3:1, body copy about 8:1.
+   */
+
+  --background: oklch(0.17 0.007 258.4);
   --foreground: oklch(0.958 0.004 91.4); /* #f2f1ee */
-  --card: oklch(0.209 0.009 264.4); /* #16181c */
+  --card: oklch(0.225 0.009 264.4);
   --card-foreground: oklch(0.958 0.004 91.4);
-  --popover: oklch(0.209 0.009 264.4);
+  --popover: oklch(0.225 0.009 264.4);
   --popover-foreground: oklch(0.958 0.004 91.4);
 
   --primary: oklch(0.958 0.004 91.4); /* #f2f1ee */
   --primary-foreground: oklch(0.181 0.007 258.4); /* #101215 */
-  --secondary: oklch(0.238 0.009 255.6); /* #1c1f23 */
+  --secondary: oklch(0.28 0.009 255.6);
   --secondary-foreground: oklch(0.958 0.004 91.4);
-  --muted: oklch(0.238 0.009 255.6); /* #1c1f23 input fill */
-  --muted-foreground: oklch(0.6 0.008 268.5); /* #7e8085 */
-  --subtle: oklch(0.693 0.007 277.1); /* #9b9ca1 */
-  --accent: oklch(0.238 0.009 255.6);
+  --muted: oklch(0.28 0.009 255.6); /* input fill */
+  --muted-foreground: oklch(0.74 0.008 268.5); /* body copy: brighter than the labels */
+  --subtle: oklch(0.62 0.007 277.1); /* mono labels, placeholders */
+  --accent: oklch(0.28 0.009 255.6);
   --accent-foreground: oklch(0.958 0.004 91.4);
 
   --destructive: oklch(0.647 0.17 36.3); /* #e2603c */
@@ -74,14 +81,14 @@
   --success-foreground: oklch(0.181 0.007 258.4);
   --success-surface: oklch(0.262 0.035 176.9); /* #0f2a24 */
 
-  --hero: oklch(0.168 0.004 264.4);
+  --hero: oklch(0.235 0.008 264.4); /* brand card: lifted so it reads on dark screens */
   --hero-foreground: oklch(0.993 0 0);
 
-  --border: oklch(0.303 0.011 254); /* #2b2f34 */
-  --border-strong: oklch(0.303 0.011 254);
-  --input: oklch(0.238 0.009 255.6);
+  --border: oklch(0.4 0.011 254);
+  --border-strong: oklch(0.5 0.011 254);
+  --input: oklch(0.4 0.011 254); /* fields get a visible edge in the dark */
   --ring: oklch(0.958 0.004 91.4);
-  --canvas: oklch(0.168 0.004 264.4);
+  --canvas: oklch(0.135 0.004 264.4); /* the darkest layer: cards sit on it */
   --overlay: oklch(0.155 0.004 264.4 / 74%); /* rgba(9,10,12,.74) scrim */
 
   --shadow-color: oklch(0 0 0 / 55%);

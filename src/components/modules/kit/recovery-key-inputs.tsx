@@ -3,6 +3,8 @@ import { RECOVERY_KEY_GROUP_SIZE, RECOVERY_KEY_HEX_LENGTH } from "@/constants/cr
 import { cn } from "@/lib/utils";
 
 const GROUPS = RECOVERY_KEY_HEX_LENGTH / RECOVERY_KEY_GROUP_SIZE;
+/** A whole key as displayed (hyphens between groups) and then some, for stray spaces. */
+const PASTE_ROOM = RECOVERY_KEY_HEX_LENGTH * 2;
 const clean = (text: string): string => text.toLowerCase().replace(/[^0-9a-f]/g, "");
 
 interface RecoveryKeyInputsProps {
@@ -85,7 +87,9 @@ export function RecoveryKeyInputs({
             autoCorrect="off"
             spellCheck={false}
             disabled={disabled}
-            maxLength={RECOVERY_KEY_HEX_LENGTH}
+            // Room for a whole pasted key with its hyphens and spaces. A phone keyboard's paste arrives
+            // as typing, so a limit of 64 cut the key short and the last box got one character.
+            maxLength={PASTE_ROOM}
             placeholder="XXXXXXXX"
             value={group.toUpperCase()}
             onChange={(event) => {
@@ -99,7 +103,7 @@ export function RecoveryKeyInputs({
             }}
             className={cn(
               "h-14.5 min-w-0 rounded-lg border-[1.5px] bg-muted px-3.5 text-center font-mono text-[0.9375rem] font-bold tracking-widest transition-colors outline-none placeholder:text-subtle focus-visible:border-foreground focus-visible:bg-background disabled:opacity-50",
-              group.length === RECOVERY_KEY_GROUP_SIZE ? "border-foreground" : "border-transparent",
+              group.length === RECOVERY_KEY_GROUP_SIZE ? "border-foreground" : "border-input",
               invalid && "border-destructive",
             )}
           />
