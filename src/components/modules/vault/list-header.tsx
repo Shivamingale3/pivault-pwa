@@ -1,31 +1,23 @@
-import { ChevronLeftIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import { Link } from "react-router";
-import { buttonVariants } from "@/components/ui/button";
-import { CRUD_COPY } from "@/constants/vault-design.constants";
-import { cn } from "@/lib/utils";
+import { BackButton } from "@/components/modules/kit/back-button";
 
 interface ListHeaderProps {
   title: string;
   meta: string;
-  /** Where the back button goes (home, or out of the sort state). */
+  /** Where back goes when there is no earlier screen. */
   backTo: string;
+  /** Replaces the usual back (the Passwords sort state leaves itself instead). */
+  onBack?: () => void;
   /** The right-hand action (Sort pill, search button). */
   action?: ReactNode;
 }
 
 /** A list screen's back button, title (27/800), a meta line, and one action on the right. */
-export function ListHeader({ title, meta, backTo, action }: ListHeaderProps) {
+export function ListHeader({ title, meta, backTo, onBack, action }: ListHeaderProps) {
   return (
     <header className="flex animate-rise flex-col gap-4">
       <div className="flex items-center justify-between gap-3">
-        <Link
-          to={backTo}
-          aria-label={CRUD_COPY.back}
-          className={cn(buttonVariants({ variant: "secondary", size: "icon-sm" }), "bg-muted")}
-        >
-          <ChevronLeftIcon />
-        </Link>
+        <BackButton fallback={backTo} onBack={onBack} />
         {action}
       </div>
       <div className="flex min-w-0 flex-col gap-1">

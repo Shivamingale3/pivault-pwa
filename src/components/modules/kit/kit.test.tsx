@@ -36,9 +36,9 @@ describe("Keypad", () => {
   it("shows the Face ID key only when asked to", async () => {
     const onBiometric = vi.fn();
     const { rerender } = render(<Keypad onDigit={vi.fn()} onBackspace={vi.fn()} />);
-    expect(screen.queryByRole("button", { name: "Unlock with Face ID" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Unlock with biometrics" })).toBeNull();
     rerender(<Keypad onDigit={vi.fn()} onBackspace={vi.fn()} onBiometric={onBiometric} />);
-    await userEvent.setup().click(screen.getByRole("button", { name: "Unlock with Face ID" }));
+    await userEvent.setup().click(screen.getByRole("button", { name: "Unlock with biometrics" }));
     expect(onBiometric).toHaveBeenCalledOnce();
   });
 
@@ -151,7 +151,7 @@ describe("notes and progress", () => {
 
   it("lists stages with their counts and a bar", () => {
     const stages: Stage[] = [
-      { label: "Vault key unwrapped", state: "done", value: "" },
+      { label: "Recovery key accepted", state: "done", value: "" },
       { label: "Records", state: "active", value: "7 of 12" },
       { label: "Decrypting", state: "waiting", value: "waiting" },
     ];

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/drawer";
 import { SETUP_COPY } from "@/constants/setup.constants";
 
-/** After the PIN matches: turn Face ID on, or not now. It can't be dismissed without an answer. */
+/** After the PIN matches: turn biometric unlock on, or not now. It can't be dismissed without an answer. */
 export function FaceIdOfferSheet({ onAnswer }: { onAnswer: (withFace: boolean) => void }) {
   return (
     <Drawer open onOpenChange={() => undefined} showSwipeHandle>

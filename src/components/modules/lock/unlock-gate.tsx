@@ -9,7 +9,7 @@ import { SignOutDialog } from "@/components/modules/settings/sign-out-dialog";
 import { LOCK_COPY } from "@/constants/lock.constants";
 import { useUnlockFlow } from "@/hooks/use-unlock-flow";
 
-/** The lock screen: whichever of Face ID, PIN or the paused view applies, plus its sheets. */
+/** The lock screen: whichever of biometrics, PIN or the paused view applies, plus its sheets. */
 export function UnlockGate() {
   const flow = useUnlockFlow();
   const [forgot, setForgot] = useState(false);
@@ -17,6 +17,14 @@ export function UnlockGate() {
 
   return (
     <GateLayout>
+      {flow.endedElsewhere && (
+        <p
+          role="status"
+          className="w-full rounded-lg bg-muted px-3.5 py-3 text-center text-xs font-semibold text-muted-foreground"
+        >
+          {LOCK_COPY.endedElsewhere}
+        </p>
+      )}
       {flow.stage === "lockout" && (
         <PinLockoutScreen
           flow={flow}
@@ -47,7 +55,6 @@ export function UnlockGate() {
       )}
       {leaving && (
         <SignOutDialog
-          host={window.location.host}
           mayLoseChanges
           onClose={() => {
             setLeaving(false);

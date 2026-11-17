@@ -1,4 +1,5 @@
 import { EyeIcon, EyeOffIcon, CopyIcon } from "lucide-react";
+import { UnsyncedDot } from "@/components/modules/vault/sync-mark";
 import { RowAvatar } from "@/components/modules/vault/row-avatar";
 import { Button } from "@/components/ui/button";
 import { LIST_COPY } from "@/constants/vault-design.constants";
@@ -37,6 +38,7 @@ export function PasswordRow({ entry, revealed, onOpen, onToggleReveal, onCopy }:
           {revealed ? entry.password : BULLETS}
         </span>
       </button>
+      <UnsyncedDot id={entry.id} updatedAt={entry.updatedAt} />
       <Button
         type="button"
         variant="ghost"

@@ -16,7 +16,7 @@ import { errorMessage } from "@/utils/error-message.utils";
 export type UnlockStage = "face" | "face-failed" | "pin" | "lockout";
 
 /**
- * The lock screen as one state machine. With biometrics on, Face ID is the way in and the PIN
+ * The lock screen as one state machine. With biometrics on, biometrics are the way in and the PIN
  * takes over after three failures (or when asked for); otherwise it is the PIN straight away. Five
  * wrong PINs start a growing wait. The vault key is loaded by the service; the app only opens
  * after the "Unlocked" confirmation.
@@ -122,6 +122,8 @@ export function useUnlockFlow() {
     stage,
     firstName: session?.firstName ?? "",
     email: session?.email ?? "",
+    /** A sign-in on another device replaced this session: this phone still opens, but no longer syncs. */
+    endedElsewhere: session?.endedElsewhere === true,
     pin,
     wrong,
     showPin,

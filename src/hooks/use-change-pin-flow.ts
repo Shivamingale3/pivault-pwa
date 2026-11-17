@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
-import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { wrongPinMessage } from "@/constants/lock.constants";
 import { CHANGE_PIN_COPY } from "@/constants/settings.constants";
 import { PIN_MESSAGES } from "@/constants/setup.constants";
+import { useBack } from "@/hooks/use-back";
 import { useAuth } from "@/hooks/use-auth";
 import { usePinEntry } from "@/hooks/use-pin-entry";
 import { ROUTES } from "@/routes/route-paths";
@@ -18,7 +18,7 @@ const STEP_DELAY_MS = 160;
  * count like wrong unlocks; the fifth locks the app, where the wait is shown.
  */
 export function useChangePinFlow() {
-  const navigate = useNavigate();
+  const back = useBack();
   const { lock } = useAuth();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [message, setMessage] = useState<string | null>(null);
@@ -73,7 +73,7 @@ export function useChangePinFlow() {
         void run(async () => {
           await setPin(pin);
           toast.success(CHANGE_PIN_COPY.done);
-          void navigate(ROUTES.settingsSecurity, { replace: true });
+          back(ROUTES.settingsSecurity);
         });
       }
     },

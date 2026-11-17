@@ -26,7 +26,6 @@ beforeEach(unlockVaultForTest);
 afterEach(() => {
   clearUnlockedKey();
   vi.restoreAllMocks();
-  Reflect.deleteProperty(navigator, "storage");
 });
 
 describe("home dashboard", () => {
@@ -37,7 +36,7 @@ describe("home dashboard", () => {
     renderUnlocked(ROUTES.home);
 
     expect(await screen.findByRole("heading", { name: "Hello, Jane" })).toBeInTheDocument();
-    expect(screen.getByText("VAULT UNLOCKED")).toBeInTheDocument();
+    expect(screen.queryByText(/VAULT UNLOCKED|ON THIS PHONE/)).toBeNull();
     const main = within(await screen.findByRole("main"));
     await waitFor(() => {
       expect(main.getByRole("link", { name: /Passwords/ })).toHaveTextContent("2 items");
@@ -61,19 +60,6 @@ describe("home dashboard", () => {
     expect(screen.queryByRole("navigation", { name: "Main" })).toBeNull();
   });
 
-  it("shows how much space the vault takes on this phone", async () => {
-    Object.defineProperty(navigator, "storage", {
-      configurable: true,
-      value: { estimate: () => Promise.resolve({ usage: 312_000_000, quota: 10_000_000_000 }) },
-    });
-    renderUnlocked(ROUTES.home);
-    expect(await screen.findByText("ON THIS PHONE")).toBeInTheDocument();
-    expect(await screen.findByText("312 MB")).toBeInTheDocument();
-    expect(
-      screen.getByRole("progressbar", { name: "Space used on this phone" }),
-    ).toBeInTheDocument();
-  });
-
   it("lists recently opened items, newest first, and opens one on its own screen", async () => {
     const bank = await addEntry(login("Bank"));
     const note = await addEntry({ kind: EntryKind.Note, title: "Wifi", body: "x" });
@@ -87,9 +73,9 @@ describe("home dashboard", () => {
     });
     const rows = within(section).getAllByRole("listitem");
     expect(rows[0]).toHaveTextContent("Wifi");
-    expect(rows[0]).toHaveTextContent("Note · opened 1 min ago");
+    expect(rows[0]).toHaveTextContent("Opened 1 min ago");
     expect(rows[1]).toHaveTextContent("Bank");
-    expect(rows[1]).toHaveTextContent("Password · opened 12 min ago");
+    expect(rows[1]).toHaveTextContent("Opened 12 min ago");
 
     const target = rows[1];
     if (!target) throw new Error("expected two recent rows");

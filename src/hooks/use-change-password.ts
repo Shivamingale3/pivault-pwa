@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { CHANGE_PASSWORD_COPY } from "@/constants/settings.constants";
+import { useBack } from "@/hooks/use-back";
 import { useAuthRequest } from "@/hooks/use-auth-request";
 import { useSetPasswordForm } from "@/hooks/use-set-password-form";
 import { ROUTES } from "@/routes/route-paths";
@@ -9,7 +9,7 @@ import { changePassword } from "@/services/auth.service";
 
 /** Change password: the current one, a new one that passes the rules, typed twice. Needs a connection. */
 export function useChangePassword() {
-  const navigate = useNavigate();
+  const back = useBack();
   const request = useAuthRequest();
   const form = useSetPasswordForm();
   const [current, setCurrentState] = useState("");
@@ -22,7 +22,7 @@ export function useChangePassword() {
     );
     if (!done) return;
     toast.success(CHANGE_PASSWORD_COPY.done);
-    void navigate(ROUTES.settings, { replace: true });
+    back(ROUTES.settings);
   };
 
   return {

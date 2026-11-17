@@ -41,7 +41,7 @@ afterEach(() => {
 describe("Settings home", () => {
   it("groups the rows as designed and links each to its screen", async () => {
     renderUnlocked(ROUTES.settings);
-    expect(await screen.findByText("MEMBER")).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Settings" })).toBeInTheDocument();
     for (const [name, href] of [
       [/Change password/, ROUTES.settingsPassword],
       [/Change PIN/, ROUTES.settingsPin],
@@ -51,7 +51,7 @@ describe("Settings home", () => {
     ] as const) {
       expect(screen.getByRole("link", { name })).toHaveAttribute("href", href);
     }
-    expect(screen.getByText("Set by your build")).toBeInTheDocument();
+    expect(screen.queryByText("Set by your build")).toBeNull();
     expect(screen.queryByText(/Private area/)).toBeNull();
     const rows = screen.getAllByRole("button").map((row) => row.textContent);
     expect(rows.at(-1)).toContain("Sign out");
@@ -98,7 +98,7 @@ describe("Settings › Security", () => {
     const enroll = vi.spyOn(biometric, "enrollBiometric").mockResolvedValue("cred-1");
     renderUnlocked(ROUTES.settingsSecurity);
     const user = userEvent.setup();
-    const toggle = await screen.findByRole("switch", { name: /Unlock with Face ID/ });
+    const toggle = await screen.findByRole("switch", { name: /Unlock with biometrics/ });
     await waitFor(() => {
       expect(toggle).not.toHaveAttribute("aria-disabled", "true");
     });
@@ -118,7 +118,7 @@ describe("Settings › Security", () => {
     vi.spyOn(biometric, "enrollBiometric").mockRejectedValue(new Error("cancelled"));
     const error = vi.spyOn(toast, "error");
     renderUnlocked(ROUTES.settingsSecurity);
-    const toggle = await screen.findByRole("switch", { name: /Unlock with Face ID/ });
+    const toggle = await screen.findByRole("switch", { name: /Unlock with biometrics/ });
     await waitFor(() => {
       expect(toggle).not.toHaveAttribute("aria-disabled", "true");
     });
@@ -134,7 +134,7 @@ describe("Settings › Security", () => {
   it("can't be turned on where the device has no biometrics", async () => {
     vi.spyOn(biometric, "isBiometricAvailable").mockResolvedValue(false);
     renderUnlocked(ROUTES.settingsSecurity);
-    const toggle = await screen.findByRole("switch", { name: /Unlock with Face ID/ });
+    const toggle = await screen.findByRole("switch", { name: /Unlock with biometrics/ });
     // The switch is a custom control: it marks itself disabled for assistive tech, not with `disabled`.
     expect(toggle).toHaveAttribute("aria-disabled", "true");
     expect(screen.getByText("This device can't use biometric unlock")).toBeInTheDocument();
@@ -212,7 +212,7 @@ describe("Settings › Change password", () => {
     const success = vi.spyOn(toast, "success");
     renderUnlocked(ROUTES.settingsPassword);
     const user = userEvent.setup();
-    expect(await screen.findByText(/This is your identity on the Pi/)).toBeInTheDocument();
+    expect(await screen.findByText(/You'll use the new password/)).toBeInTheDocument();
     const save = screen.getByRole("button", { name: "Save new password" });
     expect(save).toBeDisabled();
     const current = fakeSecret();
@@ -240,12 +240,24 @@ describe("Settings › Change password", () => {
 });
 
 describe("Settings › About", () => {
-  it("says what runs where, with our real stack and no dead links", async () => {
+  it("shows the version to compare between phones, and checks for updates", async () => {
+    const update = vi.fn(() => Promise.resolve());
+    Object.defineProperty(navigator, "serviceWorker", {
+      configurable: true,
+      value: {
+        getRegistration: () => Promise.resolve({ update, installing: null, waiting: null }),
+      },
+    });
+    const success = vi.spyOn(toast, "success");
     renderUnlocked(ROUTES.settingsAbout);
-    expect(await screen.findByText("AES-256-GCM")).toBeInTheDocument();
+    expect(await screen.findAllByText(/1\.0\.0/)).not.toHaveLength(0);
     expect(await screen.findByText("jane@example.com")).toBeInTheDocument();
-    expect(screen.getByText("Node · Express")).toBeInTheDocument();
-    expect(screen.queryByText(/FastAPI|MinIO|licences/i)).toBeNull();
-    expect(screen.getByText(/There is no public sign-up/)).toBeInTheDocument();
+    expect(screen.queryByText(/AES|Postgres|Express|FastAPI|sign-up/i)).toBeNull();
+    await userEvent.setup().click(screen.getByRole("button", { name: "Check for updates" }));
+    await waitFor(() => {
+      expect(success).toHaveBeenCalledWith("You have the latest version.");
+    });
+    expect(update).toHaveBeenCalledOnce();
+    Reflect.deleteProperty(navigator, "serviceWorker");
   });
 });

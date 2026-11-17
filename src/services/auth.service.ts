@@ -6,6 +6,7 @@ import { keepStorage } from "@/utils/storage.utils";
 import { postJson } from "@/services/api.client";
 import { exportPublicKey, generateLoginKeyPair } from "@/services/crypto.service";
 import { clearPreferences } from "@/services/preferences.service";
+import { clearSyncedState } from "@/services/synced-state.service";
 import { clearUsage } from "@/services/usage.service";
 import { clearSyncStats } from "@/services/sync-stats.service";
 import { clearAppLock } from "@/services/app-lock.service";
@@ -122,6 +123,7 @@ export async function wipeDevice(): Promise<void> {
     clearSyncStats(),
     clearUsage(),
     clearPreferences(),
+    clearSyncedState(),
   ]);
   const failure = results.find((result) => result.status === "rejected");
   if (failure) throw failure.reason;

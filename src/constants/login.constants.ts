@@ -2,7 +2,7 @@
 export const LOGIN_COPY = {
   eyebrow: "Self-hosted on your Pi",
   title: "Sign in",
-  body: "Your vault lives encrypted on this phone and works offline. Your Pi keeps an encrypted backup and syncs when it can.",
+  body: "Sign in to open your passwords and notes.",
   passwordPlaceholder: "••••••••",
   forgot: "Forgot password?",
   submit: "Sign in",

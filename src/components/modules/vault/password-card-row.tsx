@@ -1,3 +1,4 @@
+import { UnsyncedDot } from "@/components/modules/vault/sync-mark";
 import { RowAvatar } from "@/components/modules/vault/row-avatar";
 import type { PasswordEntry } from "@/types/vault.types";
 import { formatLastUsed } from "@/utils/last-used.utils";
@@ -29,6 +30,7 @@ export function PasswordCardRow({ entry, lastUsedAt, onOpen }: PasswordCardRowPr
             </span>
           )}
         </span>
+        <UnsyncedDot id={entry.id} updatedAt={entry.updatedAt} />
         {lastUsedAt !== null && (
           <span className="shrink-0 font-mono text-[0.625rem] font-bold tracking-wider text-subtle">
             {formatLastUsed(lastUsedAt)}

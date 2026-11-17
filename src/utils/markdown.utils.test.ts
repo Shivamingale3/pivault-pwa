@@ -47,7 +47,7 @@ describe("markdown", () => {
 
   it("treats html as plain text and survives an unclosed code block", () => {
     expect(parseMarkdown("<img src=x onerror=alert(1)>")).toEqual([
-      { type: "paragraph", inline: [{ type: "text", text: "<img src=x onerror=alert(1)>" }] },
+      { type: "paragraph", lines: [[{ type: "text", text: "<img src=x onerror=alert(1)>" }]] },
     ]);
     expect(parseMarkdown("```\nopen")).toEqual([{ type: "code", text: "open" }]);
   });
@@ -57,6 +57,19 @@ describe("markdown", () => {
     expect(ticked.split("\n")[8]).toBe("- [x] print");
     expect(toggleCheck(ticked, 8)).toBe(SOURCE);
     expect(toggleCheck(SOURCE, 0)).toBe(SOURCE);
+  });
+
+  it("keeps each line of a paragraph as its own line", () => {
+    expect(parseMarkdown("wifi: home\npassword: on the router\n\nnext")).toEqual([
+      {
+        type: "paragraph",
+        lines: [
+          [{ type: "text", text: "wifi: home" }],
+          [{ type: "text", text: "password: on the router" }],
+        ],
+      },
+      { type: "paragraph", lines: [[{ type: "text", text: "next" }]] },
+    ]);
   });
 
   it("handles notes with Windows line endings", () => {

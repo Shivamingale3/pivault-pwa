@@ -1,7 +1,4 @@
-import { ChevronLeftIcon } from "lucide-react";
-import { Link } from "react-router";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { BackButton } from "@/components/modules/kit/back-button";
 
 interface SettingsHeaderProps {
   title: string;
@@ -10,15 +7,11 @@ interface SettingsHeaderProps {
   parent?: string;
 }
 
-const BACK = cn(buttonVariants({ variant: "outline", size: "icon-sm" }), "border-border bg-card");
-
 export function SettingsHeader({ title, backTo, parent }: SettingsHeaderProps) {
   return (
     <header className="flex animate-rise flex-col gap-4">
       <div className="flex items-center gap-3">
-        <Link to={backTo} aria-label={parent ? `Back to ${parent}` : "Back"} className={BACK}>
-          <ChevronLeftIcon />
-        </Link>
+        <BackButton fallback={backTo} label={parent ? `Back to ${parent}` : "Back"} onCanvas />
         {parent ? (
           <span className="text-[0.8125rem] font-bold">{parent}</span>
         ) : (

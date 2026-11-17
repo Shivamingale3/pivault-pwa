@@ -81,15 +81,16 @@ const sectionOf = async (name: string): Promise<HTMLElement> => {
 };
 
 describe("Settings home", () => {
-  it("shows who is signed in, the Sync row under SERVER, and a way back", async () => {
+  it("shows who is signed in, the Sync row, the version and a way back", async () => {
     open(ROUTES.settings);
     expect(await screen.findByRole("heading", { name: "Settings" })).toBeInTheDocument();
     expect(await screen.findByText("Jane Doe")).toBeInTheDocument();
     expect(screen.getByText("jane@example.com")).toBeInTheDocument();
     expect(screen.getByText("J")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "SERVER" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Back" })).toHaveAttribute("href", ROUTES.home);
-    expect(screen.getByText(/users are added by your admin/)).toHaveTextContent(/^PiVault · /);
+    expect(screen.getByRole("heading", { name: "SYNC" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Back" })).toBeInTheDocument();
+    expect(screen.getByText(/^PiVault 1\.0\.0/)).toBeInTheDocument();
+    expect(screen.queryByText(/admin|Set by your build/)).toBeNull();
   });
 
   it("summarises the sync status in the Sync row and opens Settings › Sync", async () => {
@@ -122,21 +123,16 @@ describe("Sign out dialog", () => {
     return { user, dialog: await screen.findByRole("dialog") };
   };
 
-  it("says what signing out removes and what stays on the server", async () => {
+  it("says plainly what signing out removes", async () => {
     const { dialog } = await openDialog();
     expect(within(dialog).getByText("Sign out?")).toBeInTheDocument();
     expect(
-      within(dialog).getByText(
-        /signing out removes it from here\. The encrypted backup on .* is untouched\./,
-      ),
+      within(dialog).getByText(/removed from this phone\. Synced items come back/),
     ).toBeInTheDocument();
-    for (const row of ["Session token cleared", "PIN removed from this phone"]) {
-      expect(within(dialog).getByText(row)).toBeInTheDocument();
-    }
-    expect(within(dialog).getByText(/^Vault untouched on /)).toBeInTheDocument();
     expect(
-      within(dialog).getByText("You will need your password to sign in again, then a new PIN."),
+      within(dialog).getByText(/You'll need your password and recovery key/),
     ).toBeInTheDocument();
+    expect(within(dialog).queryByText(/token|untouched/i)).toBeNull();
   });
 
   it("does not warn about lost changes when everything is synced", async () => {
@@ -148,7 +144,7 @@ describe("Sign out dialog", () => {
     state$.next(stateWith({ status: "offline" }));
     const { dialog } = await openDialog();
     expect(
-      within(dialog).getByText(/Changes that haven't synced yet will be lost\./),
+      within(dialog).getByText(/Items that haven't synced yet will be lost\./),
     ).toBeInTheDocument();
   });
 
@@ -173,15 +169,12 @@ describe("Settings › Sync", () => {
   it("names its parent and shows the status card", async () => {
     open(ROUTES.settingsSync);
     expect(await screen.findByRole("heading", { name: "Sync" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Back to Settings" })).toHaveAttribute(
-      "href",
-      ROUTES.settings,
-    );
+    expect(screen.getByRole("button", { name: "Back to Settings" })).toBeInTheDocument();
     await waitFor(() => {
       expect(screen.getByText("4 min ago")).toBeInTheDocument();
     });
     expect(screen.getByText("Up to date")).toBeInTheDocument();
-    expect(screen.getByText(/^Today at \d{2}:\d{2} · /)).toBeInTheDocument();
+    expect(screen.getByText(/^Today at \d{2}:\d{2}$/)).toBeInTheDocument();
   });
 
   it("says nothing has synced yet", async () => {
@@ -289,7 +282,7 @@ describe("sync in the unlocked zone", () => {
     const user = userEvent.setup();
     await user.click(await screen.findByRole("link", { name: "Settings" }));
     await screen.findByRole("heading", { name: "Settings" });
-    await user.click(screen.getByRole("link", { name: "Back" }));
+    await user.click(screen.getByRole("button", { name: "Back" }));
     await screen.findByRole("heading", { name: /^Hello/ });
     expect(startVaultSync).toHaveBeenCalledTimes(1);
     expect(stop).not.toHaveBeenCalled();

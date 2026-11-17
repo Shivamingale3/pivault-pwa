@@ -43,13 +43,13 @@ describe("notes", () => {
     await addEntry(note("Licence"));
     renderUnlocked(ROUTES.notes);
     const user = userEvent.setup();
-    expect(await screen.findByText("2 notes · encrypted on this phone")).toBeInTheDocument();
+    expect(await screen.findByText("2 notes")).toBeInTheDocument();
     await user.type(screen.getByRole("searchbox", { name: "Filter notes" }), "wifi");
     const list = await screen.findByRole("list", { name: "Notes" });
     expect(within(list).getAllByRole("listitem")).toHaveLength(1);
     await user.click(within(list).getByRole("button", { name: /Wifi codes/ }));
     expect(await screen.findByRole("heading", { name: "Wifi codes" })).toBeInTheDocument();
-    expect(screen.getByText(/Body stays encrypted/)).toBeInTheDocument();
+    expect(screen.getByText(/^(Synced|Not synced yet)$/)).toBeInTheDocument();
   });
 });
 

@@ -152,7 +152,7 @@ describe("first sign in: set the PIN", () => {
       const user = userEvent.setup();
       open();
       await setUpPin(user);
-      await user.click(await screen.findByRole("button", { name: "Turn on Face ID" }));
+      await user.click(await screen.findByRole("button", { name: "Turn on" }));
       expect(await heading("Your recovery key")).toBeInTheDocument();
       expect(await getBiometricCredentialId()).not.toBeNull();
     });
@@ -175,7 +175,7 @@ describe("first sign in: set the PIN", () => {
       const user = userEvent.setup();
       open();
       await setUpPin(user);
-      await user.click(await screen.findByRole("button", { name: "Turn on Face ID" }));
+      await user.click(await screen.findByRole("button", { name: "Turn on" }));
       expect(await heading("Your recovery key")).toBeInTheDocument();
       expect(error).toHaveBeenCalledWith(BIOMETRIC_MESSAGES.failed);
       expect(await getBiometricCredentialId()).toBeNull();
@@ -311,7 +311,7 @@ describe("new phone: recover the vault", () => {
     open();
     expect(await heading("Enter your recovery key")).toBeInTheDocument();
     expect(
-      await screen.findByText(/Signed in as jane@example\.com\. This phone has no vault key yet/),
+      await screen.findByText(/Signed in as jane@example\.com\. Enter your recovery key/),
     ).toBeInTheDocument();
     expect(await screen.findAllByRole("textbox")).toHaveLength(8);
     expect(await screen.findByRole("button", { name: "Recover my vault" })).toBeDisabled();
@@ -331,9 +331,7 @@ describe("new phone: recover the vault", () => {
     const user = userEvent.setup();
     await fillKey(user, generateRecoveryKey());
     await user.click(screen.getByRole("button", { name: "Recover my vault" }));
-    expect(
-      await screen.findByText("That key does not match any vault on this server."),
-    ).toBeInTheDocument();
+    expect(await screen.findByText("That key doesn't match your vault.")).toBeInTheDocument();
     expect(error).not.toHaveBeenCalled();
     await expect(loadVaultKey()).resolves.toBeNull();
   });
@@ -346,7 +344,7 @@ describe("new phone: recover the vault", () => {
 
     expect(await heading("Rebuilding your vault")).toBeInTheDocument();
     expect(screen.getByText("KEY ACCEPTED")).toBeInTheDocument();
-    expect(screen.getByText("Vault key unwrapped")).toBeInTheDocument();
+    expect(screen.getByText("Recovery key accepted")).toBeInTheDocument();
     expect(await heading("Set your app PIN", 5000)).toBeInTheDocument();
 
     await setUpPin(user);

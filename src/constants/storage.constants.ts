@@ -17,6 +17,7 @@ export const RecordId = {
   SyncStats: "sync-stats",
   Usage: "usage",
   Preferences: "preferences",
+  SyncedState: "synced-state",
 } as const;
 
 export const STORAGE_ERROR_MESSAGES = {

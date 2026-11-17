@@ -1,7 +1,6 @@
 import type { SubmitEvent } from "react";
 import { FormErrorBanner } from "@/components/modules/auth/form-error-banner";
 import { PrimaryCta } from "@/components/modules/auth/primary-cta";
-import { StatusChip } from "@/components/modules/kit/status-chip";
 import { PasswordField } from "@/components/modules/password-link/password-field";
 import { PasswordRules } from "@/components/modules/password-link/password-rules";
 import { SettingsHeader } from "@/components/modules/settings/settings-header";
@@ -61,7 +60,6 @@ export function SettingsPasswordPage() {
         <PasswordRules rules={form.rules} />
         <FormErrorBanner message={flow.error} />
         <div className="mt-auto flex flex-col gap-3">
-          <StatusChip wide>{CHANGE_PASSWORD_COPY.chip}</StatusChip>
           <PrimaryCta
             type="submit"
             disabled={!flow.valid}

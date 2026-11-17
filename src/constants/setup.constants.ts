@@ -12,15 +12,15 @@ export const SETUP_COPY = {
   step2Eyebrow: "STEP 2 OF 2",
   step2Title: "Confirm your PIN",
   step2Body: "Enter the same six digits once more so a slip does not lock you out.",
-  faceOfferTitle: "Turn on Face ID?",
-  faceOfferBody: "Unlock PiVault with a look next time. Your PIN stays as the fallback.",
-  faceOfferYes: "Turn on Face ID",
+  faceOfferTitle: "Turn on biometric unlock?",
+  faceOfferBody: "Unlock PiVault with your fingerprint or face next time. Your PIN still works.",
+  faceOfferYes: "Turn on",
   faceOfferNo: "Not now",
 
   revealEyebrow: "SETUP · STEP 3 OF 3",
   revealTitle: "Your recovery key",
   revealBody:
-    "Shown once, now. Your Pi never receives it, so nobody — not you, not your admin — can look it up later.",
+    "It's the only way back into your vault on a new phone. It's shown once, so save it now.",
   revealWarning:
     "Lose this key and a wiped phone means a lost vault. There is no reset, no backup copy, and no way for support to help. Write it down or print it.",
   revealSaved: "I've saved it somewhere safe",
@@ -39,19 +39,18 @@ export const SETUP_COPY = {
 
   recoverTitle: "Enter your recovery key",
   recoverBody: (email: string): string =>
-    `Signed in as ${email}. This phone has no vault key yet, so the sixty-four characters are the only way in.`,
+    `Signed in as ${email}. Enter your recovery key to open your vault on this phone.`,
   recoverSubmit: "Recover my vault",
   recoverBusy: "Checking the key",
-  recoverNote:
-    "Paste the whole key into the first box and it splits itself. Without the key, the only way forward is a new empty vault.",
+  recoverNote: "Paste the whole key into the first box and it fills the rest.",
   recoverIncomplete: "All sixty-four characters are needed.",
 
   recoveringEyebrow: "KEY ACCEPTED",
   recoveringTitle: "Rebuilding your vault",
-  recoveringBody: "Unwrapping the vault key, then pulling your records down. Do not close the app.",
+  recoveringBody: "Downloading your passwords and notes. Don't close the app.",
   recoveringFooter: "A new PIN is set once this finishes.",
-  stageKey: "Vault key unwrapped",
-  stageRecords: "Records",
+  stageKey: "Recovery key accepted",
+  stageRecords: "Passwords and notes",
   stageSaved: "Saved on this phone",
   recoveringFailed: "The vault could not be rebuilt.",
   retry: "Try again",

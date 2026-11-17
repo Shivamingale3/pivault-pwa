@@ -10,6 +10,7 @@ export function DetailActions({ editTo, onMore }: { editTo: string; onMore: () =
     <>
       <Link
         to={editTo}
+        state={{ fromView: true }}
         className={cn(
           buttonVariants({ variant: "outline", size: "sm" }),
           "rounded-full border-border",

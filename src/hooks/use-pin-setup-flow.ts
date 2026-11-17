@@ -15,7 +15,7 @@ import { isWeakPin } from "@/utils/pin.utils";
 const STEP_DELAY_MS = 160;
 
 /**
- * Set the app PIN in two steps (enter, then confirm), offer Face ID once it matches, save, and move
+ * Set the app PIN in two steps (enter, then confirm), offer biometric unlock once it matches, save, and move
  * on: a first-time user goes to the recovery key, a user on a new phone is done.
  */
 export function usePinSetupFlow() {

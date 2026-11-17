@@ -50,7 +50,7 @@ export function SearchPage() {
   const search = useSearch();
 
   return (
-    <main className="flex flex-1 justify-center bg-background">
+    <main className="flex min-h-full w-full justify-center bg-background">
       <div className="flex w-full max-w-md flex-col gap-5 px-5.5 pt-[max(--spacing(9.5),env(safe-area-inset-top))] pb-6">
         <div className="flex items-center gap-3">
           <div className="min-w-0 flex-1">

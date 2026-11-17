@@ -17,6 +17,8 @@ export const sessionRecordSchema = z.object({
   setupDone: z.boolean(),
   /** The server is known to hold this account's recovery-key check (older sessions don't say). */
   keyCheckStored: z.boolean().optional(),
+  /** The server said this session was replaced by a sign-in on another device. */
+  endedElsewhere: z.boolean().optional(),
 });
 
 export type SessionRecord = z.infer<typeof sessionRecordSchema>;

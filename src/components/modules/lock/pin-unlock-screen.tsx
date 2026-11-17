@@ -10,7 +10,7 @@ interface PinUnlockScreenProps {
   onForgot: () => void;
 }
 
-/** Welcome, six cells, Show PIN, the error line, then the keypad (with the Face ID key when on). */
+/** Welcome, six cells, Show PIN, the error line, then the keypad (with the biometric key when on). */
 export function PinUnlockScreen({ flow, onForgot }: PinUnlockScreenProps) {
   const { pin, wrong, showPin } = flow;
   return (

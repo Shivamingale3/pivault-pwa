@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { useNavigate } from "react-router";
 import { EntryKind } from "@/enums/vault.enum";
 import { useSession } from "@/hooks/use-session";
-import { useStorageEstimate } from "@/hooks/use-storage-estimate";
 import { useUsage } from "@/hooks/use-usage";
 import { useVault } from "@/hooks/use-vault";
 import { entryPath } from "@/routes/route-paths";
@@ -16,12 +15,11 @@ export interface RecentItem {
 
 const RECENT_LIMIT = 5;
 
-/** Everything the dashboard shows: the name, the counts, recently opened items and the storage used. */
+/** Everything the dashboard shows: the name, the counts and recently opened items. */
 export function useDashboard() {
   const session = useSession();
   const { entries } = useVault();
   const { usage, clear } = useUsage();
-  const storage = useStorageEstimate();
   const navigate = useNavigate();
 
   const recents = useMemo<RecentItem[]>(
@@ -45,7 +43,6 @@ export function useDashboard() {
     passwords,
     notes: entries.length - passwords,
     recents,
-    storage,
     clearRecents: clear,
     /** Opens the item's own screen. */
     openRecent: (item: RecentItem) => {

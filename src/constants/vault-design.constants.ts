@@ -1,26 +1,22 @@
-/** Copy from docs/design 02-vault, 03-crud and 05-states. Media is not part of PiVault, so the files and Media cards are left out. */
+/**
+ * Copy from docs/design 02-vault and 03-crud, trimmed by the owner: no technical lines (encryption,
+ * storage, server) in the UI. The one status worth showing about an item is whether it is synced.
+ */
 export const HOME_COPY = {
-  eyebrow: "VAULT UNLOCKED",
   hello: (firstName: string): string => (firstName === "" ? "Hello" : `Hello, ${firstName}`),
   search: "Search passwords, notes",
   passwords: "Passwords",
   notes: "Notes",
-  onThisPhone: "ON THIS PHONE",
   recent: "RECENTLY OPENED",
   clear: "Clear",
-  openedPassword: (when: string): string => `Password · opened ${when}`,
-  openedNote: (when: string): string => `Note · opened ${when}`,
+  opened: (when: string): string => `Opened ${when}`,
 } as const;
 
 export const LIST_COPY = {
   passwordsTitle: "Passwords",
   notesTitle: "Notes",
-  passwordsMeta: (count: number): string =>
-    `${String(count)} ${count === 1 ? "item" : "items"} · most recent first`,
-  passwordsSortMeta: (count: number): string =>
-    `${String(count)} ${count === 1 ? "item" : "items"} · newest use first`,
-  notesMeta: (count: number): string =>
-    `${String(count)} ${count === 1 ? "note" : "notes"} · encrypted on this phone`,
+  passwordsMeta: (count: number): string => `${String(count)} ${count === 1 ? "item" : "items"}`,
+  notesMeta: (count: number): string => `${String(count)} ${count === 1 ? "note" : "notes"}`,
   filter: "Filter this list",
   sort: "Sort",
   tabRecent: "Recent",
@@ -33,9 +29,8 @@ export const LIST_COPY = {
   noWeak: "No weak passwords",
   noWeakBody: "Every password here looks strong enough.",
   passwordsEmpty: "No passwords yet",
-  passwordsEmptyBody:
-    "Add your first login and it is encrypted here before it ever reaches your Pi.",
-  restore: "Restore from Pi backup",
+  passwordsEmptyBody: "Add your first login to get started.",
+  restore: "Sync now",
   notesEmpty: "No notes yet",
   notesEmptyBody: "Recovery codes, licence keys, anything you would not put in a plain notes app.",
   writeNote: "Write a note",
@@ -51,7 +46,7 @@ export const SEARCH_COPY = {
   passwords: "Passwords",
   notes: "Notes",
   none: "Nothing found",
-  noneBody: "Notes are matched on their title, because the text stays encrypted.",
+  noneBody: "Try a different word.",
 } as const;
 
 export const CRUD_COPY = {
@@ -65,11 +60,6 @@ export const CRUD_COPY = {
   name: "NAME",
   created: "CREATED",
   modified: "MODIFIED",
-  savedOnPhone: "Saved on this phone · backed up at next sync",
-  savedJustNow: "Saved just now",
-  saving: "Saving…",
-  notSaved: "Not saved yet",
-  saveFailed: "Couldn't save",
   customFields: "CUSTOM FIELDS",
   addField: "+ Add field",
   fieldLabel: "Label",
@@ -80,15 +70,11 @@ export const CRUD_COPY = {
   generatorTitle: "Generate password",
   length: "Length",
   usePassword: "Use this password",
-  bodyEncrypted: "Body stays encrypted — search only sees the title",
-  noteSaved: "Saved · encrypted",
   noteTitle: "Title",
   noteBody: "Write your note",
-  updated: (when: string, words: number): string =>
-    `Updated ${when} · ${String(words)} ${words === 1 ? "word" : "words"}`,
+  updated: (when: string): string => `Updated ${when}`,
   deleteTitle: (kind: string): string => `Delete this ${kind}?`,
-  deleteBody:
-    "This is permanent. It goes from this phone now and from your Pi at the next sync, and there is no trash to restore from.",
+  deleteBody: "This can't be undone.",
   cancel: "Cancel",
   delete: "Delete",
   gone: "That item no longer exists.",
@@ -102,3 +88,11 @@ export const GENERATOR_TOGGLES = [
 ] as const;
 
 export const STRENGTH_LABELS = ["Very weak", "Weak", "Fair", "Strong", "Very strong"] as const;
+
+export const SYNC_MARK_COPY = {
+  synced: "Synced",
+  notSynced: "Not synced yet",
+  saving: "Saving…",
+  notSaved: "Not saved yet",
+  saveFailed: "Couldn't save",
+} as const;

@@ -8,7 +8,7 @@ import { SetupShell } from "@/components/modules/setup/setup-shell";
 import { SETUP_COPY } from "@/constants/setup.constants";
 import type { usePinSetupFlow } from "@/hooks/use-pin-setup-flow";
 
-/** Set up PIN: two-segment progress, the six masked cells, the keypad (no Face ID key here). */
+/** Set up PIN: two-segment progress, the six masked cells, the keypad (no biometric key here). */
 export function PinSetupScreen({ flow }: { flow: ReturnType<typeof usePinSetupFlow> }) {
   const first = flow.step === 1;
   return (

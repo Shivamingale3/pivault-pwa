@@ -1,6 +1,6 @@
 import { Trash2Icon } from "lucide-react";
 import { useRef } from "react";
-import { useNavigate } from "react-router";
+import { useLocation } from "react-router";
 import { ScreenHeader } from "@/components/modules/kit/screen-header";
 import { DeleteEntryDialog } from "@/components/modules/vault/delete-entry-dialog";
 import { NoteToolbar } from "@/components/modules/vault/note-toolbar";
@@ -10,13 +10,15 @@ import { CRUD_COPY } from "@/constants/vault-design.constants";
 import { ENTRY_LIMITS } from "@/constants/vault.constants";
 import { EntryKind } from "@/enums/vault.enum";
 import { useNoteEditor } from "@/hooks/use-note-editor";
+import { useBack } from "@/hooks/use-back";
 import { ROUTES, entryPath } from "@/routes/route-paths";
 import type { NoteEntry } from "@/types/vault.types";
 
 /** The note editor: a borderless title and body, a formatting row, and no Save button. */
 export function NoteEditor({ entry }: { entry: NoteEntry | null }) {
   const editor = useNoteEditor(entry);
-  const navigate = useNavigate();
+  const back = useBack();
+  const fromView = (useLocation().state as { fromView?: boolean } | null)?.fromView === true;
   const area = useRef<HTMLTextAreaElement>(null);
   const { id } = editor.save;
 
@@ -26,7 +28,7 @@ export function NoteEditor({ entry }: { entry: NoteEntry | null }) {
     <main className="flex h-dvh justify-center overflow-hidden bg-background">
       <div className="flex min-h-0 w-full max-w-md flex-col gap-4 px-5.5 pt-[max(--spacing(9.5),env(safe-area-inset-top))] pb-[max(--spacing(4),env(safe-area-inset-bottom))]">
         <ScreenHeader backTo={entry ? entryPath.note(entry.id) : ROUTES.notes}>
-          <SaveChip status={editor.status} saved={CRUD_COPY.noteSaved} />
+          <SaveChip status={editor.status} id={id} />
           {id && (
             <Button
               type="button"
@@ -80,7 +82,10 @@ export function NoteEditor({ entry }: { entry: NoteEntry | null }) {
           }}
           onBeforeDelete={editor.save.pause}
           onDeleteFailed={editor.save.resume}
-          onDeleted={() => void navigate(ROUTES.notes, { replace: true })}
+          // Opened from the item's screen: skip past it too, the item is gone.
+          onDeleted={() => {
+            back(ROUTES.notes, fromView ? 2 : 1);
+          }}
         />
       )}
     </main>

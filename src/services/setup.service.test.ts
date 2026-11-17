@@ -152,7 +152,7 @@ describe("recovering the vault on a new phone", () => {
     serverHas([]);
     await expect(recoverVaultKey(generateRecoveryKey())).rejects.toMatchObject({
       kind: CryptoErrorKind.InvalidRecoveryKey,
-      message: "That key does not match any vault on this server.",
+      message: "That key doesn't match your vault.",
     });
     await expect(loadVaultKey()).resolves.toBeNull();
   });
@@ -174,7 +174,7 @@ describe("recovering the vault on a new phone", () => {
     serverHas([await sealedEntry(await importRecoveryKey(generateRecoveryKey()))]);
     await expect(recoverVaultKey(generateRecoveryKey())).rejects.toMatchObject({
       kind: CryptoErrorKind.InvalidRecoveryKey,
-      message: "That key does not match any vault on this server.",
+      message: "That key doesn't match your vault.",
     });
     await expect(loadVaultKey()).resolves.toBeNull();
   });

@@ -5,6 +5,7 @@ import { getVaultDb } from "@/db/vault.db";
 import { EntryKind } from "@/enums/vault.enum";
 import { ROUTES, entryPath } from "@/routes/route-paths";
 import { clearUnlockedKey } from "@/services/secure-memory.service";
+import { clearSyncedState, recordServerVersions } from "@/services/synced-state.service";
 import { loadUsage } from "@/services/usage.service";
 import { addEntry } from "@/services/vault.service";
 import { fakeSecret } from "@/test/fake-secret";
@@ -27,7 +28,10 @@ const chip = (text: string | RegExp) =>
   );
 
 beforeEach(unlockVaultForTest);
-afterEach(clearUnlockedKey);
+afterEach(async () => {
+  clearUnlockedKey();
+  await clearSyncedState();
+});
 
 describe("password detail", () => {
   const seed = (secret: string) =>
@@ -50,7 +54,7 @@ describe("password detail", () => {
     expect(screen.getByText("RECOVERY EMAIL")).toBeInTheDocument();
     expect(screen.getByText("backup@example.com")).toBeInTheDocument();
     expect(screen.getByText("CREATED")).toBeInTheDocument();
-    expect(screen.getByText("Saved on this phone · backed up at next sync")).toBeInTheDocument();
+    expect(screen.getByText(/^(Synced|Not synced yet)$/)).toBeInTheDocument();
     expect(screen.queryByText(secret)).toBeNull();
     const user = userEvent.setup();
     await user.click(screen.getByRole("button", { name: "Show password" }));
@@ -70,7 +74,7 @@ describe("password detail", () => {
     await user.click(await screen.findByRole("button", { name: "Delete" }));
     const dialog = await screen.findByRole("alertdialog").catch(() => screen.findByRole("dialog"));
     expect(dialog).toHaveTextContent("Delete this password?");
-    expect(dialog).toHaveTextContent("there is no trash to restore from");
+    expect(dialog).toHaveTextContent("This can't be undone.");
     expect(await count()).toBe(1);
     await user.click(within(dialog).getByRole("button", { name: "Delete" }));
     expect(await screen.findByRole("heading", { name: "No passwords yet" })).toBeInTheDocument();
@@ -82,6 +86,37 @@ describe("password detail", () => {
   });
 });
 
+describe("sync marks", () => {
+  it("shows whether an item is synced on its screen and with a dot in its list", async () => {
+    const entry = await addEntry({
+      kind: EntryKind.Password,
+      title: "Bank",
+      username: "",
+      password: fakeSecret(),
+      url: "",
+      notes: "",
+    });
+    renderUnlocked(entryPath.password(entry.id));
+    expect(await screen.findByText("Not synced yet")).toBeInTheDocument();
+    await recordServerVersions([{ id: entry.id, updatedAt: entry.updatedAt, _deleted: false }]);
+    expect(await screen.findByText("Synced")).toBeInTheDocument();
+  });
+
+  it("marks unsynced rows in the list", async () => {
+    const synced = await addEntry({ kind: EntryKind.Note, title: "Synced one", body: "" });
+    await addEntry({ kind: EntryKind.Note, title: "Local one", body: "" });
+    await recordServerVersions([{ id: synced.id, updatedAt: synced.updatedAt, _deleted: false }]);
+    renderUnlocked(ROUTES.notes);
+    const list = await screen.findByRole("list", { name: "Notes" });
+    await waitFor(() => {
+      expect(within(list).getAllByRole("img", { name: "Not synced yet" })).toHaveLength(1);
+    });
+    expect(
+      within(list).getByRole("img", { name: "Not synced yet" }).closest("li"),
+    ).toHaveTextContent("Local one");
+  });
+});
+
 describe("password form", () => {
   it("saves by itself once it has a name and password, encrypted, with no Save button", async () => {
     renderUnlocked(ROUTES.passwordNew);
@@ -90,15 +125,15 @@ describe("password form", () => {
     await user.type(await screen.findByLabelText("NAME"), "Bank");
     expect(await count()).toBe(0);
     await user.type(screen.getByLabelText("PASSWORD"), "Correct-Horse-9!");
-    await chip("Saved just now");
+    await chip(/^(Synced|Not synced yet)$/);
     expect(await count()).toBe(1);
     expect(await stored()).not.toMatch(/Bank|Correct/);
     expect(screen.getByRole("img", { name: /Strength:/ })).toBeInTheDocument();
 
     await user.type(screen.getByLabelText("USERNAME"), "jane");
-    await chip("Saved just now");
+    await chip(/^(Synced|Not synced yet)$/);
     expect(await count()).toBe(1);
-    await user.click(screen.getByRole("link", { name: "Back" }));
+    await user.click(screen.getByRole("button", { name: "Back" }));
     expect(await screen.findByText("jane")).toBeInTheDocument();
   });
 
@@ -114,10 +149,10 @@ describe("password form", () => {
     renderUnlocked(entryPath.passwordEdit(entry.id));
     const user = userEvent.setup();
     const name = await screen.findByLabelText("NAME");
-    await chip("Saved just now");
+    await chip(/^(Synced|Not synced yet)$/);
     await user.type(name, "x");
     await user.type(name, "{Backspace}");
-    await chip("Saved just now");
+    await chip(/^(Synced|Not synced yet)$/);
     await user.clear(name);
     await chip("Not saved yet");
   });
@@ -135,8 +170,8 @@ describe("password form", () => {
     const user = userEvent.setup();
     await user.click(await screen.findByRole("button", { name: "+ Add field" }));
     await user.type(screen.getByLabelText("Field 1 value"), "blue");
-    await chip("Saved just now");
-    await user.click(screen.getByRole("link", { name: "Back" }));
+    await chip(/^(Synced|Not synced yet)$/);
+    await user.click(screen.getByRole("button", { name: "Back" }));
     expect(await screen.findByText("OTHER")).toBeInTheDocument();
     expect(screen.getByText("blue")).toBeInTheDocument();
   });
@@ -177,13 +212,13 @@ describe("password form", () => {
     await user.click(await screen.findByRole("button", { name: "+ Add field" }));
     await user.type(screen.getByLabelText("Field 1 label"), "Hint");
     await user.type(screen.getByLabelText("Field 1 value"), "blue");
-    await chip("Saved just now");
-    await user.click(screen.getByRole("link", { name: "Back" }));
+    await chip(/^(Synced|Not synced yet)$/);
+    await user.click(screen.getByRole("button", { name: "Back" }));
     expect(await screen.findByText("HINT")).toBeInTheDocument();
 
     await user.click(screen.getByRole("link", { name: "Edit" }));
     await user.click(await screen.findByRole("button", { name: "Remove field 1" }));
-    await chip("Saved just now");
+    await chip(/^(Synced|Not synced yet)$/);
     await user.click(screen.getByRole("button", { name: "Delete this password" }));
     await user.click(await screen.findByRole("button", { name: "Delete" }));
     expect(await screen.findByRole("heading", { name: "No passwords yet" })).toBeInTheDocument();
@@ -207,7 +242,7 @@ describe("notes", () => {
     const note = await addEntry({ kind: EntryKind.Note, title: "Recovery", body: BODY });
     renderUnlocked(entryPath.note(note.id));
     expect(await screen.findByRole("heading", { name: "Recovery" })).toBeInTheDocument();
-    expect(screen.getByText(/· 7 words/)).toBeInTheDocument();
+    expect(screen.getByText(/^Updated /)).toBeInTheDocument();
     expect(screen.getByText("these").tagName).toBe("STRONG");
     expect(screen.getByRole("heading", { name: "Codes" })).toBeInTheDocument();
     expect(screen.getByText("ABCD-1234").closest("pre")).not.toBeNull();
@@ -258,7 +293,7 @@ describe("notes", () => {
     await user.type(await screen.findByRole("textbox", { name: "Title" }), "Wifi");
     const body = screen.getByRole<HTMLTextAreaElement>("textbox", { name: "Write your note" });
     await user.type(body, "router");
-    await chip("Saved · encrypted");
+    await chip(/^(Synced|Not synced yet)$/);
     expect(await count()).toBe(1);
     expect(await stored()).not.toMatch(/Wifi|router/);
 
@@ -269,8 +304,8 @@ describe("notes", () => {
     expect(body.value).toBe("router");
     await user.click(screen.getByRole("button", { name: "Checkbox" }));
     expect(body.value).toBe("- [ ] router");
-    await chip("Saved · encrypted");
-    await user.click(screen.getByRole("link", { name: "Back" }));
+    await chip(/^(Synced|Not synced yet)$/);
+    await user.click(screen.getByRole("button", { name: "Back" }));
     expect(await screen.findByRole("list", { name: "Notes" })).toHaveTextContent("Wifi");
   });
 });

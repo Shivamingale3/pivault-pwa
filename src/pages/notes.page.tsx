@@ -29,7 +29,7 @@ export function NotesPage() {
   };
 
   return (
-    <main className="flex flex-1 justify-center bg-background">
+    <main className="flex min-h-full w-full justify-center bg-background">
       <div className="flex w-full max-w-md flex-col gap-4 px-5.5 pt-[max(--spacing(9.5),env(safe-area-inset-top))] pb-6">
         <ListHeader
           title={LIST_COPY.notesTitle}

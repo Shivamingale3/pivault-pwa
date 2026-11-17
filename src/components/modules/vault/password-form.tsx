@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { useLocation } from "react-router";
 import { ScreenHeader } from "@/components/modules/kit/screen-header";
 import { CustomFields } from "@/components/modules/vault/custom-fields";
 import { DeleteEntryDialog } from "@/components/modules/vault/delete-entry-dialog";
@@ -10,17 +10,19 @@ import { Button } from "@/components/ui/button";
 import { CRUD_COPY } from "@/constants/vault-design.constants";
 import { EntryKind } from "@/enums/vault.enum";
 import { usePasswordForm } from "@/hooks/use-password-form";
+import { useBack } from "@/hooks/use-back";
 import { ROUTES, entryPath } from "@/routes/route-paths";
 import type { PasswordEntry } from "@/types/vault.types";
 
 /** The password form (new or existing). There is no Save button: it saves as you type. */
 export function PasswordForm({ entry }: { entry: PasswordEntry | null }) {
   const form = usePasswordForm(entry);
-  const navigate = useNavigate();
+  const back = useBack();
+  const fromView = (useLocation().state as { fromView?: boolean } | null)?.fromView === true;
   const { id } = form.save;
 
   return (
-    <main className="flex flex-1 justify-center bg-background">
+    <main className="flex min-h-full w-full justify-center bg-background">
       <form
         noValidate
         onSubmit={(event) => {
@@ -29,7 +31,7 @@ export function PasswordForm({ entry }: { entry: PasswordEntry | null }) {
         className="flex w-full max-w-md flex-col gap-4 px-5.5 pt-[max(--spacing(9.5),env(safe-area-inset-top))] pb-[max(--spacing(6.5),env(safe-area-inset-bottom))]"
       >
         <ScreenHeader backTo={entry ? entryPath.password(entry.id) : ROUTES.passwords}>
-          <SaveChip status={form.status} />
+          <SaveChip status={form.status} id={id} />
         </ScreenHeader>
         <EyebrowField
           id="title"
@@ -106,7 +108,10 @@ export function PasswordForm({ entry }: { entry: PasswordEntry | null }) {
           onClose={form.close}
           onBeforeDelete={form.save.pause}
           onDeleteFailed={form.save.resume}
-          onDeleted={() => void navigate(ROUTES.passwords, { replace: true })}
+          // Opened from the item's screen: skip past it too, the item is gone.
+          onDeleted={() => {
+            back(ROUTES.passwords, fromView ? 2 : 1);
+          }}
         />
       )}
     </main>

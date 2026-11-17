@@ -1,9 +1,9 @@
 import { Navigate } from "react-router";
 import { ScreenHeader } from "@/components/modules/kit/screen-header";
-import { StatusChip } from "@/components/modules/kit/status-chip";
 import { DetailActions } from "@/components/modules/vault/detail-actions";
 import { DetailOverlays } from "@/components/modules/vault/detail-overlays";
 import { PasswordFields } from "@/components/modules/vault/password-fields";
+import { SyncChip } from "@/components/modules/vault/sync-mark";
 import { RowAvatar } from "@/components/modules/vault/row-avatar";
 import { VaultLoading } from "@/components/modules/vault/vault-loading";
 import { CRUD_COPY } from "@/constants/vault-design.constants";
@@ -22,7 +22,7 @@ export function PasswordDetailPage() {
   const domain = entry ? domainOf(entry.url) : "";
 
   return (
-    <main className="flex flex-1 justify-center bg-background">
+    <main className="flex min-h-full w-full justify-center bg-background">
       <div className="flex w-full max-w-md flex-col gap-5 px-5.5 pt-[max(--spacing(9.5),env(safe-area-inset-top))] pb-[max(--spacing(6.5),env(safe-area-inset-bottom))]">
         <ScreenHeader backTo={ROUTES.passwords}>
           {entry && (
@@ -58,7 +58,7 @@ export function PasswordDetailPage() {
               </div>
             </dl>
             <div className="mt-auto">
-              <StatusChip wide>{CRUD_COPY.savedOnPhone}</StatusChip>
+              <SyncChip id={entry.id} updatedAt={entry.updatedAt} />
             </div>
             <DetailOverlays entry={entry} detail={detail} listPath={ROUTES.passwords} />
           </>
