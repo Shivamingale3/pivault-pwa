@@ -190,17 +190,15 @@ describe("resolveStoredStatus", () => {
     await expect(resolveStoredStatus()).resolves.toEqual({ status: AuthStatus.Locked });
   });
 
-  it("treats an expired session as logged out and wipes the device", async () => {
+  it("never signs out by the clock: a session with a past expiry is still locked, nothing wiped", async () => {
     await saveSession({ ...session, setupDone: true, expiresAt: "2020-01-01T00:00:00.000Z" });
     await setPin("135792");
     await saveVaultKey(await importRecoveryKey(generateRecoveryKey()));
 
-    const result = await resolveStoredStatus();
-    expect(result.status).toBe(AuthStatus.LoggedOut);
-    expect(result.error).toBe("Your session expired. Sign in again.");
-    await expect(loadSession()).resolves.toBeNull();
-    await expect(loadVaultKey()).resolves.toBeNull();
-    expect(await hasPin()).toBe(false);
+    await expect(resolveStoredStatus()).resolves.toEqual({ status: AuthStatus.Locked });
+    await expect(loadSession()).resolves.not.toBeNull();
+    await expect(loadVaultKey()).resolves.not.toBeNull();
+    expect(await hasPin()).toBe(true);
   });
 
   it("falls back to logged out, with a message, when the saved session is unreadable", async () => {

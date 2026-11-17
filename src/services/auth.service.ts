@@ -2,6 +2,7 @@ import { removeVaultDb } from "@/db/vault.db";
 import { emptyResponseSchema, loginResponseSchema } from "@/schemas/auth.schema";
 import type { EncryptedEnvelope } from "@/schemas/crypto.schema";
 import type { SessionRecord } from "@/schemas/session.schema";
+import { keepStorage } from "@/utils/storage.utils";
 import { postJson } from "@/services/api.client";
 import { exportPublicKey, generateLoginKeyPair } from "@/services/crypto.service";
 import { clearUsage } from "@/services/usage.service";
@@ -11,7 +12,6 @@ import { postSigned } from "@/services/signed-api.client";
 import { clearLoginKeyPair, clearVaultKey, saveLoginKeyPair } from "@/services/key-store.service";
 import { clearUnlockedKey } from "@/services/secure-memory.service";
 import { clearSession, loadSession, saveSession } from "@/services/session.service";
-import { LOCK_MESSAGES } from "@/constants/lock.constants";
 import { AuthStatus } from "@/enums/auth.enum";
 import { errorMessage } from "@/utils/error-message.utils";
 
@@ -50,6 +50,7 @@ export async function login(
   };
   await saveLoginKeyPair(pair);
   await saveSession(session);
+  void keepStorage();
   return session;
 }
 
@@ -115,11 +116,8 @@ export async function resolveStoredStatus(): Promise<{ status: AuthStatus; error
   try {
     const session = await loadSession();
     if (!session) return { status: AuthStatus.LoggedOut };
-    if (Date.parse(session.expiresAt) <= Date.now()) {
-      // The server dropped this session already: nothing on the device is worth keeping.
-      await wipeDevice();
-      return { status: AuthStatus.LoggedOut, error: LOCK_MESSAGES.sessionExpired };
-    }
+    // Sessions never expire, on purpose (the stored `expiresAt` is ignored): the app must not sign
+    // its owner out by the clock. Only signing out, or signing in elsewhere, ends one.
     return { status: session.setupDone ? AuthStatus.Locked : AuthStatus.NeedsSetup };
   } catch (error) {
     return { status: AuthStatus.LoggedOut, error: errorMessage(error) };
