@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { CRUD_COPY } from "@/constants/vault-design.constants";
 import { ENTRY_LIMITS } from "@/constants/vault.constants";
 import { EntryKind } from "@/enums/vault.enum";
+import { useAutoGrow } from "@/hooks/use-auto-grow";
 import { useNoteEditor } from "@/hooks/use-note-editor";
 import { ROUTES, entryPath } from "@/routes/route-paths";
 import type { NoteEntry } from "@/types/vault.types";
@@ -19,6 +20,7 @@ export function NoteEditor({ entry }: { entry: NoteEntry | null }) {
   const navigate = useNavigate();
   const area = useRef<HTMLTextAreaElement>(null);
   const { id } = editor.save;
+  useAutoGrow(area, editor.body);
 
   return (
     <main className="flex flex-1 justify-center bg-background">
@@ -57,7 +59,8 @@ export function NoteEditor({ entry }: { entry: NoteEntry | null }) {
           placeholder={CRUD_COPY.noteBody}
           value={editor.body}
           maxLength={ENTRY_LIMITS.body}
-          className="flex-1 resize-none bg-transparent text-[0.9375rem] leading-[1.55] font-medium outline-none placeholder:text-subtle"
+          // Grows with the text (useAutoGrow) and fills the space when short: the page scrolls, never the box.
+          className="min-h-40 grow resize-none overflow-hidden bg-transparent text-[0.9375rem] leading-[1.55] font-medium outline-none placeholder:text-subtle"
           onChange={(event) => {
             editor.type(event.target.value);
           }}
