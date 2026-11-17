@@ -4,6 +4,7 @@ import { useAutoLock } from "@/hooks/use-auto-lock";
 import { UsageProvider } from "@/providers/usage.provider";
 import { SyncProvider } from "@/providers/sync.provider";
 import { ensureKeyCheckStored } from "@/services/key-check.service";
+import { keepStorage } from "@/utils/storage.utils";
 import { clearSearchHistory } from "@/services/search-history.service";
 import { VaultProvider } from "@/providers/vault.provider";
 
@@ -18,6 +19,7 @@ export function PrivateLayout() {
   // Older accounts: give the server the recovery-key check once. Quietly retried on the next unlock.
   useEffect(() => {
     ensureKeyCheckStored().catch(() => undefined);
+    void keepStorage();
   }, []);
   return (
     <VaultProvider>
