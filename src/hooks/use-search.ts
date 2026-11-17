@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { EntryKind } from "@/enums/vault.enum";
+import { useBack } from "@/hooks/use-back";
 import { useVault } from "@/hooks/use-vault";
 import { ROUTES, entryPath } from "@/routes/route-paths";
 import { recentSearches, rememberSearch } from "@/services/search-history.service";
@@ -13,6 +14,7 @@ import type { NoteEntry, PasswordEntry, VaultEntry } from "@/types/vault.types";
 export function useSearch() {
   const { entries } = useVault();
   const navigate = useNavigate();
+  const back = useBack();
   const [query, setQuery] = useState("");
   const [recent, setRecent] = useState<readonly string[]>(recentSearches);
 
@@ -48,9 +50,7 @@ export function useSearch() {
       );
     },
     done: () => {
-      // Opened directly (no earlier screen in this app): go home instead of leaving the app.
-      const index = (window.history.state as { idx?: number } | null)?.idx ?? 0;
-      void (index > 0 ? navigate(-1) : navigate(ROUTES.home, { replace: true }));
+      back(ROUTES.home);
     },
   };
 }

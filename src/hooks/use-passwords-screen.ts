@@ -61,6 +61,9 @@ export function usePasswordsScreen() {
     setQuery,
     filtering: query.trim() !== "",
     sorting,
+    leaveSort: () => {
+      void navigate(ROUTES.passwords, { replace: true });
+    },
     openSort: () => {
       void navigate(ROUTES.passwords, { replace: true, state: { sort: true } });
     },
