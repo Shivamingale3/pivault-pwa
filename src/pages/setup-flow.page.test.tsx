@@ -17,6 +17,7 @@ import { encryptJson, generateRecoveryKey, importRecoveryKey } from "@/services/
 import { loadVaultKey, saveVaultKey } from "@/services/key-store.service";
 import { clearUnlockedKey, isUnlocked } from "@/services/secure-memory.service";
 import { loadSession, saveSession } from "@/services/session.service";
+import * as keyCheck from "@/services/key-check.service";
 import * as syncApi from "@/services/sync.api";
 import type * as SyncModule from "@/services/vault-sync.service";
 import { startVaultSync } from "@/services/vault-sync.service";
@@ -292,6 +293,8 @@ describe("new phone: recover the vault", () => {
     hex = generateRecoveryKey();
     const key = await importRecoveryKey(hex);
     for (const title of ["Wifi", "Bank", "Mail"]) server.put(await sealed(key, title));
+    // The server holds the check made with the account's real key.
+    vi.spyOn(keyCheck, "fetchKeyCheck").mockResolvedValue(await keyCheck.makeKeyCheck(key));
     vi.spyOn(syncApi, "pullChanges").mockImplementation((checkpoint, limit) =>
       Promise.resolve(server.pull(checkpoint, limit)),
     );

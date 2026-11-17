@@ -13,7 +13,8 @@ import { LOCK_MESSAGES } from "@/constants/lock.constants";
 import { StorageErrorKind } from "@/enums/storage.enum";
 import { StorageError } from "@/services/storage.error";
 import { setUnlockedKey } from "@/services/secure-memory.service";
-import { loadSession, markSetupDone } from "@/services/session.service";
+import { fetchKeyCheck, makeKeyCheck, opensKeyCheck } from "@/services/key-check.service";
+import { loadSession, markKeyCheckStored, markSetupDone } from "@/services/session.service";
 
 /**
  * Saves the PIN and, when asked, enrolls biometric unlock. A biometric problem never blocks
@@ -48,16 +49,26 @@ async function adoptRecoveryKey(key: CryptoKey): Promise<void> {
  */
 export async function finishSetupWithNewKey(recoveryKey: string, signal?: AbortSignal) {
   const key = await importRecoveryKey(recoveryKey);
-  await markRecoveryKeyConfigured(signal);
+  await markRecoveryKeyConfigured(await makeKeyCheck(key), signal);
   await adoptRecoveryKey(key);
+  await markKeyCheckStored();
 }
 
+const mismatch = () =>
+  new CryptoError(CryptoErrorKind.InvalidRecoveryKey, SYNC_MESSAGES.keyMismatch);
+
 /**
- * A typed recovery key must open the vault that is already on the server: the first few entries
- * are pulled and at least one has to decrypt. An empty vault accepts any well-formed key. Needs a
- * connection; offline, the error says so and nothing is stored.
+ * A typed recovery key must be this account's key. The server holds a check made with the right
+ * key (see key-check.service): the typed key has to open it, even when the vault is still empty.
+ * Accounts from before the check existed fall back to the entries: at least one of the first few
+ * has to decrypt. Needs a connection; offline, the error says so and nothing is stored.
  */
 async function verifyAgainstServer(key: CryptoKey): Promise<void> {
+  const check = await fetchKeyCheck();
+  if (check) {
+    if (!(await opensKeyCheck(key, check))) throw mismatch();
+    return;
+  }
   const { documents } = await pullChanges(null, KEY_CHECK_SAMPLE);
   if (documents.length === 0) return;
   const opened = await Promise.all(
@@ -68,9 +79,7 @@ async function verifyAgainstServer(key: CryptoKey): Promise<void> {
       ),
     ),
   );
-  if (!opened.some(Boolean)) {
-    throw new CryptoError(CryptoErrorKind.InvalidRecoveryKey, SYNC_MESSAGES.keyMismatch);
-  }
+  if (!opened.some(Boolean)) throw mismatch();
 }
 
 /**

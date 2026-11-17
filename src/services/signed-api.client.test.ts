@@ -37,7 +37,12 @@ describe("postSigned", () => {
       Authorization: string;
       "X-Timestamp": string;
       "X-Signature": string;
+      "X-Body-SHA256": string;
     };
+    // SHA-256 of "{}", the exact body sent.
+    const bodyHash = headers["X-Body-SHA256"];
+    expect(bodyHash).toBe("RBNvo1WzZ4oRRq0W9-hknpT7T8If536DEMBg9hyq_4o");
+    expect(calledInit(spy, 1).body).toBe("{}");
     expect(headers.Authorization).toBe(`Bearer ${LOGIN_DATA.token}`);
     const timestamp = headers["X-Timestamp"];
     expect(Math.abs(Date.now() - Number(timestamp))).toBeLessThan(5_000);
@@ -46,7 +51,7 @@ describe("postSigned", () => {
     const signature = fromBase64Url(headers["X-Signature"]);
     expect(signature).toHaveLength(64);
     const payload = new TextEncoder().encode(
-      signaturePayload(timestamp, "POST", "/api/auth/logout"),
+      signaturePayload(timestamp, "POST", "/api/auth/logout", bodyHash),
     );
     const valid = await crypto.subtle.verify(
       { name: "ECDSA", hash: "SHA-256" },
@@ -55,10 +60,21 @@ describe("postSigned", () => {
       payload,
     );
     expect(valid).toBe(true);
-    const other = new TextEncoder().encode(signaturePayload(timestamp, "POST", "/api/auth/other"));
+    const verifies = (text: string) =>
+      crypto.subtle.verify(
+        { name: "ECDSA", hash: "SHA-256" },
+        pair!.publicKey,
+        signature,
+        new TextEncoder().encode(text),
+      );
+    // Not valid for another path, another body, or without the body.
     await expect(
-      crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, pair!.publicKey, signature, other),
+      verifies(signaturePayload(timestamp, "POST", "/api/auth/other", bodyHash)),
     ).resolves.toBe(false);
+    await expect(
+      verifies(signaturePayload(timestamp, "POST", "/api/auth/logout", "x".repeat(43))),
+    ).resolves.toBe(false);
+    await expect(verifies(`${timestamp}.POST./api/auth/logout`)).resolves.toBe(false);
   });
 
   it("fails with a 401 and sends nothing when there is no session on this device", async () => {
