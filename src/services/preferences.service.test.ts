@@ -16,9 +16,13 @@ describe("preferences", () => {
   it("starts with the defaults, saves a change and applies it at once", async () => {
     expect(await loadPreferences()).toEqual(DEFAULT_PREFERENCES);
     await savePreferences({ autoLockMs: 0 });
-    expect(currentPreferences()).toEqual({ autoLockMs: 0, clipboardClearMs: 30_000 });
+    expect(currentPreferences()).toEqual({ autoLockMs: 0, clipboardClearMs: 30_000, avatar: null });
     await savePreferences({ clipboardClearMs: null });
-    expect(await loadPreferences()).toEqual({ autoLockMs: 0, clipboardClearMs: null });
+    expect(await loadPreferences()).toEqual({
+      autoLockMs: 0,
+      clipboardClearMs: null,
+      avatar: null,
+    });
   });
 
   it("refuses a value that is not one of the choices", async () => {
