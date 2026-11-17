@@ -104,7 +104,8 @@ export function PasswordForm({ entry }: { entry: PasswordEntry | null }) {
         <DeleteEntryDialog
           entry={{ id, kind: EntryKind.Password, title: form.values.title }}
           onClose={form.close}
-          onBeforeDelete={form.save.stop}
+          onBeforeDelete={form.save.pause}
+          onDeleteFailed={form.save.resume}
           onDeleted={() => void navigate(ROUTES.passwords, { replace: true })}
         />
       )}

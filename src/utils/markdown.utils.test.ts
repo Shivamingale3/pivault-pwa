@@ -59,6 +59,12 @@ describe("markdown", () => {
     expect(toggleCheck(SOURCE, 0)).toBe(SOURCE);
   });
 
+  it("handles notes with Windows line endings", () => {
+    const windows = "- [ ] one\r\n- [x] two\r\n";
+    expect(parseMarkdown(windows).map((block) => block.type)).toEqual(["checklist"]);
+    expect(toggleCheck(windows, 0)).toBe("- [x] one\r\n- [x] two\r\n");
+  });
+
   it("counts words", () => {
     expect(wordCount("one two\n- three **four**")).toBe(4);
     expect(wordCount("")).toBe(0);

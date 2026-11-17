@@ -102,6 +102,45 @@ describe("password form", () => {
     expect(await screen.findByText("jane")).toBeInTheDocument();
   });
 
+  it("says so when there is nothing saveable, and settles again when a change is undone", async () => {
+    const entry = await addEntry({
+      kind: EntryKind.Password,
+      title: "Mail",
+      username: "",
+      password: fakeSecret(),
+      url: "",
+      notes: "",
+    });
+    renderUnlocked(entryPath.passwordEdit(entry.id));
+    const user = userEvent.setup();
+    const name = await screen.findByLabelText("NAME");
+    await chip("Saved just now");
+    await user.type(name, "x");
+    await user.type(name, "{Backspace}");
+    await chip("Saved just now");
+    await user.clear(name);
+    await chip("Not saved yet");
+  });
+
+  it("keeps a custom value typed without a label", async () => {
+    const entry = await addEntry({
+      kind: EntryKind.Password,
+      title: "Mail",
+      username: "",
+      password: fakeSecret(),
+      url: "",
+      notes: "",
+    });
+    renderUnlocked(entryPath.passwordEdit(entry.id));
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole("button", { name: "+ Add field" }));
+    await user.type(screen.getByLabelText("Field 1 value"), "blue");
+    await chip("Saved just now");
+    await user.click(screen.getByRole("link", { name: "Back" }));
+    expect(await screen.findByText("OTHER")).toBeInTheDocument();
+    expect(screen.getByText("blue")).toBeInTheDocument();
+  });
+
   it("rolls a password with the dice, and takes one from the generator sheet", async () => {
     renderUnlocked(ROUTES.passwordNew);
     const user = userEvent.setup();
@@ -179,6 +218,25 @@ describe("notes", () => {
     await userEvent.setup().click(first);
     await waitFor(() => {
       expect(screen.getAllByRole("checkbox")[0]).toHaveAttribute("aria-checked", "true");
+    });
+  });
+
+  it("keeps both ticks when two boxes are ticked at once", async () => {
+    const note = await addEntry({
+      kind: EntryKind.Note,
+      title: "List",
+      body: "- [ ] one\n- [ ] two",
+    });
+    renderUnlocked(entryPath.note(note.id));
+    const [first, second] = await screen.findAllByRole("checkbox");
+    if (!first || !second) throw new Error("expected two checkboxes");
+    // No waiting in between: the second tick must build on the first.
+    first.click();
+    second.click();
+    await waitFor(() => {
+      expect(
+        screen.getAllByRole("checkbox").map((box) => box.getAttribute("aria-checked")),
+      ).toEqual(["true", "true"]);
     });
   });
 

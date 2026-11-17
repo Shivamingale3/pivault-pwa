@@ -1,5 +1,4 @@
 import { Navigate } from "react-router";
-import { toast } from "sonner";
 import { ScreenHeader } from "@/components/modules/kit/screen-header";
 import { StatusChip } from "@/components/modules/kit/status-chip";
 import { DetailActions } from "@/components/modules/vault/detail-actions";
@@ -10,17 +9,16 @@ import { CRUD_COPY } from "@/constants/vault-design.constants";
 import { EntryKind } from "@/enums/vault.enum";
 import { useEntryDetail } from "@/hooks/use-entry-detail";
 import { useEntryRoute } from "@/hooks/use-entry-route";
-import { useVault } from "@/hooks/use-vault";
+import { useNoteChecklist } from "@/hooks/use-note-checklist";
 import { ROUTES, entryPath } from "@/routes/route-paths";
-import { errorMessage } from "@/utils/error-message.utils";
-import { toggleCheck, wordCount } from "@/utils/markdown.utils";
+import { wordCount } from "@/utils/markdown.utils";
 import { formatOpened } from "@/utils/time.utils";
 
 /** A note, rendered. Checkboxes can be ticked right here; the tick is saved like any other edit. */
 export function NoteReadPage() {
   const { entry, loading, missing } = useEntryRoute(EntryKind.Note);
   const detail = useEntryDetail(entry?.id, EntryKind.Note);
-  const { edit } = useVault();
+  const toggle = useNoteChecklist(entry);
   if (missing) return <Navigate to={ROUTES.notes} replace />;
 
   return (
@@ -43,16 +41,7 @@ export function NoteReadPage() {
                 {CRUD_COPY.updated(formatOpened(entry.updatedAt), wordCount(entry.body))}
               </p>
             </div>
-            <MarkdownView
-              source={entry.body}
-              onToggle={(line) => {
-                edit(entry.id, {
-                  kind: EntryKind.Note,
-                  title: entry.title,
-                  body: toggleCheck(entry.body, line),
-                }).catch((error: unknown) => toast.error(errorMessage(error)));
-              }}
-            />
+            <MarkdownView source={entry.body} onToggle={toggle} />
             <div className="mt-auto pt-2">
               <StatusChip wide>{CRUD_COPY.bodyEncrypted}</StatusChip>
             </div>

@@ -14,6 +14,9 @@ import { LOCK_MESSAGES } from "@/constants/lock.constants";
 import { AuthStatus } from "@/enums/auth.enum";
 import { errorMessage } from "@/utils/error-message.utils";
 
+/** The sign-out wipe in progress, if any. */
+let wiping: Promise<void> = Promise.resolve();
+
 /**
  * Signs in: makes a fresh device key pair (private key non-extractable), sends only the public
  * key with the credentials, and keeps the key pair and session on this device once the server
@@ -24,6 +27,8 @@ export async function login(
   password: string,
   signal?: AbortSignal,
 ): Promise<SessionRecord> {
+  // A sign out may still be wiping this device: let it finish, or it would delete the new session.
+  await wiping;
   const pair = await generateLoginKeyPair();
   const publicKey = await exportPublicKey(pair.publicKey);
   const data = await postJson(
@@ -65,15 +70,20 @@ export const markRecoveryKeyConfigured = async (signal?: AbortSignal): Promise<v
  * login here starts from scratch (and asks for the recovery key), so a shared device never leaks
  * one account's key to the next.
  */
-export async function signOut(): Promise<void> {
-  await postSigned("/auth/logout", {}, emptyResponseSchema).catch(() => undefined);
-  await wipeDevice();
+export function signOut(): Promise<void> {
+  const done = (async () => {
+    await postSigned("/auth/logout", {}, emptyResponseSchema).catch(() => undefined);
+    await wipeDevice();
+  })();
+  wiping = done.catch(() => undefined);
+  return done;
 }
 
 /** Removes the session, keys, PIN and every saved item from this device, and locks memory. */
 export async function wipeDevice(): Promise<void> {
   clearUnlockedKey();
-  await Promise.all([
+  // Every step is attempted even when one fails, so a single error can't leave the rest behind.
+  const results = await Promise.allSettled([
     clearSession(),
     clearLoginKeyPair(),
     clearVaultKey(),
@@ -82,6 +92,8 @@ export async function wipeDevice(): Promise<void> {
     clearSyncStats(),
     clearUsage(),
   ]);
+  const failure = results.find((result) => result.status === "rejected");
+  if (failure) throw failure.reason;
 }
 
 /** Where the app should start: logged out, set up, or locked. Never throws. */

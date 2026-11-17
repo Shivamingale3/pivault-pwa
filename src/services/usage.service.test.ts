@@ -29,6 +29,15 @@ describe("usage", () => {
     expect(usage[ids.at(-1) ?? ""]?.at).toBe(ids.length);
   });
 
+  it("keeps every touch made at once, and Clear wins over a touch made just before it", async () => {
+    const ids = [newId(), newId(), newId()];
+    await Promise.all(ids.map((id, index) => recordUse(id, EntryKind.Note, index + 1)));
+    expect(Object.keys(await loadUsage())).toHaveLength(3);
+    void recordUse(newId(), EntryKind.Note, 9);
+    await clearUsage();
+    expect(await loadUsage()).toEqual({});
+  });
+
   it("stores no titles or secrets, only ids, kinds and times", async () => {
     await recordUse(newId(), EntryKind.Password, 1);
     const raw = JSON.stringify(await loadUsage());

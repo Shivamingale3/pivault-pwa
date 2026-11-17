@@ -148,6 +148,18 @@ describe("signOut", () => {
     await expectWiped();
   });
 
+  it("a sign in started while the wipe is still running keeps its new session", async () => {
+    await setUp();
+    mockFetch(ok(LOGIN_DATA));
+    const leaving = signOut();
+    // Not waited for: the user is back on the login screen and signs in straight away.
+    const session = await login("jane@example.com", "pw");
+    await leaving;
+    await expect(loadSession()).resolves.toMatchObject({ token: session.token });
+    await expect(loadLoginKeyPair()).resolves.not.toBeNull();
+    await expect(hasPin()).resolves.toBe(false);
+  });
+
   it("still wipes the device when the server can't be reached", async () => {
     await setUp();
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new TypeError("offline"));

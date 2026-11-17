@@ -5,6 +5,8 @@ import { base64UrlToBytes, bytesToBase64Url } from "@/utils/bytes.utils";
 
 const CHALLENGE_BYTES = 32;
 const ENROLL_TIMEOUT_MS = 60_000;
+const FLAGS_OFFSET = 32;
+const USER_VERIFIED_FLAG = 0x04;
 /** ES256 and RS256, what platform authenticators offer. */
 const ALGORITHMS = [-7, -257] as const;
 
@@ -69,7 +71,11 @@ export async function verifyBiometric(credentialId: string): Promise<boolean> {
         timeout: ENROLL_TIMEOUT_MS,
       },
     });
-    return assertion instanceof PublicKeyCredential;
+    if (!(assertion instanceof PublicKeyCredential)) return false;
+    if (!(assertion.response instanceof AuthenticatorAssertionResponse)) return false;
+    // Byte 32 of the authenticator data holds the flags; the device must say it verified the user.
+    const flags = new Uint8Array(assertion.response.authenticatorData)[FLAGS_OFFSET] ?? 0;
+    return (flags & USER_VERIFIED_FLAG) !== 0;
   } catch {
     return false;
   }
