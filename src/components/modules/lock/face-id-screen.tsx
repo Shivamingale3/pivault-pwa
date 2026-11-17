@@ -1,4 +1,5 @@
-import { FrownIcon, ScanFaceIcon } from "lucide-react";
+import { FrownIcon } from "lucide-react";
+import { BiometricIcon } from "@/components/modules/kit/biometric-icon";
 import { PrimaryCta } from "@/components/modules/auth/primary-cta";
 import { AppLogo } from "@/components/modules/brand/app-logo";
 import { Button } from "@/components/ui/button";
@@ -7,7 +8,7 @@ import type { useUnlockFlow } from "@/hooks/use-unlock-flow";
 import { cn } from "@/lib/utils";
 
 /**
- * Face ID first. The big tile starts a scan (some browsers need a tap before they ask the device);
+ * Biometrics first (fingerprint or face, whatever the phone uses). The big tile starts a scan (some browsers need a tap before they ask the device);
  * after two misses it turns into the failure screen with a way to the PIN.
  */
 export function FaceIdScreen({ flow }: { flow: ReturnType<typeof useUnlockFlow> }) {
@@ -15,7 +16,6 @@ export function FaceIdScreen({ flow }: { flow: ReturnType<typeof useUnlockFlow> 
   return (
     <>
       <AppLogo className="size-13.5 rounded-2xl" />
-      <p className="text-eyebrow">{LOCK_COPY.faceEyebrow}</p>
       <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
         <button
           type="button"
@@ -29,7 +29,7 @@ export function FaceIdScreen({ flow }: { flow: ReturnType<typeof useUnlockFlow> 
             flow.scanning && "animate-pulse-soft",
           )}
         >
-          {failed ? <FrownIcon aria-hidden="true" /> : <ScanFaceIcon aria-hidden="true" />}
+          {failed ? <FrownIcon aria-hidden="true" /> : <BiometricIcon />}
         </button>
         <h1 className="text-[1.4375rem] font-extrabold tracking-tight">
           {failed ? LOCK_COPY.failedTitle : LOCK_COPY.faceTitle}
@@ -55,9 +55,6 @@ export function FaceIdScreen({ flow }: { flow: ReturnType<typeof useUnlockFlow> 
         </div>
       ) : (
         <div className="flex w-full flex-col items-center gap-3">
-          <p className="rounded-full bg-muted px-3.5 py-2 text-[0.71875rem] font-semibold text-muted-foreground">
-            {LOCK_COPY.faceChip(flow.email)}
-          </p>
           <Button type="button" variant="link" size="sm" onClick={flow.usePin}>
             {LOCK_COPY.enterPin}
           </Button>

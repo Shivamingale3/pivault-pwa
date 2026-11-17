@@ -1,4 +1,5 @@
-import { DeleteIcon, ScanFaceIcon } from "lucide-react";
+import { DeleteIcon } from "lucide-react";
+import { BiometricIcon } from "@/components/modules/kit/biometric-icon";
 import { cn } from "@/lib/utils";
 
 const DIGITS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"] as const;
@@ -6,7 +7,7 @@ const DIGITS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"] as const;
 interface KeypadProps {
   onDigit: (digit: string) => void;
   onBackspace: () => void;
-  /** Shows the Face ID key in the bottom-left cell (unlock only). */
+  /** Shows the biometric key in the bottom-left cell (unlock only). */
   onBiometric?: () => void;
   /** The biometric glyph pulses while a scan is running. */
   scanning?: boolean;
@@ -50,11 +51,11 @@ export function Keypad({ onDigit, onBackspace, onBiometric, scanning, disabled }
           <button
             type="button"
             className={cn(KEY, scanning && "animate-pulse-soft")}
-            aria-label="Unlock with Face ID"
+            aria-label="Unlock with biometrics"
             onClick={onBiometric}
             {...lock}
           >
-            <ScanFaceIcon />
+            <BiometricIcon />
           </button>
         ) : (
           <span aria-hidden="true" className={cn(KEY, "block")} />
