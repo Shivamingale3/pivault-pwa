@@ -25,6 +25,9 @@ export const VAULT_MESSAGES = {
 } as const;
 
 export const CLIPBOARD_MESSAGES = {
-  copied: (label: string) => `${label} copied. It clears from the clipboard in 30 seconds.`,
+  copied: (label: string, clearAfterMs: number | null = 30_000) =>
+    clearAfterMs === null
+      ? `${label} copied.`
+      : `${label} copied. It clears from the clipboard in ${String(clearAfterMs / 1000)} seconds.`,
   failed: "Couldn't copy. Select it and copy by hand.",
 } as const;

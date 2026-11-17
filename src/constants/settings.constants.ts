@@ -5,6 +5,18 @@ export const SETTINGS_COPY = {
   groupAccount: "ACCOUNT",
   lockNow: "Lock now",
   lockMeta: "Asks for your PIN to open again",
+  groupSecurity: "SECURITY",
+  groupApp: "APP",
+  changePassword: "Change password",
+  changePasswordMeta: "Signs you out on other devices",
+  changePin: "Change PIN",
+  changePinMeta: "Six digits",
+  security: "Security",
+  securityMeta: "Face ID, auto-lock, clipboard",
+  serverMeta: "Set by your build",
+  about: "About",
+  aboutMeta: "What runs where",
+  member: "MEMBER",
   groupServer: "SERVER",
   syncRow: "Sync",
   signOut: "Sign out",
@@ -50,3 +62,63 @@ export const SIGN_OUT_COPY = {
 /** "1 item", "42 items". */
 export const countLabel = (count: number, one: string, many: string): string =>
   `${String(count)} ${count === 1 ? one : many}`;
+
+export const SECURITY_COPY = {
+  title: "Security",
+  faceId: "Unlock with Face ID",
+  faceIdMeta: "PIN still works as the fallback",
+  faceIdUnavailable: "This device can't use biometric unlock",
+  lockAfter: "LOCK THE APP AFTER",
+  clipboardAfter: "CLEAR CLIPBOARD AFTER",
+  changePin: "Change PIN",
+  saveFailed: "Couldn't save that setting. Try again.",
+} as const;
+
+export const LOCK_CHOICE_LABELS: Record<number, string> = {
+  0: "Instantly",
+  60000: "1 min",
+  300000: "5 min",
+  900000: "15 min",
+};
+
+/** `null` (never) is keyed as "never" because a chip needs a text value. */
+export const CLIPBOARD_CHOICE_LABELS: Record<string, string> = {
+  15000: "15 s",
+  30000: "30 s",
+  60000: "60 s",
+  never: "Never",
+};
+
+export const CHANGE_PASSWORD_COPY = {
+  title: "Change password",
+  intro: "This is your identity on the Pi. Changing it signs you out everywhere else.",
+  current: "CURRENT PASSWORD",
+  next: "NEW PASSWORD",
+  confirm: "CONFIRM NEW PASSWORD",
+  confirmPlaceholder: "Type it again",
+  chip: "Your admin can reset this if you lose it",
+  cta: "Save new password",
+  busy: "Saving",
+  done: "Password changed.",
+} as const;
+
+export const CHANGE_PIN_COPY = {
+  title: "Change PIN",
+  eyebrow: (step: number) => `STEP ${String(step)} OF 3`,
+  currentTitle: "Current PIN",
+  currentBody: "Enter the PIN you use now.",
+  done: "PIN changed.",
+} as const;
+
+export const ABOUT_COPY = {
+  title: "About",
+  server: "Server",
+  account: "Account",
+  encryption: "Vault encryption",
+  encryptionValue: "AES-256-GCM",
+  backup: "Backup",
+  backupValue: "Postgres",
+  api: "API",
+  apiValue: "Node · Express",
+  footer: "Accounts are created by your administrator. There is no public sign-up.",
+} as const;

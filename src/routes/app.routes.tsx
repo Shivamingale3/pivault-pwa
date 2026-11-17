@@ -13,6 +13,10 @@ import { SearchPage } from "@/pages/search.page";
 import { LockPage } from "@/pages/lock.page";
 import { LoginPage } from "@/pages/login.page";
 import { SettingsPage } from "@/pages/settings.page";
+import { SettingsAboutPage } from "@/pages/settings-about.page";
+import { SettingsPasswordPage } from "@/pages/settings-password.page";
+import { SettingsPinPage } from "@/pages/settings-pin.page";
+import { SettingsSecurityPage } from "@/pages/settings-security.page";
 import { SettingsSyncPage } from "@/pages/settings-sync.page";
 import { ResetPasswordPage } from "@/pages/reset-password.page";
 import { SetupEntryPage } from "@/pages/setup-entry.page";
@@ -71,6 +75,10 @@ export function AppRoutes() {
           <Route path={ROUTES.search} element={<SearchPage />} />
           <Route path={ROUTES.settings} element={<SettingsPage />} />
           <Route path={ROUTES.settingsSync} element={<SettingsSyncPage />} />
+          <Route path={ROUTES.settingsSecurity} element={<SettingsSecurityPage />} />
+          <Route path={ROUTES.settingsPassword} element={<SettingsPasswordPage />} />
+          <Route path={ROUTES.settingsPin} element={<SettingsPinPage />} />
+          <Route path={ROUTES.settingsAbout} element={<SettingsAboutPage />} />
         </Route>
       </Route>
 

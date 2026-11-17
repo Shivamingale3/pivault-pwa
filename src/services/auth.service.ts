@@ -5,6 +5,7 @@ import type { SessionRecord } from "@/schemas/session.schema";
 import { keepStorage } from "@/utils/storage.utils";
 import { postJson } from "@/services/api.client";
 import { exportPublicKey, generateLoginKeyPair } from "@/services/crypto.service";
+import { clearPreferences } from "@/services/preferences.service";
 import { clearUsage } from "@/services/usage.service";
 import { clearSyncStats } from "@/services/sync-stats.service";
 import { clearAppLock } from "@/services/app-lock.service";
@@ -80,6 +81,20 @@ export const markRecoveryKeyConfigured = async (
 };
 
 /**
+ * Changes the account password after the server checks the current one. This device stays signed
+ * in. A wrong current password comes back as a plain error with the server's message.
+ */
+export const changePassword = async (
+  currentPassword: string,
+  newPassword: string,
+  signal?: AbortSignal,
+): Promise<void> => {
+  await postSigned("/auth/change-password", { currentPassword, newPassword }, emptyResponseSchema, {
+    signal,
+  });
+};
+
+/**
  * Signs out. The server session is ended first on a best-effort basis (sign out must work
  * offline), then EVERYTHING on this device goes: session, device key, vault key, PIN and every saved item. The next
  * login here starts from scratch (and asks for the recovery key), so a shared device never leaks
@@ -106,6 +121,7 @@ export async function wipeDevice(): Promise<void> {
     removeVaultDb(),
     clearSyncStats(),
     clearUsage(),
+    clearPreferences(),
   ]);
   const failure = results.find((result) => result.status === "rejected");
   if (failure) throw failure.reason;

@@ -1,4 +1,13 @@
-import { LockIcon, LogOutIcon, RefreshCwIcon } from "lucide-react";
+import {
+  GripIcon,
+  InfoIcon,
+  KeyRoundIcon,
+  LockIcon,
+  LogOutIcon,
+  RefreshCwIcon,
+  ServerIcon,
+  ShieldCheckIcon,
+} from "lucide-react";
 import { useState } from "react";
 import { ProfileCard } from "@/components/modules/settings/profile-card";
 import { SettingsGroup } from "@/components/modules/settings/settings-group";
@@ -36,6 +45,26 @@ export function SettingsPage() {
       <ProfileCard session={session} />
       <SettingsGroup label={SETTINGS_COPY.groupAccount}>
         <SettingsRow
+          title={SETTINGS_COPY.changePassword}
+          meta={SETTINGS_COPY.changePasswordMeta}
+          icon={<KeyRoundIcon aria-hidden="true" />}
+          to={ROUTES.settingsPassword}
+        />
+        <SettingsRow
+          title={SETTINGS_COPY.changePin}
+          meta={SETTINGS_COPY.changePinMeta}
+          icon={<GripIcon aria-hidden="true" />}
+          to={ROUTES.settingsPin}
+        />
+      </SettingsGroup>
+      <SettingsGroup label={SETTINGS_COPY.groupSecurity}>
+        <SettingsRow
+          title={SETTINGS_COPY.security}
+          meta={SETTINGS_COPY.securityMeta}
+          icon={<ShieldCheckIcon aria-hidden="true" />}
+          to={ROUTES.settingsSecurity}
+        />
+        <SettingsRow
           title={SETTINGS_COPY.lockNow}
           meta={SETTINGS_COPY.lockMeta}
           icon={<LockIcon aria-hidden="true" />}
@@ -43,6 +72,13 @@ export function SettingsPage() {
         />
       </SettingsGroup>
       <SettingsGroup label={SETTINGS_COPY.groupServer}>
+        <div className="flex min-h-16.5 items-center gap-3.5 px-4 py-3 [&_svg]:size-4 [&_svg]:shrink-0">
+          <ServerIcon aria-hidden="true" />
+          <div className="flex min-w-0 flex-col gap-0.5">
+            <p className="truncate text-[0.90625rem] font-bold tracking-tight">{host}</p>
+            <p className="text-xs font-medium text-muted-foreground">{SETTINGS_COPY.serverMeta}</p>
+          </div>
+        </div>
         <SettingsRow
           title={SETTINGS_COPY.syncRow}
           meta={
@@ -50,6 +86,14 @@ export function SettingsPage() {
           }
           icon={<RefreshCwIcon aria-hidden="true" />}
           to={ROUTES.settingsSync}
+        />
+      </SettingsGroup>
+      <SettingsGroup label={SETTINGS_COPY.groupApp}>
+        <SettingsRow
+          title={SETTINGS_COPY.about}
+          meta={SETTINGS_COPY.aboutMeta}
+          icon={<InfoIcon aria-hidden="true" />}
+          to={ROUTES.settingsAbout}
         />
       </SettingsGroup>
       <SettingsGroup>

@@ -4,6 +4,7 @@ import { useAutoLock } from "@/hooks/use-auto-lock";
 import { UsageProvider } from "@/providers/usage.provider";
 import { SyncProvider } from "@/providers/sync.provider";
 import { ensureKeyCheckStored } from "@/services/key-check.service";
+import { loadPreferences } from "@/services/preferences.service";
 import { keepStorage } from "@/utils/storage.utils";
 import { clearSearchHistory } from "@/services/search-history.service";
 import { VaultProvider } from "@/providers/vault.provider";
@@ -20,6 +21,7 @@ export function PrivateLayout() {
   useEffect(() => {
     ensureKeyCheckStored().catch(() => undefined);
     void keepStorage();
+    void loadPreferences();
   }, []);
   return (
     <VaultProvider>
