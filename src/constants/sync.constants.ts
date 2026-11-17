@@ -20,7 +20,7 @@ export const SYNC_RETRY_MS = 5_000;
 export const KEY_CHECK_SAMPLE = 5;
 
 export const SYNC_MESSAGES = {
-  ended: "Your session ended, probably because you signed in on another device.",
-  keyMismatch: "That key does not match any vault on this server.",
+  ended: "You signed in on another device, so this phone no longer syncs.",
+  keyMismatch: "That key doesn't match your vault.",
   tooLarge: "This item is too large to sync. Shorten it and try again.",
 } as const;

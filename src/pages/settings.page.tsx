@@ -5,7 +5,6 @@ import {
   LockIcon,
   LogOutIcon,
   RefreshCwIcon,
-  ServerIcon,
   ShieldCheckIcon,
 } from "lucide-react";
 import { useState } from "react";
@@ -15,7 +14,8 @@ import { SettingsHeader } from "@/components/modules/settings/settings-header";
 import { SettingsLayout } from "@/components/modules/settings/settings-layout";
 import { SettingsRow } from "@/components/modules/settings/settings-row";
 import { SignOutDialog } from "@/components/modules/settings/sign-out-dialog";
-import { SETTINGS_COPY, SYNC_COPY } from "@/constants/settings.constants";
+import { APP_VERSION } from "@/constants/app-version.constants";
+import { ABOUT_COPY, SETTINGS_COPY, SYNC_COPY } from "@/constants/settings.constants";
 import { useAuth } from "@/hooks/use-auth";
 import { useSession } from "@/hooks/use-session";
 import { useSync } from "@/hooks/use-sync";
@@ -36,7 +36,6 @@ export function SettingsPage() {
   const session = useSession();
   const { status, stats } = useSync();
   const [confirming, setConfirming] = useState(false);
-  const host = window.location.host;
   const last = stats.lastSyncedAt;
 
   return (
@@ -46,7 +45,6 @@ export function SettingsPage() {
       <SettingsGroup label={SETTINGS_COPY.groupAccount}>
         <SettingsRow
           title={SETTINGS_COPY.changePassword}
-          meta={SETTINGS_COPY.changePasswordMeta}
           icon={<KeyRoundIcon aria-hidden="true" />}
           to={ROUTES.settingsPassword}
         />
@@ -71,14 +69,7 @@ export function SettingsPage() {
           onClick={lock}
         />
       </SettingsGroup>
-      <SettingsGroup label={SETTINGS_COPY.groupServer}>
-        <div className="flex min-h-16.5 items-center gap-3.5 px-4 py-3 [&_svg]:size-4 [&_svg]:shrink-0">
-          <ServerIcon aria-hidden="true" />
-          <div className="flex min-w-0 flex-col gap-0.5">
-            <p className="truncate text-[0.90625rem] font-bold tracking-tight">{host}</p>
-            <p className="text-xs font-medium text-muted-foreground">{SETTINGS_COPY.serverMeta}</p>
-          </div>
-        </div>
+      <SettingsGroup label={SETTINGS_COPY.groupSync}>
         <SettingsRow
           title={SETTINGS_COPY.syncRow}
           meta={
@@ -91,7 +82,7 @@ export function SettingsPage() {
       <SettingsGroup label={SETTINGS_COPY.groupApp}>
         <SettingsRow
           title={SETTINGS_COPY.about}
-          meta={SETTINGS_COPY.aboutMeta}
+          meta={`${ABOUT_COPY.version} ${APP_VERSION}`}
           icon={<InfoIcon aria-hidden="true" />}
           to={ROUTES.settingsAbout}
         />
@@ -107,11 +98,10 @@ export function SettingsPage() {
         />
       </SettingsGroup>
       <p className="mt-auto text-center text-[0.71875rem] font-medium text-muted-foreground">
-        {SETTINGS_COPY.footer(host)}
+        {SETTINGS_COPY.footer(APP_VERSION)}
       </p>
       {confirming && (
         <SignOutDialog
-          host={host}
           mayLoseChanges={status !== "synced"}
           onClose={() => {
             setConfirming(false);

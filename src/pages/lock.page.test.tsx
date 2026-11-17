@@ -176,7 +176,23 @@ describe("PIN unlock", () => {
   });
 });
 
-describe("Face ID first", () => {
+describe("signed in on another device", () => {
+  it("says so on the lock screen, and still opens the vault", async () => {
+    await saveSession({ ...SESSION, endedElsewhere: true });
+    open();
+    expect(await screen.findByText(/You signed in on another device/)).toBeInTheDocument();
+    await press(userEvent.setup(), PIN);
+    expect(await heading("Hello, Jane")).toBeInTheDocument();
+  });
+
+  it("says nothing about the session otherwise", async () => {
+    open();
+    await heading("Welcome back, Jane");
+    expect(screen.queryByText(/another device|session/i)).toBeNull();
+  });
+});
+
+describe("biometrics first", () => {
   beforeEach(async () => {
     await setBiometric("cred-1");
     vi.stubGlobal("PublicKeyCredential", {
@@ -192,34 +208,33 @@ describe("Face ID first", () => {
     expect(await heading("Hello, Jane")).toBeInTheDocument();
   });
 
-  it("shows the invitation and the session chip while it waits for a tap", async () => {
+  it("shows the invitation while it waits for a tap, with no technical lines", async () => {
     vi.spyOn(biometric, "verifyBiometric").mockResolvedValue(false);
     open();
-    expect(await heading("Look at your phone")).toBeInTheDocument();
-    expect(screen.getByText("PIVAULT IS LOCKED")).toBeInTheDocument();
+    expect(await heading("Unlock PiVault")).toBeInTheDocument();
     expect(screen.getByText(LOCK_COPY.faceBody)).toBeInTheDocument();
-    expect(screen.getByText("jane@example.com · session still valid")).toBeInTheDocument();
+    expect(screen.queryByText(/session/i)).toBeNull();
   });
 
   it("shows the failure screen after two misses, and hands over to the PIN after three", async () => {
     const verify = vi.spyOn(biometric, "verifyBiometric").mockResolvedValue(false);
     open();
     const user = userEvent.setup();
-    await heading("Look at your phone");
+    await heading("Unlock PiVault");
     await waitFor(() => {
       expect(verify).toHaveBeenCalledTimes(1);
     });
-    await user.click(await screen.findByRole("button", { name: "Look at your phone" }));
+    await user.click(await screen.findByRole("button", { name: "Unlock PiVault" }));
 
-    expect(await heading("Face not recognised")).toBeInTheDocument();
+    expect(await heading("Not recognised")).toBeInTheDocument();
     expect(
-      screen.getByText(/Two tries used\. One more and PiVault will ask for your six-digit PIN/),
+      screen.getByText(/Two tries used\. One more and PiVault will ask for your PIN/),
     ).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Try Face ID again" }));
+    await user.click(screen.getByRole("button", { name: "Try again" }));
     expect(await heading("Welcome back, Jane")).toBeInTheDocument();
     expect(verify).toHaveBeenCalledTimes(3);
-    expect(screen.getByRole("button", { name: "Unlock with Face ID" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Unlock with biometrics" })).toBeInTheDocument();
   });
 
   it("lets the user choose the PIN at any time", async () => {
@@ -239,7 +254,7 @@ describe("Face ID first", () => {
     const verify = vi.spyOn(biometric, "verifyBiometric");
     open();
     expect(await heading("Welcome back, Jane")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Unlock with Face ID" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Unlock with biometrics" })).toBeNull();
     expect(verify).not.toHaveBeenCalled();
   });
 });

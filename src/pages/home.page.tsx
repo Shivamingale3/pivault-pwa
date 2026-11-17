@@ -3,7 +3,6 @@ import { CategoryCard } from "@/components/modules/vault/category-card";
 import { HomeHeader } from "@/components/modules/vault/home-header";
 import { RecentsSection } from "@/components/modules/vault/recents-section";
 import { SearchPill } from "@/components/modules/vault/search-pill";
-import { StorageCard } from "@/components/modules/vault/storage-card";
 import { HOME_COPY } from "@/constants/vault-design.constants";
 import { countLabel } from "@/constants/settings.constants";
 import { useDashboard } from "@/hooks/use-dashboard";
@@ -14,7 +13,7 @@ export function HomePage() {
   const dashboard = useDashboard();
 
   return (
-    <main className="flex flex-1 justify-center bg-canvas">
+    <main className="flex min-h-full w-full justify-center bg-canvas">
       <div className="flex w-full max-w-md flex-col gap-5 px-5.5 pt-[max(--spacing(9.5),env(safe-area-inset-top))] pb-6">
         <HomeHeader firstName={dashboard.firstName} name={dashboard.name} />
         <SearchPill />
@@ -31,7 +30,6 @@ export function HomePage() {
             title={HOME_COPY.notes}
             count={countLabel(dashboard.notes, "note", "notes")}
           />
-          <StorageCard estimate={dashboard.storage} />
         </div>
         <RecentsSection
           items={dashboard.recents}

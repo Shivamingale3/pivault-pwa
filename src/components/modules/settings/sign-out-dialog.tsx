@@ -1,4 +1,4 @@
-import { CheckIcon, LogOutIcon, XIcon } from "lucide-react";
+import { LogOutIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,16 +13,13 @@ import { SIGN_OUT_COPY } from "@/constants/settings.constants";
 import { useAuth } from "@/hooks/use-auth";
 
 interface SignOutDialogProps {
-  host: string;
   /** Changes that haven't reached the server would be lost: adds a line saying so. */
   mayLoseChanges: boolean;
   onClose: () => void;
 }
 
-const ROW = "flex items-center gap-3 px-3.5 py-3 text-[0.8125rem] font-semibold [&_svg]:size-3";
-
 /** What signing out removes from this phone, and what stays on the server. */
-export function SignOutDialog({ host, mayLoseChanges, onClose }: SignOutDialogProps) {
+export function SignOutDialog({ mayLoseChanges, onClose }: SignOutDialogProps) {
   const { signOut } = useAuth();
 
   return (
@@ -41,22 +38,8 @@ export function SignOutDialog({ host, mayLoseChanges, onClose }: SignOutDialogPr
             <LogOutIcon />
           </span>
           <DialogTitle>{SIGN_OUT_COPY.title}</DialogTitle>
-          <DialogDescription>{SIGN_OUT_COPY.body(host)}</DialogDescription>
+          <DialogDescription>{SIGN_OUT_COPY.body}</DialogDescription>
         </DialogHeader>
-        <ul className="divide-y divide-border rounded-lg bg-muted">
-          <li className={ROW}>
-            <XIcon aria-hidden="true" />
-            {SIGN_OUT_COPY.tokenCleared}
-          </li>
-          <li className={ROW}>
-            <XIcon aria-hidden="true" />
-            {SIGN_OUT_COPY.pinRemoved}
-          </li>
-          <li className={ROW}>
-            <CheckIcon aria-hidden="true" />
-            {SIGN_OUT_COPY.vaultUntouched(host)}
-          </li>
-        </ul>
         <p className="rounded-md bg-destructive-surface px-3.5 py-3 text-xs font-semibold text-destructive-foreground">
           {SIGN_OUT_COPY.warning}
           {mayLoseChanges && ` ${SIGN_OUT_COPY.unsynced}`}

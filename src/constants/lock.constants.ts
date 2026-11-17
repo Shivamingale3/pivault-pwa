@@ -10,15 +10,15 @@ export const LOCK_COPY = {
   showPin: "Show PIN",
   hidePin: "Hide PIN",
   forgot: "Forgot PIN?",
-  scanning: "Looking for your face…",
+  scanning: "Waiting for your phone…",
   unlocked: "Unlocked",
-  faceEyebrow: "PIVAULT IS LOCKED",
-  faceTitle: "Look at your phone",
-  faceBody: "Face ID unlocks the vault. The PIN is there if Face ID cannot see you.",
-  faceChip: (email: string): string => `${email} · session still valid`,
-  failedTitle: "Face not recognised",
-  failedBody: "Two tries used. One more and PiVault will ask for your six-digit PIN instead.",
-  tryFaceAgain: "Try Face ID again",
+  faceTitle: "Unlock PiVault",
+  faceBody: "Use your fingerprint or face, whichever your phone uses. Your PIN works too.",
+  endedElsewhere:
+    "You signed in on another device. This phone no longer syncs, so copy anything you need before signing out.",
+  failedTitle: "Not recognised",
+  failedBody: "Two tries used. One more and PiVault will ask for your PIN instead.",
+  tryFaceAgain: "Try again",
   enterPin: "Enter PIN instead",
   lockoutTitle: "PIN entry paused",
   lockoutBody:
@@ -29,9 +29,9 @@ export const LOCK_COPY = {
   forgotBody: "Resetting a PIN needs your password. You'll sign in again and set a new PIN.",
 } as const;
 
-/** Face ID failures before the PIN screen takes over. */
+/** Biometric failures before the PIN screen takes over. */
 export const FACE_TRIES = 3;
-/** Failures after which the "Face not recognised" screen shows. */
+/** Failures after which the "Not recognised" screen shows. */
 export const FACE_FAILED_SCREEN_AT = 2;
 
 export const LOCK_MESSAGES = {

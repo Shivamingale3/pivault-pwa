@@ -16,7 +16,7 @@ const HEADINGS = {
   3: { title: SETUP_COPY.step2Title, body: SETUP_COPY.step2Body },
 } as const;
 
-/** Change PIN: three-segment progress, six masked cells, the keypad (no Face ID key). */
+/** Change PIN: three-segment progress, six masked cells, the keypad (no biometric key). */
 export function SettingsPinPage() {
   const flow = useChangePinFlow();
   const heading = HEADINGS[flow.step];

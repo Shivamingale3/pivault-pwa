@@ -78,9 +78,7 @@ describe("sign in screen", () => {
     expect(await heading("PiVault")).toBeInTheDocument();
     expect(screen.getByText("Self-hosted on your Pi")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Sign in" })).toBeInTheDocument();
-    expect(
-      screen.getByText(/Your vault lives encrypted on this phone and works offline/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Sign in to open your passwords and notes/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Forgot password?" })).toHaveAttribute(
       "href",
       ROUTES.forgotPassword,
@@ -244,9 +242,9 @@ describe("reset password screen", () => {
   it("explains itself, has a back button and the reassurance", async () => {
     open(ROUTES.forgotPassword);
     expect(await heading("Reset password")).toBeInTheDocument();
-    expect(screen.getByText(/We'll mail a link to the address on it/)).toBeInTheDocument();
+    expect(screen.getByText(/We'll email you a link to reset it/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Back" })).toHaveAttribute("href", ROUTES.login);
-    expect(screen.getByText(/Resetting your password does not touch it/)).toBeInTheDocument();
+    expect(screen.getByText(/Resetting your password doesn't touch them/)).toBeInTheDocument();
   });
 
   it("sends the link and confirms where it went", async () => {

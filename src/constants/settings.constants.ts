@@ -7,20 +7,16 @@ export const SETTINGS_COPY = {
   lockMeta: "Asks for your PIN to open again",
   groupSecurity: "SECURITY",
   groupApp: "APP",
+  groupSync: "SYNC",
   changePassword: "Change password",
-  changePasswordMeta: "Signs you out on other devices",
   changePin: "Change PIN",
   changePinMeta: "Six digits",
   security: "Security",
-  securityMeta: "Face ID, auto-lock, clipboard",
-  serverMeta: "Set by your build",
+  securityMeta: "Biometrics, auto-lock, clipboard",
   about: "About",
-  aboutMeta: "What runs where",
-  member: "MEMBER",
-  groupServer: "SERVER",
   syncRow: "Sync",
   signOut: "Sign out",
-  footer: (host: string) => `PiVault · ${host} · users are added by your admin`,
+  footer: (version: string) => `PiVault ${version}`,
 } as const;
 
 export const SYNC_COPY = {
@@ -28,7 +24,7 @@ export const SYNC_COPY = {
   syncing: "Syncing",
   offline: "Offline",
   problem: "Sync problem",
-  ended: "Session ended",
+  ended: "Signed in elsewhere",
   never: "Not yet",
   syncNow: "Sync now",
   busy: "Syncing",
@@ -48,13 +44,9 @@ export const SYNC_COPY = {
 
 export const SIGN_OUT_COPY = {
   title: "Sign out?",
-  body: (host: string) =>
-    `Your vault is stored on this phone, so signing out removes it from here. The encrypted backup on ${host} is untouched.`,
-  tokenCleared: "Session token cleared",
-  pinRemoved: "PIN removed from this phone",
-  vaultUntouched: (host: string) => `Vault untouched on ${host}`,
-  warning: "You will need your password to sign in again, then a new PIN.",
-  unsynced: "Changes that haven't synced yet will be lost.",
+  body: "Your passwords and notes are removed from this phone. Synced items come back when you sign in again.",
+  warning: "You'll need your password and recovery key to sign in again.",
+  unsynced: "Items that haven't synced yet will be lost.",
   cancel: "Cancel",
   confirm: "Sign out",
 } as const;
@@ -65,7 +57,7 @@ export const countLabel = (count: number, one: string, many: string): string =>
 
 export const SECURITY_COPY = {
   title: "Security",
-  faceId: "Unlock with Face ID",
+  faceId: "Unlock with biometrics",
   faceIdMeta: "PIN still works as the fallback",
   faceIdUnavailable: "This device can't use biometric unlock",
   lockAfter: "LOCK THE APP AFTER",
@@ -91,12 +83,11 @@ export const CLIPBOARD_CHOICE_LABELS: Record<string, string> = {
 
 export const CHANGE_PASSWORD_COPY = {
   title: "Change password",
-  intro: "This is your identity on the Pi. Changing it signs you out everywhere else.",
+  intro: "You'll use the new password the next time you sign in.",
   current: "CURRENT PASSWORD",
   next: "NEW PASSWORD",
   confirm: "CONFIRM NEW PASSWORD",
   confirmPlaceholder: "Type it again",
-  chip: "Your admin can reset this if you lose it",
   cta: "Save new password",
   busy: "Saving",
   done: "Password changed.",
@@ -112,13 +103,12 @@ export const CHANGE_PIN_COPY = {
 
 export const ABOUT_COPY = {
   title: "About",
-  server: "Server",
+  version: "Version",
+  built: "Built",
   account: "Account",
-  encryption: "Vault encryption",
-  encryptionValue: "AES-256-GCM",
-  backup: "Backup",
-  backupValue: "Postgres",
-  api: "API",
-  apiValue: "Node · Express",
-  footer: "Accounts are created by your administrator. There is no public sign-up.",
+  checkUpdate: "Check for updates",
+  checking: "Checking",
+  upToDate: "You have the latest version.",
+  updating: "Updating to the latest version…",
+  offline: "You're offline. Try again when you're connected.",
 } as const;

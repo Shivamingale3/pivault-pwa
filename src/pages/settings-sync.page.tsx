@@ -37,7 +37,7 @@ export function SettingsSyncPage() {
         parent={SETTINGS_COPY.title}
         backTo={ROUTES.settings}
       />
-      <SyncStatusCard host={window.location.host} busy={busy} onSync={() => void handleSync()} />
+      <SyncStatusCard busy={busy} onSync={() => void handleSync()} />
       <KeyValueCard
         label={SYNC_COPY.whatSynced}
         rows={[

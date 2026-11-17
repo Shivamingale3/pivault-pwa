@@ -16,14 +16,13 @@ const STATUS_TEXT: Record<SyncStatus, string> = {
 };
 
 interface SyncStatusCardProps {
-  host: string;
   /** True while a manual sync is running. */
   busy: boolean;
   onSync: () => void;
 }
 
 /** Status dot and word, how long ago it last finished, when and where, and the Sync now action. */
-export function SyncStatusCard({ host, busy, onSync }: SyncStatusCardProps) {
+export function SyncStatusCard({ busy, onSync }: SyncStatusCardProps) {
   const { status, error, stats } = useSync();
   const last = stats.lastSyncedAt;
   const failed = status === "error" || status === "ended";
@@ -43,9 +42,9 @@ export function SyncStatusCard({ host, busy, onSync }: SyncStatusCardProps) {
         <p className="text-[1.4375rem] leading-tight font-extrabold tracking-tight">
           {last === null ? SYNC_COPY.never : formatRelative(last)}
         </p>
-        <p className="text-[0.78125rem] font-medium text-muted-foreground">
-          {last === null ? host : `${formatWhen(last)} · ${host}`}
-        </p>
+        {last !== null && (
+          <p className="text-[0.78125rem] font-medium text-muted-foreground">{formatWhen(last)}</p>
+        )}
       </div>
       <FormErrorBanner message={failed ? error : null} />
       <PrimaryCta

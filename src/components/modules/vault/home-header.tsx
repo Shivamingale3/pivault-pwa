@@ -3,12 +3,11 @@ import { UserAvatar } from "@/components/modules/kit/user-avatar";
 import { HOME_COPY } from "@/constants/vault-design.constants";
 import { ROUTES } from "@/routes/route-paths";
 
-/** "VAULT UNLOCKED", Hello, {name}, and the user's avatar, which opens Settings. */
+/** Hello, {name}, and the user's avatar, which opens Settings. */
 export function HomeHeader({ firstName, name }: { firstName: string; name: string }) {
   return (
     <header className="flex animate-rise items-start justify-between gap-3">
       <div className="flex min-w-0 flex-col gap-1.5">
-        <p className="text-eyebrow">{HOME_COPY.eyebrow}</p>
         <h1 className="truncate text-display">{HOME_COPY.hello(firstName)}</h1>
       </div>
       <Link

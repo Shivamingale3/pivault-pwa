@@ -48,8 +48,8 @@ describe("passwords: empty", () => {
     const info = vi.spyOn(toast, "info");
     renderUnlocked(ROUTES.passwords);
     expect(await screen.findByRole("heading", { name: "No passwords yet" })).toBeInTheDocument();
-    expect(screen.getByText(/encrypted here before it ever reaches your Pi/)).toBeInTheDocument();
-    await userEvent.setup().click(screen.getByRole("button", { name: "Restore from Pi backup" }));
+    expect(screen.getByText(/Add your first login to get started/)).toBeInTheDocument();
+    await userEvent.setup().click(screen.getByRole("button", { name: "Sync now" }));
     expect(info).toHaveBeenCalledWith("Checking your Pi for a backup…");
   });
 
@@ -65,11 +65,11 @@ describe("passwords: the list", () => {
   it("shows the count and order, each row with title, username and bullets", async () => {
     await addEntry(login("Bank"));
     renderUnlocked(ROUTES.passwords);
-    expect(await screen.findByText("1 item · most recent first")).toBeInTheDocument();
+    expect(await screen.findByText("1 item")).toBeInTheDocument();
     const row = await rowOf("Bank");
     expect(row).toHaveTextContent("bank@example.com");
     expect(row).toHaveTextContent("•••••••••••");
-    expect(screen.getByRole("link", { name: "Back" })).toHaveAttribute("href", ROUTES.home);
+    expect(screen.getByRole("button", { name: "Back" })).toBeInTheDocument();
   });
 
   it("reveals one password at a time with the eye, and says whether it is pressed", async () => {
@@ -140,7 +140,7 @@ describe("passwords: the list", () => {
     const user = userEvent.setup();
     await user.click(await screen.findByRole("button", { name: "Add a password" }));
     expect(await screen.findByLabelText("NAME")).toBeInTheDocument();
-    await user.click(screen.getByRole("link", { name: "Back" }));
+    await user.click(screen.getByRole("button", { name: "Back" }));
     await user.click(within(await rowOf("Bank")).getByRole("button", { name: "Bank" }));
     expect(await screen.findByRole("heading", { name: "Bank" })).toBeInTheDocument();
   });
@@ -159,7 +159,7 @@ describe("passwords: sort", () => {
     const user = userEvent.setup();
     await user.click(await screen.findByRole("button", { name: "Sort" }));
 
-    expect(await screen.findByText("3 items · newest use first")).toBeInTheDocument();
+    expect(await screen.findByText("3 items")).toBeInTheDocument();
     const tabs = screen.getByRole("group", { name: "Sort passwords" });
     expect(
       within(tabs)
@@ -211,10 +211,10 @@ describe("passwords: sort", () => {
     renderUnlocked({ pathname: ROUTES.passwords, state: { sort: true } });
     const user = userEvent.setup();
     await screen.findByRole("group", { name: "Sort passwords" });
-    await user.click(screen.getByRole("link", { name: "Back" }));
+    await user.click(screen.getByRole("button", { name: "Back" }));
     expect(await screen.findByRole("button", { name: "Sort" })).toBeInTheDocument();
     expect(screen.queryByRole("group", { name: "Sort passwords" })).toBeNull();
-    await user.click(screen.getByRole("link", { name: "Back" }));
+    await user.click(screen.getByRole("button", { name: "Back" }));
     expect(await screen.findByRole("heading", { name: "Hello, Jane" })).toBeInTheDocument();
   });
 });

@@ -64,16 +64,18 @@ export function PasswordsPage() {
 
   return (
     <main
-      className={cn("flex flex-1 justify-center", screen.sorting ? "bg-canvas" : "bg-background")}
+      className={cn(
+        "flex min-h-full w-full justify-center",
+        screen.sorting ? "bg-canvas" : "bg-background",
+      )}
     >
       <div className="flex w-full max-w-md flex-col gap-4 px-5.5 pt-[max(--spacing(9.5),env(safe-area-inset-top))] pb-6">
         <ListHeader
           title={LIST_COPY.passwordsTitle}
-          // In the sort state, back leaves the sort state; otherwise it goes home.
-          backTo={screen.sorting ? ROUTES.passwords : ROUTES.home}
-          meta={(screen.sorting ? LIST_COPY.passwordsSortMeta : LIST_COPY.passwordsMeta)(
-            screen.total,
-          )}
+          backTo={ROUTES.home}
+          // In the sort state, back leaves the sort state; otherwise it goes to the previous screen.
+          onBack={screen.sorting ? screen.leaveSort : undefined}
+          meta={LIST_COPY.passwordsMeta(screen.total)}
           action={
             screen.sorting ? (
               <Link

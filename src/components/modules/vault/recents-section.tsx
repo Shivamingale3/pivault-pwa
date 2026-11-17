@@ -50,10 +50,8 @@ export function RecentsSection({ items, onOpen, onClear }: RecentsSectionProps) 
                 </span>
                 <span className="flex min-w-0 flex-col gap-0.5">
                   <span className="truncate text-sm font-semibold">{item.title}</span>
-                  <span className="text-[0.71875rem] font-medium text-muted-foreground">
-                    {item.kind === EntryKind.Password
-                      ? HOME_COPY.openedPassword(when)
-                      : HOME_COPY.openedNote(when)}
+                  <span className="text-[0.71875rem] font-medium tracking-normal text-muted-foreground">
+                    {HOME_COPY.opened(when)}
                   </span>
                 </span>
               </Button>
