@@ -9,12 +9,20 @@ interface CustomFieldsProps {
   onAdd: () => void;
   onChange: (index: number, patch: Partial<CustomField>) => void;
   onRemove: (index: number) => void;
+  /** Puts the cursor in the newest field's label (it was just added). */
+  focusLast?: boolean;
 }
 
 const INPUT = "w-full bg-transparent outline-none placeholder:text-subtle";
 
 /** "CUSTOM FIELDS": muted cards with a label over a value and a remove button, and "+ Add field". */
-export function CustomFields({ fields, onAdd, onChange, onRemove }: CustomFieldsProps) {
+export function CustomFields({
+  fields,
+  onAdd,
+  onChange,
+  onRemove,
+  focusLast = false,
+}: CustomFieldsProps) {
   return (
     <section aria-label="Custom fields" className="flex flex-col gap-2">
       <div className="flex items-center justify-between px-1">
@@ -38,6 +46,7 @@ export function CustomFields({ fields, onAdd, onChange, onRemove }: CustomFields
             <input
               aria-label={`Field ${String(index + 1)} label`}
               placeholder={CRUD_COPY.fieldLabel}
+              autoFocus={focusLast && index === fields.length - 1}
               value={field.label}
               maxLength={ENTRY_LIMITS.fieldLabel}
               autoComplete="off"

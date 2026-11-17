@@ -50,6 +50,26 @@ describe("home dashboard", () => {
     expect(screen.queryByText(/Media/)).toBeNull();
   });
 
+  it("adds a password or a note from the + button", async () => {
+    renderUnlocked(ROUTES.home);
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole("button", { name: "Add" }));
+    const sheet = await screen.findByRole("dialog");
+    expect(within(sheet).getByText("Add new")).toBeInTheDocument();
+    await user.click(within(sheet).getByRole("button", { name: "Note" }));
+    expect(await screen.findByRole("textbox", { name: "Title" })).toBeInTheDocument();
+  });
+
+  it("opens a new password from the + button", async () => {
+    renderUnlocked(ROUTES.home);
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole("button", { name: "Add" }));
+    await user.click(
+      within(await screen.findByRole("dialog")).getByRole("button", { name: "Password" }),
+    );
+    expect(await screen.findByLabelText("NAME")).toBeInTheDocument();
+  });
+
   it("has no tab bar, and the user's initial opens Settings", async () => {
     renderUnlocked(ROUTES.home);
     const settings = await screen.findByRole("link", { name: "Settings" });

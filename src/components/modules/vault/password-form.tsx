@@ -1,5 +1,6 @@
 import { useLocation } from "react-router";
 import { ScreenHeader } from "@/components/modules/kit/screen-header";
+import { AddFieldChips } from "@/components/modules/vault/add-field-chips";
 import { CustomFields } from "@/components/modules/vault/custom-fields";
 import { DeleteEntryDialog } from "@/components/modules/vault/delete-entry-dialog";
 import { EyebrowField } from "@/components/modules/vault/eyebrow-field";
@@ -43,14 +44,6 @@ export function PasswordForm({ entry }: { entry: PasswordEntry | null }) {
           }}
         />
         <EyebrowField
-          id="username"
-          label={CRUD_COPY.username}
-          value={form.values.username}
-          onChange={(value) => {
-            form.set("username", value);
-          }}
-        />
-        <EyebrowField
           id="password"
           label={CRUD_COPY.password}
           value={form.values.password}
@@ -70,20 +63,43 @@ export function PasswordForm({ entry }: { entry: PasswordEntry | null }) {
             }}
           />
         </EyebrowField>
-        <EyebrowField
-          id="url"
-          label={CRUD_COPY.website}
-          type="url"
-          value={form.values.url}
-          onChange={(value) => {
-            form.set("url", value);
-          }}
-        />
-        <CustomFields
-          fields={form.fields}
-          onAdd={form.addField}
-          onChange={form.changeField}
-          onRemove={form.removeField}
+        {form.shown.username && (
+          <EyebrowField
+            id="username"
+            autoFocus={form.justAdded === "username"}
+            label={CRUD_COPY.username}
+            value={form.values.username}
+            onChange={(value) => {
+              form.set("username", value);
+            }}
+          />
+        )}
+        {form.shown.url && (
+          <EyebrowField
+            id="url"
+            autoFocus={form.justAdded === "url"}
+            label={CRUD_COPY.website}
+            type="url"
+            value={form.values.url}
+            onChange={(value) => {
+              form.set("url", value);
+            }}
+          />
+        )}
+        {form.fields.length > 0 && (
+          <CustomFields
+            fields={form.fields}
+            onAdd={form.addField}
+            onChange={form.changeField}
+            onRemove={form.removeField}
+            focusLast={form.justAdded === "field"}
+          />
+        )}
+        <AddFieldChips
+          shown={form.shown}
+          hasCustomFields={form.fields.length > 0}
+          onShow={form.show}
+          onAddCustom={form.addField}
         />
         {id && (
           <Button

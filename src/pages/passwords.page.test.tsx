@@ -56,7 +56,7 @@ describe("passwords: empty", () => {
   it("opens the password form straight from the empty state, with no Save button", async () => {
     renderUnlocked(ROUTES.passwords);
     await userEvent.setup().click(await screen.findByRole("button", { name: "Add a password" }));
-    expect(await screen.findByLabelText("USERNAME")).toBeInTheDocument();
+    expect(await screen.findByLabelText("PASSWORD")).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent("Not saved yet");
   });
 });
