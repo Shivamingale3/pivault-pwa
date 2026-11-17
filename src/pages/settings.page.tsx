@@ -6,6 +6,7 @@ import {
   LogOutIcon,
   RefreshCwIcon,
   ShieldCheckIcon,
+  SmileIcon,
 } from "lucide-react";
 import { useState } from "react";
 import { ProfileCard } from "@/components/modules/settings/profile-card";
@@ -47,6 +48,12 @@ export function SettingsPage() {
           title={SETTINGS_COPY.changePassword}
           icon={<KeyRoundIcon aria-hidden="true" />}
           to={ROUTES.settingsPassword}
+        />
+        <SettingsRow
+          title={SETTINGS_COPY.avatar}
+          meta={SETTINGS_COPY.avatarMeta}
+          icon={<SmileIcon aria-hidden="true" />}
+          to={ROUTES.settingsAvatar}
         />
         <SettingsRow
           title={SETTINGS_COPY.changePin}

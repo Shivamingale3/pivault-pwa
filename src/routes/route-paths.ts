@@ -18,6 +18,7 @@ export const ROUTES = {
   settingsPassword: "/settings/password",
   settingsPin: "/settings/pin",
   settingsAbout: "/settings/about",
+  settingsAvatar: "/settings/avatar",
   login: "/login",
   forgotPassword: "/forgot-password",
   resetPassword: "/reset-password",

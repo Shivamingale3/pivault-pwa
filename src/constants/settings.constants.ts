@@ -11,6 +11,8 @@ export const SETTINGS_COPY = {
   changePassword: "Change password",
   changePin: "Change PIN",
   changePinMeta: "Six digits",
+  avatar: "Avatar",
+  avatarMeta: "Pick a picture for your profile",
   security: "Security",
   securityMeta: "Biometrics, auto-lock, clipboard",
   about: "About",
@@ -112,3 +114,24 @@ export const ABOUT_COPY = {
   updating: "Updating to the latest version…",
   offline: "You're offline. Try again when you're connected.",
 } as const;
+
+export const AVATAR_COPY = {
+  title: "Avatar",
+  initial: "Your initial",
+  pick: (index: number) => `Avatar ${String(index)}`,
+  saved: "Avatar updated.",
+  failed: "Couldn't save your avatar. Try again.",
+} as const;
+
+/** The seeds on offer per style: each draws a different character. */
+export const AVATAR_SEEDS = [
+  "Aria",
+  "Milo",
+  "Nova",
+  "Kai",
+  "Luna",
+  "Ravi",
+  "Zoe",
+  "Arjun",
+  "Iris",
+] as const;
