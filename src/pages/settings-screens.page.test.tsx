@@ -84,7 +84,11 @@ describe("Settings › Security", () => {
     );
     await user.click(within(clipboard).getByRole("button", { name: "Never" }));
     await waitFor(async () => {
-      expect(await loadPreferences()).toEqual({ autoLockMs: 0, clipboardClearMs: null });
+      expect(await loadPreferences()).toEqual({
+        autoLockMs: 0,
+        clipboardClearMs: null,
+        avatar: null,
+      });
     });
     expect(screen.queryByText(/screenshots|app switcher/i)).toBeNull();
     expect(screen.getByRole("link", { name: /Change PIN/ })).toHaveAttribute(
