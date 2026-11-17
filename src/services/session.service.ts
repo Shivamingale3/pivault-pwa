@@ -32,4 +32,10 @@ export async function markKeyCheckStored(): Promise<void> {
   if (session) await saveSession({ ...session, keyCheckStored: true });
 }
 
+/** Remembers that a sign-in on another device replaced this session (the lock screen says so). */
+export async function markEndedElsewhere(): Promise<void> {
+  const session = await loadSession();
+  if (session && !session.endedElsewhere) await saveSession({ ...session, endedElsewhere: true });
+}
+
 export const clearSession = () => idbDelete(StoreName.Auth, RecordId.Session);

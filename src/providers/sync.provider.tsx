@@ -5,6 +5,7 @@ import type { SyncContextValue, SyncState } from "@/interfaces/sync.interface";
 import { EMPTY_STATS } from "@/services/sync-stats.service";
 import { type VaultSync, startVaultSync } from "@/services/vault-sync.service";
 import { errorMessage } from "@/utils/error-message.utils";
+import { markEndedElsewhere } from "@/services/session.service";
 
 const STARTING: SyncState = { status: "syncing", progress: null, error: null, stats: EMPTY_STATS };
 
@@ -52,7 +53,9 @@ export function SyncProvider({ children }: { children: ReactNode }) {
   // Said once, when the session is gone: the user needs to know why nothing syncs any more.
   const { status, error } = state;
   useEffect(() => {
-    if (status === "ended" && error) toast.error(error);
+    if (status !== "ended") return;
+    if (error) toast.error(error);
+    markEndedElsewhere().catch(() => undefined);
   }, [status, error]);
 
   const syncNow = useCallback(async () => {
