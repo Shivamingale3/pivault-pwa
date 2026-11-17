@@ -52,11 +52,16 @@ function GroupRow({ id, label, value, onChange, disabled }: GroupRowProps) {
 }
 
 /** Prove you saved it: type groups 2 and 4 back. */
+interface RecoveryConfirmScreenProps {
+  confirm: ReturnType<typeof useRecoveryConfirm>;
+  /** The action's wording (Settings uses its own instead of "Finish setup"). */
+  finishLabel?: string;
+}
+
 export function RecoveryConfirmScreen({
   confirm,
-}: {
-  confirm: ReturnType<typeof useRecoveryConfirm>;
-}) {
+  finishLabel = SETUP_COPY.confirmFinish,
+}: RecoveryConfirmScreenProps) {
   return (
     <SetupShell>
       <Button
@@ -93,7 +98,7 @@ export function RecoveryConfirmScreen({
           busyLabel={SETUP_COPY.confirmBusy}
           onClick={() => void confirm.finish()}
         >
-          {SETUP_COPY.confirmFinish}
+          {finishLabel}
         </PrimaryCta>
         <Button type="button" variant="ghost" size="sm" onClick={confirm.showAgain}>
           {SETUP_COPY.confirmShowAgain}

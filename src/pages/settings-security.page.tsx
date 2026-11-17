@@ -7,6 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import {
   CLIPBOARD_CHOICE_LABELS,
   LOCK_CHOICE_LABELS,
+  RECOVERY_KEY_COPY,
   SECURITY_COPY,
   SETTINGS_COPY,
 } from "@/constants/settings.constants";
@@ -76,6 +77,11 @@ export function SettingsSecurityPage() {
       />
       <SettingsGroup>
         <SettingsRow title={SECURITY_COPY.changePin} to={ROUTES.settingsPin} />
+        <SettingsRow
+          title={RECOVERY_KEY_COPY.title}
+          meta={RECOVERY_KEY_COPY.rowMeta}
+          to={ROUTES.settingsRecoveryKey}
+        />
       </SettingsGroup>
     </SettingsLayout>
   );

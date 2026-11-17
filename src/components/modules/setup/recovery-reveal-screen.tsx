@@ -9,10 +9,19 @@ import { SETUP_COPY } from "@/constants/setup.constants";
 import type { useRecoveryReveal } from "@/hooks/use-recovery-reveal";
 
 /** The new recovery key, shown once, with Copy and Download and the "I've saved it" gate. */
-export function RecoveryRevealScreen({ reveal }: { reveal: ReturnType<typeof useRecoveryReveal> }) {
+interface RecoveryRevealScreenProps {
+  reveal: ReturnType<typeof useRecoveryReveal>;
+  /** Replaces the setup step eyebrow (Settings shows it for a new key). */
+  eyebrow?: string;
+}
+
+export function RecoveryRevealScreen({
+  reveal,
+  eyebrow = SETUP_COPY.revealEyebrow,
+}: RecoveryRevealScreenProps) {
   return (
     <SetupShell>
-      <HeadingBlock eyebrow={SETUP_COPY.revealEyebrow} title={SETUP_COPY.revealTitle}>
+      <HeadingBlock eyebrow={eyebrow} title={SETUP_COPY.revealTitle}>
         {SETUP_COPY.revealBody}
       </HeadingBlock>
       <RecoveryKeyPanel
