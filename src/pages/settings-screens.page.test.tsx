@@ -167,6 +167,9 @@ describe("Settings › Change PIN", () => {
     await screen.findByRole("heading", { name: "Current PIN" });
     await press(user, "000111");
     expect(await screen.findByText(/Wrong PIN\. 4 tries left/)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "0" })).toBeEnabled();
+    });
     await press(user, OLD_PIN);
     await screen.findByRole("heading", { name: "Set your app PIN" });
     await press(user, NEW_PIN);
@@ -182,10 +185,16 @@ describe("Settings › Change PIN", () => {
     renderUnlocked(ROUTES.settingsPin);
     const user = userEvent.setup();
     await screen.findByRole("heading", { name: "Current PIN" });
-    for (let round = 0; round < 5; round += 1) {
+    // Wait for each answer before typing again: the keypad is off while a PIN is being checked,
+    // and the previous round's message is still on screen.
+    for (const left of ["4 tries", "3 tries", "2 tries", "1 try"]) {
       await press(user, "000111");
-      if (round < 4) await screen.findByText(/Wrong PIN/);
+      await screen.findByText(new RegExp(`Wrong PIN\\. ${left} left`));
+      await waitFor(() => {
+        expect(screen.getByRole("button", { name: "0" })).toBeEnabled();
+      });
     }
+    await press(user, "000111");
     expect(await screen.findByRole("heading", { name: /Welcome back/ })).toBeInTheDocument();
   });
 });
