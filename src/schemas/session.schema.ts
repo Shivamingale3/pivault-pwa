@@ -15,6 +15,8 @@ export const sessionRecordSchema = z.object({
   recoveryKeyConfigured: z.boolean(),
   /** App lock PIN and recovery key are done on this device. */
   setupDone: z.boolean(),
+  /** The server is known to hold this account's recovery-key check (older sessions don't say). */
+  keyCheckStored: z.boolean().optional(),
 });
 
 export type SessionRecord = z.infer<typeof sessionRecordSchema>;

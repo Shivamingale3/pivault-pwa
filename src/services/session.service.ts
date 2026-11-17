@@ -26,4 +26,10 @@ export async function markSetupDone(): Promise<void> {
   await saveSession({ ...session, setupDone: true });
 }
 
+/** Remembers that the server holds the recovery-key check. Nothing to do without a session. */
+export async function markKeyCheckStored(): Promise<void> {
+  const session = await loadSession();
+  if (session) await saveSession({ ...session, keyCheckStored: true });
+}
+
 export const clearSession = () => idbDelete(StoreName.Auth, RecordId.Session);

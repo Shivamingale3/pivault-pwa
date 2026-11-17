@@ -1,5 +1,6 @@
 import { removeVaultDb } from "@/db/vault.db";
 import { emptyResponseSchema, loginResponseSchema } from "@/schemas/auth.schema";
+import type { EncryptedEnvelope } from "@/schemas/crypto.schema";
 import type { SessionRecord } from "@/schemas/session.schema";
 import { postJson } from "@/services/api.client";
 import { exportPublicKey, generateLoginKeyPair } from "@/services/crypto.service";
@@ -59,9 +60,22 @@ export const requestPasswordReset = async (email: string, signal?: AbortSignal):
   });
 };
 
-/** Tells the server this device generated its recovery key (the key itself never leaves the device). */
-export const markRecoveryKeyConfigured = async (signal?: AbortSignal): Promise<void> => {
-  await postSigned("/auth/recovery-key-configured", {}, emptyResponseSchema, { signal });
+/**
+ * Tells the server this device generated its recovery key (the key itself never leaves the
+ * device). `keyCheck` is a fixed text encrypted with the vault key; the server keeps the first one.
+ */
+export const markRecoveryKeyConfigured = async (
+  keyCheck?: EncryptedEnvelope,
+  signal?: AbortSignal,
+): Promise<void> => {
+  await postSigned(
+    "/auth/recovery-key-configured",
+    keyCheck ? { keyCheck } : {},
+    emptyResponseSchema,
+    {
+      signal,
+    },
+  );
 };
 
 /**

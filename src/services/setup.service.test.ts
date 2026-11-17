@@ -6,6 +6,7 @@ import { ApiError } from "@/services/api.error";
 import { getBiometricCredentialId, hasPin, isBiometricEnabled } from "@/services/app-lock.service";
 import * as auth from "@/services/auth.service";
 import * as biometric from "@/services/biometric.service";
+import * as keyCheck from "@/services/key-check.service";
 import * as sync from "@/services/sync.api";
 import { EntryKind } from "@/enums/vault.enum";
 import { encryptJson, generateRecoveryKey, importRecoveryKey } from "@/services/crypto.service";
@@ -73,9 +74,19 @@ describe("finishSetupWithNewKey", () => {
   it("tells the server, keeps a non-extractable key, marks setup done and unlocks", async () => {
     await saveSession(SESSION);
     const server = vi.spyOn(auth, "markRecoveryKeyConfigured").mockResolvedValue();
-    await finishSetupWithNewKey(generateRecoveryKey());
+    const hex = generateRecoveryKey();
+    await finishSetupWithNewKey(hex);
 
     expect(server).toHaveBeenCalledOnce();
+    // The server gets a check only this key opens, never the key itself.
+    const [check] = server.mock.calls[0] ?? [];
+    if (!check) throw new Error("expected a key check");
+    expect(JSON.stringify(check)).not.toContain(hex);
+    expect(await keyCheck.opensKeyCheck(await importRecoveryKey(hex), check)).toBe(true);
+    expect(
+      await keyCheck.opensKeyCheck(await importRecoveryKey(generateRecoveryKey()), check),
+    ).toBe(false);
+    expect((await loadSession())?.keyCheckStored).toBe(true);
     expect((await loadVaultKey())?.extractable).toBe(false);
     expect((await loadSession())?.setupDone).toBe(true);
     expect(isUnlocked()).toBe(true);
@@ -116,8 +127,34 @@ describe("recovering the vault on a new phone", () => {
       remaining: 0,
     });
 
+  /** What the server holds as the account's key check (null: an account from before it existed). */
+  const serverCheck = async (hex: string | null) =>
+    vi
+      .spyOn(keyCheck, "fetchKeyCheck")
+      .mockResolvedValue(hex ? await keyCheck.makeKeyCheck(await importRecoveryKey(hex)) : null);
+
   beforeEach(async () => {
     await saveSession({ ...SESSION, recoveryKeyConfigured: true });
+    await serverCheck(null);
+  });
+
+  it("accepts the key that opens the server's check, without needing any entries", async () => {
+    const hex = generateRecoveryKey();
+    await serverCheck(hex);
+    const pull = serverHas([]);
+    await expect(recoverVaultKey(hex)).resolves.toBeUndefined();
+    expect(pull).not.toHaveBeenCalled();
+    expect(await loadVaultKey()).not.toBeNull();
+  });
+
+  it("refuses a wrong key even when the vault is still empty", async () => {
+    await serverCheck(generateRecoveryKey());
+    serverHas([]);
+    await expect(recoverVaultKey(generateRecoveryKey())).rejects.toMatchObject({
+      kind: CryptoErrorKind.InvalidRecoveryKey,
+      message: "That key does not match any vault on this server.",
+    });
+    await expect(loadVaultKey()).resolves.toBeNull();
   });
 
   it("keeps the key that opens the server's vault, in display format, but does not finish setup yet", async () => {
@@ -150,7 +187,7 @@ describe("recovering the vault on a new phone", () => {
     await expect(recoverVaultKey(hex)).resolves.toBeUndefined();
   });
 
-  it("accepts any well-formed key when the server's vault is empty", async () => {
+  it("accepts any well-formed key only for an older account with no check and an empty vault", async () => {
     serverHas([]);
     await expect(recoverVaultKey(generateRecoveryKey())).resolves.toBeUndefined();
     expect(await loadVaultKey()).not.toBeNull();
