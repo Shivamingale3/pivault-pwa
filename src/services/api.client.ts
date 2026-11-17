@@ -25,6 +25,12 @@ const toTransportError = (error: unknown, signal?: AbortSignal): ApiError => {
   return new ApiError(ApiErrorKind.Network, API_ERROR_MESSAGES.network, null, error);
 };
 
+/** The server's clock from the `Date` header, or null when it is missing or unreadable. */
+const serverTimeOf = (response: Response): number | null => {
+  const parsed = Date.parse(response.headers.get("Date") ?? "");
+  return Number.isNaN(parsed) ? null : parsed;
+};
+
 const readEnvelope = async (response: Response) => {
   try {
     const parsed = apiEnvelopeSchema.safeParse(await response.json());
@@ -70,6 +76,7 @@ export async function postJson<S extends z.ZodType>(
       response.status,
       undefined,
       envelope?.data ?? null,
+      serverTimeOf(response),
     );
   }
   const data = envelope?.success ? schema.safeParse(envelope.data) : null;

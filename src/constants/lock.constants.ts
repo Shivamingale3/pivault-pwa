@@ -36,7 +36,6 @@ export const FACE_FAILED_SCREEN_AT = 2;
 
 export const LOCK_MESSAGES = {
   vaultKeyMissing: "This device lost your vault key. Sign in again to restore it.",
-  sessionExpired: "Your session expired. Sign in again.",
 } as const;
 
 export const wrongPinMessage = (attemptsLeft: number): string =>
