@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { SETTINGS_COPY } from "@/constants/settings.constants";
 import type { SessionRecord } from "@/schemas/session.schema";
 
 /** Who is signed in: an ink square with the initial, the name and the email. */
@@ -20,6 +21,9 @@ export function ProfileCard({ session }: { session: SessionRecord | null }) {
           {session?.email ?? "…"}
         </p>
       </div>
+      <span className="ml-auto shrink-0 rounded-md border-[1.5px] border-border px-2 py-1 text-eyebrow">
+        {SETTINGS_COPY.member}
+      </span>
     </Card>
   );
 }
