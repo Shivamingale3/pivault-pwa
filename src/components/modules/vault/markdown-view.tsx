@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { type Inline, parseMarkdown } from "@/utils/markdown.utils";
@@ -80,7 +80,16 @@ export function MarkdownView({ source, onToggle }: MarkdownViewProps) {
               </ul>
             );
           case "paragraph":
-            return <p key={index}>{inline(block.inline)}</p>;
+            return (
+              <p key={index} className="whitespace-pre-wrap">
+                {block.lines.map((line, at) => (
+                  <Fragment key={at}>
+                    {at > 0 && <br />}
+                    {inline(line)}
+                  </Fragment>
+                ))}
+              </p>
+            );
         }
       })}
     </div>

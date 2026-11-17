@@ -5,7 +5,8 @@ export interface Inline {
 }
 
 export type Block =
-  | { type: "paragraph"; inline: Inline[] }
+  /** One line of text per entry: a line break in the note stays a line break. */
+  | { type: "paragraph"; lines: Inline[][] }
   | { type: "heading"; inline: Inline[] }
   | { type: "code"; text: string }
   | { type: "list"; items: Inline[][] }
@@ -73,7 +74,7 @@ export function parseMarkdown(source: string): Block[] {
       const special = (text: string) =>
         text.trim() === "" || text.startsWith("```") || text.startsWith("## ") || BULLET.test(text);
       while (index < lines.length && !special(lines[index] ?? "")) index += 1;
-      blocks.push({ type: "paragraph", inline: parseInline(lines.slice(start, index).join(" ")) });
+      blocks.push({ type: "paragraph", lines: lines.slice(start, index).map(parseInline) });
     }
   }
   return blocks;
