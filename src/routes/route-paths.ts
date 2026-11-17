@@ -19,6 +19,7 @@ export const ROUTES = {
   settingsPin: "/settings/pin",
   settingsAbout: "/settings/about",
   settingsAvatar: "/settings/avatar",
+  settingsRecoveryKey: "/settings/recovery-key",
   login: "/login",
   forgotPassword: "/forgot-password",
   resetPassword: "/reset-password",

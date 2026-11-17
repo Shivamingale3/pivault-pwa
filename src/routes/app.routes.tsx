@@ -13,6 +13,7 @@ import { SearchPage } from "@/pages/search.page";
 import { LockPage } from "@/pages/lock.page";
 import { LoginPage } from "@/pages/login.page";
 import { SettingsPage } from "@/pages/settings.page";
+import { SettingsRecoveryKeyPage } from "@/pages/settings-recovery-key.page";
 import { SettingsAvatarPage } from "@/pages/settings-avatar.page";
 import { SettingsAboutPage } from "@/pages/settings-about.page";
 import { SettingsPasswordPage } from "@/pages/settings-password.page";
@@ -78,6 +79,7 @@ export function AppRoutes() {
           <Route path={ROUTES.settingsPin} element={<SettingsPinPage />} />
           <Route path={ROUTES.settingsAbout} element={<SettingsAboutPage />} />
           <Route path={ROUTES.settingsAvatar} element={<SettingsAvatarPage />} />
+          <Route path={ROUTES.settingsRecoveryKey} element={<SettingsRecoveryKeyPage />} />
         </Route>
       </Route>
 

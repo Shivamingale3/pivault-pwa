@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Outlet } from "react-router";
 import { useAutoLock } from "@/hooks/use-auto-lock";
+import { KeyReplacementResume } from "@/components/modules/settings/key-replacement-resume";
 import { UsageProvider } from "@/providers/usage.provider";
 import { SyncProvider } from "@/providers/sync.provider";
 import { ensureKeyCheckStored } from "@/services/key-check.service";
@@ -27,6 +28,7 @@ export function PrivateLayout() {
     <VaultProvider>
       <SyncProvider>
         <UsageProvider>
+          <KeyReplacementResume />
           <Outlet />
         </UsageProvider>
       </SyncProvider>

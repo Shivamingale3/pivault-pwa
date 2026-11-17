@@ -4,10 +4,19 @@ import { CryptoError } from "@/services/crypto.error";
 
 /** The unlocked vault key lives only here: module memory, never storage, gone on reload or lock. */
 let unlockedKey: CryptoKey | null = null;
+/** While a new recovery key is replacing the old one, the old key still opens what isn't redone yet. */
+let previousKey: CryptoKey | null = null;
 
-export const setUnlockedKey = (key: CryptoKey): void => {
+export const setUnlockedKey = (key: CryptoKey, previous: CryptoKey | null = null): void => {
   unlockedKey = key;
+  previousKey = previous;
 };
+
+/** Every key that may open an entry: the current one first, then the one being replaced. */
+export const getDecryptionKeys = (): CryptoKey[] => [
+  getUnlockedKey(),
+  ...(previousKey ? [previousKey] : []),
+];
 
 export const isUnlocked = (): boolean => unlockedKey !== null;
 
@@ -20,4 +29,5 @@ export function getUnlockedKey(): CryptoKey {
 /** Call on lock and on sign out. */
 export const clearUnlockedKey = (): void => {
   unlockedKey = null;
+  previousKey = null;
 };

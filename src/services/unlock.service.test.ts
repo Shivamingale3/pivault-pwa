@@ -4,9 +4,20 @@ import { LOCK_MESSAGES } from "@/constants/lock.constants";
 import { StorageErrorKind } from "@/enums/storage.enum";
 import { setBiometric, setPin } from "@/services/app-lock.service";
 import * as biometric from "@/services/biometric.service";
-import { generateRecoveryKey, importRecoveryKey } from "@/services/crypto.service";
-import { saveVaultKey } from "@/services/key-store.service";
-import { clearUnlockedKey, isUnlocked } from "@/services/secure-memory.service";
+import { z } from "zod";
+import {
+  decryptJson,
+  encryptJson,
+  generateRecoveryKey,
+  importRecoveryKey,
+} from "@/services/crypto.service";
+import { savePendingVaultKey, saveVaultKey } from "@/services/key-store.service";
+import {
+  clearUnlockedKey,
+  getDecryptionKeys,
+  getUnlockedKey,
+  isUnlocked,
+} from "@/services/secure-memory.service";
 import { unlockWithBiometric, unlockWithPin } from "@/services/unlock.service";
 import { freshIndexedDbPerTest } from "@/test/indexed-db";
 
@@ -26,6 +37,21 @@ const setUp = async () => {
   await setPin(PIN);
   await saveVaultKey(await importRecoveryKey(generateRecoveryKey()));
 };
+
+describe("unlocking during a recovery-key replacement", () => {
+  it("writes with the new key and still opens with the old one", async () => {
+    await setUp();
+    const pending = await importRecoveryKey(generateRecoveryKey());
+    await savePendingVaultKey(pending);
+    await expect(unlockWithPin(PIN)).resolves.toEqual({ ok: true });
+    expect(getDecryptionKeys()).toHaveLength(2);
+    // What is written now opens with the new (pending) key.
+    const sealed = await encryptJson(getUnlockedKey(), { a: 1 });
+    await expect(decryptJson(pending, sealed, z.object({ a: z.number() }))).resolves.toEqual({
+      a: 1,
+    });
+  });
+});
 
 describe("unlockWithPin", () => {
   it("puts the vault key in memory for the right PIN", async () => {

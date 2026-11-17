@@ -135,3 +135,28 @@ export const AVATAR_SEEDS = [
   "Arjun",
   "Iris",
 ] as const;
+
+export const RECOVERY_KEY_COPY = {
+  title: "Recovery key",
+  rowMeta: "Make a new one",
+  cardTitle: "Your recovery key can't be shown again",
+  cardBody: "It was shown once when you set up PiVault. If you've lost it, make a new one.",
+  warning:
+    "Making a new key retires the old one. Wherever you wrote down the old key, replace it with the new one.",
+  cta: "Make a new recovery key",
+  offline: "You need to be online to do this.",
+  ended: "This phone no longer syncs, so it can't make a new key.",
+  pinTitle: "Enter your PIN",
+  pinBody: "Confirm it's you before making a new recovery key.",
+  revealEyebrow: "NEW RECOVERY KEY",
+  finish: "Use the new key",
+  workingTitle: "Switching to your new key",
+  workingBody: "Keep the app open. This takes a few seconds.",
+  stageItems: "Updating your items",
+  stageUpload: "Saving to your Pi",
+  stageSwitch: "Retiring the old key",
+  done: "New key ready",
+  doneToast: "Your new recovery key is ready.",
+  notAllSent: "Couldn't save everything to your Pi. Check your connection and try again.",
+  retry: "Try again",
+} as const;

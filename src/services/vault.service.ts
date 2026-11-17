@@ -11,8 +11,9 @@ import {
 } from "@/db/vault.repository";
 import { StorageErrorKind } from "@/enums/storage.enum";
 import { type EntryInput, entryPayloadSchema } from "@/schemas/vault.schema";
-import { decryptJson, encryptJson } from "@/services/crypto.service";
-import { getUnlockedKey } from "@/services/secure-memory.service";
+import { encryptJson } from "@/services/crypto.service";
+import { openWithAny } from "@/services/entry-crypto.service";
+import { getDecryptionKeys, getUnlockedKey } from "@/services/secure-memory.service";
 import { StorageError } from "@/services/storage.error";
 import type { VaultDocument, VaultEntry, VaultSnapshot } from "@/types/vault.types";
 import { newId } from "@/utils/id.utils";
@@ -67,20 +68,11 @@ export async function removeEntry(id: string): Promise<void> {
 }
 
 async function openAll(documents: VaultDocument[]): Promise<VaultSnapshot> {
-  const key = getUnlockedKey();
+  const keys = getDecryptionKeys();
   const opened = await Promise.all(
     documents.map(async (document) => {
-      try {
-        const payload = await decryptJson(
-          key,
-          document.envelope,
-          entryPayloadSchema,
-          aadFor(document.id),
-        );
-        return toEntry(document.id, document.updatedAt, payload);
-      } catch {
-        return null;
-      }
+      const result = await openWithAny(keys, document);
+      return result ? toEntry(document.id, document.updatedAt, result.payload) : null;
     }),
   );
   const entries = opened.filter((entry): entry is VaultEntry => entry !== null);
