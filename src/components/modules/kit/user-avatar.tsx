@@ -24,7 +24,13 @@ export function UserAvatar({ name, className, choice }: UserAvatarProps) {
     className,
   );
   if (shown && uri) {
-    return <img src={uri} alt="" aria-hidden="true" className={cn(box, "bg-muted")} />;
+    // Wrapped so the picture is never a bare <img> child: the Card treats a first <img> as a
+    // full-bleed cover image and drops its top padding, which pushed the avatar up.
+    return (
+      <span aria-hidden="true" className={cn(box, "bg-muted")}>
+        <img src={uri} alt="" className="size-full" />
+      </span>
+    );
   }
   return (
     <span
