@@ -4,12 +4,15 @@ import { SESSION_MISSING_MESSAGE, signaturePayload } from "@/constants/auth.cons
 import { ApiErrorKind } from "@/enums/api.enum";
 import { login } from "@/services/auth.service";
 import { loadLoginKeyPair } from "@/services/key-store.service";
-import { postSigned } from "@/services/signed-api.client";
+import { postSigned, resetClockOffset } from "@/services/signed-api.client";
 import { calledInit } from "@/test/fetch";
 import { freshIndexedDbPerTest } from "@/test/indexed-db";
 
 freshIndexedDbPerTest();
-afterEach(() => vi.restoreAllMocks());
+afterEach(() => {
+  vi.restoreAllMocks();
+  resetClockOffset();
+});
 
 const reply = (data?: unknown) =>
   new Response(JSON.stringify({ success: true, message: "ok", data }), { status: 200 });
@@ -75,6 +78,61 @@ describe("postSigned", () => {
       verifies(signaturePayload(timestamp, "POST", "/api/auth/logout", "x".repeat(43))),
     ).resolves.toBe(false);
     await expect(verifies(`${timestamp}.POST./api/auth/logout`)).resolves.toBe(false);
+  });
+
+  describe("a phone with the wrong clock", () => {
+    const unauthorized = (serverNow: number) =>
+      new Response(JSON.stringify({ success: false, message: "Not signed in" }), {
+        status: 401,
+        headers: { Date: new Date(serverNow).toUTCString() },
+      });
+    const signIn = async () => {
+      vi.spyOn(globalThis, "fetch").mockImplementation(() => Promise.resolve(reply(LOGIN_DATA)));
+      await login("jane@example.com", "pw");
+    };
+    /** Replaces the server's answers and forgets the login call (the fetch spy is shared). */
+    const serverAnswers = (answer: () => Response) => {
+      const spy = vi.spyOn(globalThis, "fetch").mockImplementation(() => Promise.resolve(answer()));
+      spy.mockClear();
+      return spy;
+    };
+    const stampOf = (spy: ReturnType<typeof vi.spyOn>, call: number) =>
+      Number((calledInit(spy as never, call).headers as { "X-Timestamp": string })["X-Timestamp"]);
+
+    it("learns the server's time from a 401, retries once and keeps using it", async () => {
+      await signIn();
+      const serverNow = Date.now() + 10 * 60_000;
+      let calls = 0;
+      const spy = serverAnswers(() => {
+        calls += 1;
+        return calls === 1 ? unauthorized(serverNow) : reply();
+      });
+      await expect(postSigned("/auth/logout", {}, z.undefined())).resolves.toBeUndefined();
+      expect(spy).toHaveBeenCalledTimes(2);
+      expect(Math.abs(stampOf(spy, 1) - serverNow)).toBeLessThan(5_000);
+
+      await postSigned("/auth/logout", {}, z.undefined());
+      expect(spy).toHaveBeenCalledTimes(3);
+      expect(Math.abs(stampOf(spy, 2) - serverNow)).toBeLessThan(5_000);
+    });
+
+    it("does not retry a 401 when the clocks agree: the session really is gone", async () => {
+      await signIn();
+      const spy = serverAnswers(() => unauthorized(Date.now()));
+      await expect(postSigned("/auth/logout", {}, z.undefined())).rejects.toMatchObject({
+        status: 401,
+      });
+      expect(spy).toHaveBeenCalledOnce();
+    });
+
+    it("gives up after one retry", async () => {
+      await signIn();
+      const spy = serverAnswers(() => unauthorized(Date.now() + 10 * 60_000));
+      await expect(postSigned("/auth/logout", {}, z.undefined())).rejects.toMatchObject({
+        status: 401,
+      });
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
   });
 
   it("fails with a 401 and sends nothing when there is no session on this device", async () => {

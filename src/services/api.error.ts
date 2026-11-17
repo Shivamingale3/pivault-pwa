@@ -7,6 +7,8 @@ export class ApiError extends Error {
   readonly status: number | null;
   /** The `data` the server sent with an error (e.g. how long a lockout lasts), or null. */
   readonly data: unknown;
+  /** The server's clock when it answered (from the `Date` header), or null when unknown. */
+  readonly serverTime: number | null;
 
   constructor(
     kind: ApiErrorKind,
@@ -14,11 +16,13 @@ export class ApiError extends Error {
     status: number | null = null,
     cause?: unknown,
     data: unknown = null,
+    serverTime: number | null = null,
   ) {
     super(message, { cause });
     this.name = "ApiError";
     this.kind = kind;
     this.status = status;
     this.data = data;
+    this.serverTime = serverTime;
   }
 }
