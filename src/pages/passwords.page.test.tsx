@@ -69,7 +69,7 @@ describe("passwords: the list", () => {
     const row = await rowOf("Bank");
     expect(row).toHaveTextContent("bank@example.com");
     expect(row).toHaveTextContent("•••••••••••");
-    expect(screen.getByRole("link", { name: "Passwords" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Back" })).toHaveAttribute("href", ROUTES.home);
   });
 
   it("reveals one password at a time with the eye, and says whether it is pressed", async () => {
@@ -206,13 +206,15 @@ describe("passwords: sort", () => {
     expect(await screen.findByText("No weak passwords")).toBeInTheDocument();
   });
 
-  it("leaves the sort state when the Passwords tab is pressed again", async () => {
+  it("leaves the sort state with the back button, then goes home with it", async () => {
     await seed();
     renderUnlocked({ pathname: ROUTES.passwords, state: { sort: true } });
     const user = userEvent.setup();
     await screen.findByRole("group", { name: "Sort passwords" });
-    await user.click(screen.getByRole("link", { name: "Passwords" }));
+    await user.click(screen.getByRole("link", { name: "Back" }));
     expect(await screen.findByRole("button", { name: "Sort" })).toBeInTheDocument();
     expect(screen.queryByRole("group", { name: "Sort passwords" })).toBeNull();
+    await user.click(screen.getByRole("link", { name: "Back" }));
+    expect(await screen.findByRole("heading", { name: "Hello, Jane" })).toBeInTheDocument();
   });
 });

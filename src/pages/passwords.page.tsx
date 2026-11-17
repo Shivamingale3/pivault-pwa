@@ -69,6 +69,8 @@ export function PasswordsPage() {
       <div className="flex w-full max-w-md flex-col gap-4 px-5.5 pt-[max(--spacing(9.5),env(safe-area-inset-top))] pb-6">
         <ListHeader
           title={LIST_COPY.passwordsTitle}
+          // In the sort state, back leaves the sort state; otherwise it goes home.
+          backTo={screen.sorting ? ROUTES.passwords : ROUTES.home}
           meta={(screen.sorting ? LIST_COPY.passwordsSortMeta : LIST_COPY.passwordsMeta)(
             screen.total,
           )}

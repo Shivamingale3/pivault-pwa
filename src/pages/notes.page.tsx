@@ -7,6 +7,7 @@ import { NotesEmpty } from "@/components/modules/vault/notes-empty";
 import { VaultEmpty } from "@/components/modules/vault/vault-empty";
 import { VaultLoading } from "@/components/modules/vault/vault-loading";
 import { LIST_COPY } from "@/constants/vault-design.constants";
+import { ROUTES } from "@/routes/route-paths";
 import { useNotesScreen } from "@/hooks/use-notes-screen";
 
 /** Notes: title rows with chevrons, a filter, and a button to write a new one. */
@@ -30,7 +31,11 @@ export function NotesPage() {
   return (
     <main className="flex flex-1 justify-center bg-background">
       <div className="flex w-full max-w-md flex-col gap-4 px-5.5 pt-[max(--spacing(9.5),env(safe-area-inset-top))] pb-6">
-        <ListHeader title={LIST_COPY.notesTitle} meta={LIST_COPY.notesMeta(screen.total)} />
+        <ListHeader
+          title={LIST_COPY.notesTitle}
+          meta={LIST_COPY.notesMeta(screen.total)}
+          backTo={ROUTES.home}
+        />
         <OfflinePill />
         <FilterField
           value={screen.query}
