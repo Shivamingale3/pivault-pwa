@@ -16,7 +16,7 @@ export function HomePage() {
   return (
     <main className="flex flex-1 justify-center bg-canvas">
       <div className="flex w-full max-w-md flex-col gap-5 px-5.5 pt-[max(--spacing(9.5),env(safe-area-inset-top))] pb-6">
-        <HomeHeader firstName={dashboard.firstName} />
+        <HomeHeader firstName={dashboard.firstName} name={dashboard.name} />
         <SearchPill />
         <div className="grid grid-cols-2 gap-2.5">
           <CategoryCard
