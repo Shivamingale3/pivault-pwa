@@ -1,6 +1,7 @@
 import type { RxCollection, WithDeleted } from "rxdb/plugins/core";
 import type { SyncCheckpoint, SyncCounts, SyncDocument } from "@/schemas/sync.schema";
 import { type PushRow, pullChanges, pushChanges } from "@/services/sync.api";
+import { recordServerVersions } from "@/services/synced-state.service";
 import type { VaultDocument } from "@/types/vault.types";
 
 const NONE: SyncCounts = { created: 0, updated: 0, deleted: 0 };
@@ -53,6 +54,7 @@ export function createTransfer(
   const pull = async (checkpoint: SyncCheckpoint | undefined, batchSize: number) => {
     const response = await pullChanges(checkpoint ?? null, batchSize);
     const counts = await countReceived(collection, response.documents, echoes);
+    await recordServerVersions(response.documents);
     if (total(counts) > 0) await reports.received(counts);
     reports.page?.({ documents: response.documents.length, remaining: response.remaining });
     return {
@@ -73,6 +75,9 @@ export function createTransfer(
     for (const row of body) {
       if (!lost.has(row.newDocumentState.id)) echoes.add(fingerprint(row.newDocumentState));
     }
+    await recordServerVersions(
+      body.map((row) => row.newDocumentState).filter((doc) => !lost.has(doc.id)),
+    );
     if (total(response.counts) > 0) await reports.sent(response.counts);
     return response.conflicts.map(toDocument) as WithDeleted<VaultDocument>[];
   };

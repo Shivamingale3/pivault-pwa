@@ -20,6 +20,7 @@ import {
   recordSynced,
 } from "@/services/sync-stats.service";
 import { createTransfer } from "@/services/sync-transfer.service";
+import { loadSyncedState, seedSyncedState } from "@/services/synced-state.service";
 import { isOfflineError, isSessionEnded } from "@/utils/sync-error.utils";
 import type { VaultDocument } from "@/types/vault.types";
 import { errorMessage } from "@/utils/error-message.utils";
@@ -42,6 +43,9 @@ export async function startVaultSync({
 }: { retryMs?: number } = {}): Promise<VaultSync> {
   const database = await getVaultDb();
   const collection = database.entries;
+  // Per-item "synced" marks. An install from before they existed reads the server's versions once.
+  const hasSyncedState = await loadSyncedState().catch(() => true);
+  if (!hasSyncedState) void seedSyncedState().catch(() => undefined);
   const state$ = new BehaviorSubject<SyncState>({
     status: navigator.onLine ? "syncing" : "offline",
     progress: null,
