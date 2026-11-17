@@ -1,4 +1,5 @@
 /// <reference types="vitest/config" />
+import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { styleText } from "node:util";
 import react, { reactCompilerPreset } from "@vitejs/plugin-react";
@@ -21,11 +22,26 @@ const assertValidEnv = (mode: string): Readonly<Env> => {
   }
 };
 
+/** The app's version (package.json), the commit when CI provides it, and when it was built. Shown in About. */
+const buildInfo = () => {
+  const { version } = JSON.parse(
+    readFileSync(resolve(import.meta.dirname, "package.json"), "utf8"),
+  ) as {
+    version: string;
+  };
+  return {
+    __APP_VERSION__: JSON.stringify(version),
+    __APP_COMMIT__: JSON.stringify((process.env.GITHUB_SHA ?? "").slice(0, 7)),
+    __APP_BUILT_AT__: JSON.stringify(new Date().toISOString()),
+  };
+};
+
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = assertValidEnv(mode);
 
   return {
+    define: buildInfo(),
     plugins: [
       react(),
       babel({ presets: [reactCompilerPreset()] }),
