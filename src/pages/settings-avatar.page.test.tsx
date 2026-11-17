@@ -8,6 +8,7 @@ import {
   clearPreferences,
   currentPreferences,
   loadPreferences,
+  savePreferences,
 } from "@/services/preferences.service";
 import { clearUnlockedKey } from "@/services/secure-memory.service";
 import { freshIndexedDbPerTest } from "@/test/indexed-db";
@@ -47,6 +48,16 @@ describe("Settings › Avatar", () => {
     await waitFor(() => {
       expect(settings.querySelector("img")?.getAttribute("src")).toMatch(/^data:image\/svg\+xml;/);
     });
+  });
+
+  it("sits inside the profile card like the initial does, not as a cover image", async () => {
+    await savePreferences({ avatar: { style: "notionists", seed: "Nova" } });
+    renderUnlocked(ROUTES.settings);
+    await waitFor(() => {
+      expect(document.querySelector('[data-slot="card"] img')).not.toBeNull();
+    });
+    const card = document.querySelector('[data-slot="card"]');
+    expect(card?.querySelector(":scope > img")).toBeNull();
   });
 
   it("goes back to the initial", async () => {
