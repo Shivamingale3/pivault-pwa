@@ -6,7 +6,7 @@ interface FabProps {
   onClick: () => void;
 }
 
-/** The round add button: 56 px, ink, floats above the tab bar at the end of the screen. */
+/** The round add button: 56 px, ink, pinned to the bottom right of the screen. */
 export function Fab({ label, onClick }: FabProps) {
   return (
     <Button

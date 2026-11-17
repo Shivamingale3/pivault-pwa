@@ -1,4 +1,7 @@
 import { KeyRoundIcon, NotebookTextIcon } from "lucide-react";
+import { useState } from "react";
+import { Fab } from "@/components/modules/kit/fab";
+import { AddEntrySheet } from "@/components/modules/vault/add-entry-sheet";
 import { CategoryCard } from "@/components/modules/vault/category-card";
 import { HomeHeader } from "@/components/modules/vault/home-header";
 import { RecentsSection } from "@/components/modules/vault/recents-section";
@@ -11,6 +14,7 @@ import { ROUTES } from "@/routes/route-paths";
 /** Home: a greeting, search, the counts, what is on this phone, and recently opened items. */
 export function HomePage() {
   const dashboard = useDashboard();
+  const [adding, setAdding] = useState(false);
 
   return (
     <main className="flex min-h-full w-full justify-center bg-canvas">
@@ -36,7 +40,20 @@ export function HomePage() {
           onOpen={dashboard.openRecent}
           onClear={dashboard.clearRecents}
         />
+        <Fab
+          label={HOME_COPY.add}
+          onClick={() => {
+            setAdding(true);
+          }}
+        />
       </div>
+      {adding && (
+        <AddEntrySheet
+          onClose={() => {
+            setAdding(false);
+          }}
+        />
+      )}
     </main>
   );
 }
