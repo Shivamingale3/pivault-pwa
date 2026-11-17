@@ -16,6 +16,7 @@ export const RecordId = {
   AppLock: "app-lock",
   SyncStats: "sync-stats",
   Usage: "usage",
+  Preferences: "preferences",
 } as const;
 
 export const STORAGE_ERROR_MESSAGES = {
