@@ -4,6 +4,7 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
+  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
@@ -30,7 +31,7 @@ export function EntryActionSheet({ title, onDelete, onClose }: EntryActionSheetP
           <DrawerTitle>{title}</DrawerTitle>
           <DrawerDescription className="sr-only">Actions for this item</DrawerDescription>
         </DrawerHeader>
-        <div className="flex flex-col gap-2.5 px-6 pb-6">
+        <DrawerFooter>
           <Button
             type="button"
             variant="destructive-soft"
@@ -50,7 +51,7 @@ export function EntryActionSheet({ title, onDelete, onClose }: EntryActionSheetP
           >
             {CRUD_COPY.cancel}
           </Button>
-        </div>
+        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );

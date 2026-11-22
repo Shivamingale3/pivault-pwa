@@ -5,6 +5,7 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
+  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
@@ -32,7 +33,7 @@ export function AddEntrySheet({ onClose }: { onClose: () => void }) {
           <DrawerTitle>{HOME_COPY.addTitle}</DrawerTitle>
           <DrawerDescription className="sr-only">Choose what to add</DrawerDescription>
         </DrawerHeader>
-        <div className="flex flex-col gap-2.5 px-6 pb-6">
+        <DrawerFooter>
           {CHOICES.map(({ label, to, icon: Icon }) => (
             <Button
               key={to}
@@ -52,7 +53,7 @@ export function AddEntrySheet({ onClose }: { onClose: () => void }) {
           <Button type="button" variant="ghost" size="lg" className="rounded-3xl" onClick={onClose}>
             {HOME_COPY.cancel}
           </Button>
-        </div>
+        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
