@@ -118,23 +118,13 @@ export const ABOUT_COPY = {
 export const AVATAR_COPY = {
   title: "Avatar",
   initial: "Your initial",
+  styles: "Style",
+  characters: "Characters",
   pick: (index: number) => `Avatar ${String(index)}`,
+  more: "Show more",
   saved: "Avatar updated.",
   failed: "Couldn't save your avatar. Try again.",
 } as const;
-
-/** The seeds on offer per style: each draws a different character. */
-export const AVATAR_SEEDS = [
-  "Aria",
-  "Milo",
-  "Nova",
-  "Kai",
-  "Luna",
-  "Ravi",
-  "Zoe",
-  "Arjun",
-  "Iris",
-] as const;
 
 export const RECOVERY_KEY_COPY = {
   title: "Recovery key",
