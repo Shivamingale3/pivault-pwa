@@ -5,6 +5,7 @@ import { getVaultDb } from "@/db/vault.db";
 import { EntryKind } from "@/enums/vault.enum";
 import { ROUTES, entryPath } from "@/routes/route-paths";
 import { clearUnlockedKey } from "@/services/secure-memory.service";
+import { clearPreferences, loadPreferences } from "@/services/preferences.service";
 import { clearSyncedState, recordServerVersions } from "@/services/synced-state.service";
 import { loadUsage } from "@/services/usage.service";
 import { addEntry } from "@/services/vault.service";
@@ -31,6 +32,7 @@ beforeEach(unlockVaultForTest);
 afterEach(async () => {
   clearUnlockedKey();
   await clearSyncedState();
+  await clearPreferences();
 });
 
 describe("password detail", () => {
@@ -318,6 +320,32 @@ describe("notes", () => {
     expect(follows(title, toolbar)).toBe(true);
     expect(follows(toolbar, body)).toBe(true);
     expect(body).toHaveClass("flex-1", "overflow-y-auto");
+  });
+
+  it("changes the text size from the toolbar, in the editor and when reading, and remembers it", async () => {
+    const note = await addEntry({ kind: EntryKind.Note, title: "Wifi", body: "router" });
+    renderUnlocked(entryPath.noteEdit(note.id));
+    const user = userEvent.setup();
+    const body = await screen.findByRole("textbox", { name: "Write your note" });
+    expect(body).toHaveClass("text-[0.9375rem]");
+    await user.click(screen.getByRole("button", { name: "Text size" }));
+    const menu = await screen.findByRole("menu");
+    expect(
+      within(menu)
+        .getAllByRole("menuitemradio")
+        .map((item) => item.textContent),
+    ).toEqual(["Small", "Default", "Large", "Extra large"]);
+    await user.click(within(menu).getByRole("menuitemradio", { name: "Large" }));
+    await waitFor(() => {
+      expect(body).toHaveClass("text-[1.125rem]");
+    });
+    expect((await loadPreferences()).noteFontSize).toBe("large");
+
+    await user.click(screen.getByRole("button", { name: "Back" }));
+    await waitFor(() => {
+      // The size is set once on the note body that holds the paragraphs.
+      expect(screen.getByText("router").parentElement).toHaveClass("text-[1.125rem]");
+    });
   });
 
   it("writes a note that saves itself, with formatting and undo", async () => {

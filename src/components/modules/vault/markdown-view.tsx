@@ -1,5 +1,7 @@
 import { Fragment, type ReactNode } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { NOTE_FONT_CLASS } from "@/constants/vault-design.constants";
+import { useNoteFontSize } from "@/hooks/use-note-font-size";
 import { cn } from "@/lib/utils";
 import { type Inline, parseMarkdown } from "@/utils/markdown.utils";
 
@@ -32,8 +34,14 @@ interface MarkdownViewProps {
 
 /** A note's body, rendered from its markdown as React elements (never as HTML). */
 export function MarkdownView({ source, onToggle }: MarkdownViewProps) {
+  const { size } = useNoteFontSize();
   return (
-    <div className="flex flex-col gap-3.5 text-[0.9375rem] leading-[1.55] font-medium wrap-break-word">
+    <div
+      className={cn(
+        "flex flex-col gap-3.5 leading-[1.55] font-medium wrap-break-word",
+        NOTE_FONT_CLASS[size],
+      )}
+    >
       {parseMarkdown(source).map((block, index) => {
         switch (block.type) {
           case "heading":

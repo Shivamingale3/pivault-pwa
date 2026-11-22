@@ -1,4 +1,5 @@
 import { BoldIcon, CodeIcon, ItalicIcon, ListIcon, ListChecksIcon, Undo2Icon } from "lucide-react";
+import { FontSizeMenu } from "@/components/modules/vault/font-size-menu";
 import { Button } from "@/components/ui/button";
 import type { Format } from "@/utils/markdown-edit.utils";
 
@@ -43,6 +44,7 @@ export function NoteToolbar({ onFormat, onUndo, canUndo }: NoteToolbarProps) {
           <Icon />
         </Button>
       ))}
+      <FontSizeMenu />
       <Button
         type="button"
         variant="secondary"
