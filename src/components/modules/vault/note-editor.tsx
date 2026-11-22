@@ -6,11 +6,13 @@ import { DeleteEntryDialog } from "@/components/modules/vault/delete-entry-dialo
 import { NoteToolbar } from "@/components/modules/vault/note-toolbar";
 import { SaveChip } from "@/components/modules/vault/save-chip";
 import { Button } from "@/components/ui/button";
-import { CRUD_COPY } from "@/constants/vault-design.constants";
+import { CRUD_COPY, NOTE_FONT_CLASS } from "@/constants/vault-design.constants";
 import { ENTRY_LIMITS } from "@/constants/vault.constants";
 import { EntryKind } from "@/enums/vault.enum";
+import { useNoteFontSize } from "@/hooks/use-note-font-size";
 import { useNoteEditor } from "@/hooks/use-note-editor";
 import { useBack } from "@/hooks/use-back";
+import { cn } from "@/lib/utils";
 import { ROUTES, entryPath } from "@/routes/route-paths";
 import type { NoteEntry } from "@/types/vault.types";
 
@@ -21,6 +23,7 @@ export function NoteEditor({ entry }: { entry: NoteEntry | null }) {
   const fromView = (useLocation().state as { fromView?: boolean } | null)?.fromView === true;
   const area = useRef<HTMLTextAreaElement>(null);
   const { id } = editor.save;
+  const { size } = useNoteFontSize();
 
   return (
     // Exactly one screen tall (shrinks with the keyboard): header, title and toolbar keep their
@@ -68,7 +71,10 @@ export function NoteEditor({ entry }: { entry: NoteEntry | null }) {
           placeholder={CRUD_COPY.noteBody}
           value={editor.body}
           maxLength={ENTRY_LIMITS.body}
-          className="min-h-0 flex-1 resize-none overflow-y-auto bg-transparent text-[0.9375rem] leading-[1.55] font-medium outline-none placeholder:text-subtle"
+          className={cn(
+            "min-h-0 flex-1 resize-none overflow-y-auto bg-transparent leading-[1.55] font-medium outline-none placeholder:text-subtle",
+            NOTE_FONT_CLASS[size],
+          )}
           onChange={(event) => {
             editor.type(event.target.value);
           }}

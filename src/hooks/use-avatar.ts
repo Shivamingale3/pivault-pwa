@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import type { AvatarChoice } from "@/schemas/preferences.schema";
-import { watchPreferences } from "@/services/preferences.service";
+import { currentPreferences, watchPreferences } from "@/services/preferences.service";
 import { avatarDataUri } from "@/utils/avatar.utils";
 
 /** The user's picked avatar, or null for the initial. Follows a new pick at once. */
 export function useAvatarChoice(): AvatarChoice | null {
-  const [choice, setChoice] = useState<AvatarChoice | null>(null);
+  // Starts from what is already known, so a screen opening later doesn't flash the initial.
+  const [choice, setChoice] = useState<AvatarChoice | null>(() => currentPreferences().avatar);
   useEffect(() => {
     const subscription = watchPreferences().subscribe((preferences) => {
       setChoice(preferences.avatar);

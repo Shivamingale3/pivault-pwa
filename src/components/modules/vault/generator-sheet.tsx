@@ -42,7 +42,7 @@ export function GeneratorSheet({ options: initial, onUse, onClose }: GeneratorSh
             {CRUD_COPY.reroll}
           </Button>
         </DrawerHeader>
-        <div className="flex flex-col gap-4 overflow-y-auto px-6 pb-6">
+        <div className="flex flex-col gap-4 overflow-y-auto px-6 pt-6 pb-[max(--spacing(8.5),env(safe-area-inset-bottom))]">
           <output
             aria-label="Generated password"
             className="rounded-[1.125rem] bg-muted px-4.5 py-4 font-mono text-[0.9375rem] font-bold break-all"

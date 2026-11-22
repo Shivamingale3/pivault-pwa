@@ -22,25 +22,31 @@ afterEach(async () => {
 });
 
 describe("Settings › Avatar", () => {
-  it("starts on the initial, saves a picked avatar and shows it on Home", async () => {
+  it("offers every style, starts on the initial, and saves a picked character that Home shows", async () => {
     renderUnlocked(ROUTES.settingsAvatar);
     const user = userEvent.setup();
-    const grid = await screen.findByRole("group", { name: "Avatar" });
+    const styles = await screen.findByRole("group", { name: "Style" });
+    expect(within(styles).getAllByRole("button")).toHaveLength(31);
+    expect(within(styles).getByRole("button", { name: "Notionists" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    const grid = screen.getByRole("group", { name: "Characters" });
     expect(within(grid).getByRole("button", { name: "Your initial" })).toHaveAttribute(
       "aria-pressed",
       "true",
     );
-    expect(within(grid).getAllByRole("button")).toHaveLength(19);
+    expect(within(grid).getAllByRole("button")).toHaveLength(13);
 
     await user.click(within(grid).getByRole("button", { name: "Avatar 3" }));
     await waitFor(() => {
-      expect(currentPreferences().avatar).toEqual({ style: "notionists", seed: "Nova" });
+      expect(currentPreferences().avatar).toEqual({ style: "notionists", seed: "3" });
     });
     expect(within(grid).getByRole("button", { name: "Avatar 3" })).toHaveAttribute(
       "aria-pressed",
       "true",
     );
-    expect((await loadPreferences()).avatar).toEqual({ style: "notionists", seed: "Nova" });
+    expect((await loadPreferences()).avatar).toEqual({ style: "notionists", seed: "3" });
 
     await user.click(screen.getByRole("button", { name: "Back to Settings" }));
     await user.click(await screen.findByRole("button", { name: "Back" }));
@@ -48,6 +54,38 @@ describe("Settings › Avatar", () => {
     await waitFor(() => {
       expect(settings.querySelector("img")?.getAttribute("src")).toMatch(/^data:image\/svg\+xml;/);
     });
+  });
+
+  it("switches style, shows more characters, and credits the artists", async () => {
+    renderUnlocked(ROUTES.settingsAvatar);
+    const user = userEvent.setup();
+    const styles = await screen.findByRole("group", { name: "Style" });
+    await user.click(within(styles).getByRole("button", { name: "Pixel art" }));
+    expect(within(styles).getByRole("button", { name: "Pixel art" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    const grid = screen.getByRole("group", { name: "Characters" });
+    await user.click(screen.getByRole("button", { name: "Show more" }));
+    expect(within(grid).getAllByRole("button")).toHaveLength(25);
+    await user.click(within(grid).getByRole("button", { name: "Avatar 20" }));
+    await waitFor(() => {
+      expect(currentPreferences().avatar).toEqual({ style: "pixel-art", seed: "20" });
+    });
+    expect(screen.getByText(/Lisa Wischofsky.*CC BY 4\.0/)).toBeInTheDocument();
+  });
+
+  it("stops offering more at the limit", async () => {
+    renderUnlocked(ROUTES.settingsAvatar);
+    const user = userEvent.setup();
+    await screen.findByRole("group", { name: "Style" });
+    for (let round = 0; round < 7; round += 1) {
+      await user.click(screen.getByRole("button", { name: "Show more" }));
+    }
+    expect(screen.queryByRole("button", { name: "Show more" })).toBeNull();
+    expect(
+      within(screen.getByRole("group", { name: "Characters" })).getAllByRole("button"),
+    ).toHaveLength(97);
   });
 
   it("sits inside the profile card like the initial does, not as a cover image", async () => {
@@ -61,13 +99,20 @@ describe("Settings › Avatar", () => {
   });
 
   it("goes back to the initial", async () => {
+    await savePreferences({ avatar: { style: "lorelei", seed: "5" } });
     renderUnlocked(ROUTES.settingsAvatar);
     const user = userEvent.setup();
-    const grid = await screen.findByRole("group", { name: "Avatar" });
-    await user.click(within(grid).getByRole("button", { name: "Avatar 10" }));
-    await waitFor(() => {
-      expect(currentPreferences().avatar?.style).toBe("lorelei");
-    });
+    const styles = await screen.findByRole("group", { name: "Style" });
+    // Opens on the style that is picked now.
+    expect(within(styles).getByRole("button", { name: "Lorelei" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    const grid = screen.getByRole("group", { name: "Characters" });
+    expect(within(grid).getByRole("button", { name: "Avatar 5" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
     await user.click(within(grid).getByRole("button", { name: "Your initial" }));
     await waitFor(() => {
       expect(currentPreferences().avatar).toBeNull();
@@ -80,6 +125,7 @@ describe("Settings › Avatar", () => {
       autoLockMs: 0,
       clipboardClearMs: null,
       avatar: null,
+      noteFontSize: "medium",
     });
   });
 });

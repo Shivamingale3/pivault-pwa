@@ -97,6 +97,22 @@ export const GENERATOR_TOGGLES = [
 
 export const STRENGTH_LABELS = ["Very weak", "Weak", "Fair", "Strong", "Very strong"] as const;
 
+export const FONT_SIZE_COPY = {
+  button: "Text size",
+  small: "Small",
+  medium: "Default",
+  large: "Large",
+  xlarge: "Extra large",
+} as const;
+
+/** The note body's size classes (the line height stays the same at every size). */
+export const NOTE_FONT_CLASS = {
+  small: "text-[0.8125rem]",
+  medium: "text-[0.9375rem]",
+  large: "text-[1.125rem]",
+  xlarge: "text-[1.375rem]",
+} as const;
+
 export const SYNC_MARK_COPY = {
   synced: "Synced",
   notSynced: "Not synced yet",

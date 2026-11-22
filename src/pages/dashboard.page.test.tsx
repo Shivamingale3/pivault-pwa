@@ -60,6 +60,21 @@ describe("home dashboard", () => {
     expect(await screen.findByRole("textbox", { name: "Title" })).toBeInTheDocument();
   });
 
+  it("keeps the choices apart from the Add heading, in the sheet's own footer spacing", async () => {
+    renderUnlocked(ROUTES.home);
+    await userEvent.setup().click(await screen.findByRole("button", { name: "Add" }));
+    const sheet = await screen.findByRole("dialog");
+    const footer = sheet.querySelector('[data-slot="drawer-footer"]');
+    // The shared footer carries the top spacing under the title; the buttons live inside it.
+    expect(footer).not.toBeNull();
+    expect(footer).toHaveClass("pt-6");
+    expect(
+      within(footer as HTMLElement)
+        .getAllByRole("button")
+        .map((b) => b.textContent),
+    ).toEqual(["Password", "Note", "Cancel"]);
+  });
+
   it("opens a new password from the + button", async () => {
     renderUnlocked(ROUTES.home);
     const user = userEvent.setup();

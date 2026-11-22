@@ -88,6 +88,7 @@ describe("Settings › Security", () => {
         autoLockMs: 0,
         clipboardClearMs: null,
         avatar: null,
+        noteFontSize: "medium",
       });
     });
     expect(screen.queryByText(/screenshots|app switcher/i)).toBeNull();
