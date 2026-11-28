@@ -3,11 +3,11 @@ import { NotesEmpty } from "@/components/modules/vault/notes-empty";
 import { PasswordRow } from "@/components/modules/vault/password-row";
 import { PasswordsEmpty } from "@/components/modules/vault/passwords-empty";
 import { VaultLoading } from "@/components/modules/vault/vault-loading";
-import type { useNotesScreen } from "@/hooks/use-notes-screen";
-import type { usePasswordsScreen } from "@/hooks/use-passwords-screen";
+import type { useNoteList } from "@/hooks/use-note-list";
+import type { usePasswordList } from "@/hooks/use-password-list";
 
 /** Every note, newest first, or the "no notes yet" state. */
-export function NotesPanel({ screen }: { screen: ReturnType<typeof useNotesScreen> }) {
+export function NotesPanel({ screen }: { screen: ReturnType<typeof useNoteList> }) {
   if (screen.status === "loading") return <VaultLoading />;
   if (screen.total === 0) return <NotesEmpty onWrite={screen.write} />;
   return (
@@ -20,7 +20,7 @@ export function NotesPanel({ screen }: { screen: ReturnType<typeof useNotesScree
 }
 
 /** Every password, last used first, hidden until revealed, or the "no passwords yet" state. */
-export function PasswordsPanel({ screen }: { screen: ReturnType<typeof usePasswordsScreen> }) {
+export function PasswordsPanel({ screen }: { screen: ReturnType<typeof usePasswordList> }) {
   if (screen.status === "loading") return <VaultLoading />;
   if (screen.total === 0)
     return <PasswordsEmpty onAdd={screen.add} onRestore={() => void screen.restore()} />;

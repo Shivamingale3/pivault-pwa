@@ -7,8 +7,6 @@ import { NoteEditPage, NoteNewPage } from "@/pages/note-editor.page";
 import { NoteReadPage } from "@/pages/note-read.page";
 import { PasswordDetailPage } from "@/pages/password-detail.page";
 import { PasswordEditPage, PasswordNewPage } from "@/pages/password-form.page";
-import { NotesPage } from "@/pages/notes.page";
-import { PasswordsPage } from "@/pages/passwords.page";
 import { SearchPage } from "@/pages/search.page";
 import { LockPage } from "@/pages/lock.page";
 import { LoginPage } from "@/pages/login.page";
@@ -63,8 +61,6 @@ export function AppRoutes() {
       <Route element={<ZoneGuard allow={AuthStatus.Unlocked} />}>
         <Route element={<PrivateLayout />}>
           <Route path={ROUTES.home} element={<HomePage />} />
-          <Route path={ROUTES.passwords} element={<PasswordsPage />} />
-          <Route path={ROUTES.notes} element={<NotesPage />} />
           <Route path={ROUTES.passwordNew} element={<PasswordNewPage />} />
           <Route path={ROUTES.passwordDetail} element={<PasswordDetailPage />} />
           <Route path={ROUTES.passwordEdit} element={<PasswordEditPage />} />

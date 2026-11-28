@@ -3,7 +3,7 @@ import { PasswordForm } from "@/components/modules/vault/password-form";
 import { VaultLoading } from "@/components/modules/vault/vault-loading";
 import { EntryKind } from "@/enums/vault.enum";
 import { useEntryRoute } from "@/hooks/use-entry-route";
-import { ROUTES } from "@/routes/route-paths";
+import { homeList } from "@/routes/route-paths";
 
 /** A new password. */
 export function PasswordNewPage() {
@@ -14,7 +14,7 @@ export function PasswordNewPage() {
 export function PasswordEditPage() {
   const { id } = useParams();
   const { entry, loading, missing } = useEntryRoute(EntryKind.Password);
-  if (missing) return <Navigate to={ROUTES.passwords} replace />;
+  if (missing) return <Navigate to={homeList(EntryKind.Password)} replace />;
   if (loading || !entry) return <VaultLoading />;
   return <PasswordForm key={id} entry={entry} />;
 }

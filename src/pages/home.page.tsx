@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Fab } from "@/components/modules/kit/fab";
+import { OfflinePill } from "@/components/modules/sync/offline-pill";
 import { AddEntrySheet } from "@/components/modules/vault/add-entry-sheet";
 import { NotesPanel, PasswordsPanel } from "@/components/modules/vault/home-panels";
 import { HomeSwitch } from "@/components/modules/vault/home-switch";
@@ -24,6 +25,7 @@ export function HomePage() {
       <div className="relative flex min-h-0 w-full max-w-md flex-col gap-4 px-5.5 pt-[max(--spacing(9.5),env(safe-area-inset-top))]">
         <h1 className="sr-only">{HOME_COPY.title}</h1>
         <HomeTopBar name={home.name} />
+        <OfflinePill />
         <Tabs
           value={home.show}
           onValueChange={(value: EntryKind) => {

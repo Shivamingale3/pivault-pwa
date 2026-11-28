@@ -16,21 +16,10 @@ export const HOME_COPY = {
 } as const;
 
 export const LIST_COPY = {
-  passwordsTitle: "Passwords",
-  notesTitle: "Notes",
   passwordsMeta: (count: number): string => `${String(count)} ${count === 1 ? "item" : "items"}`,
   notesMeta: (count: number): string => `${String(count)} ${count === 1 ? "note" : "notes"}`,
-  filter: "Filter this list",
-  sort: "Sort",
-  tabRecent: "Recent",
-  tabAZ: "A-Z",
-  tabWeak: "Weak",
   addPassword: "Add a password",
   addNote: "Add a note",
-  noMatches: "No matches",
-  noMatchesBody: "Try a different search or filter.",
-  noWeak: "No weak passwords",
-  noWeakBody: "Every password here looks strong enough.",
   passwordsEmpty: "No passwords yet",
   passwordsEmptyBody: "Add your first login to get started.",
   restore: "Sync now",
