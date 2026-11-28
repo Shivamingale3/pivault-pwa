@@ -3,13 +3,11 @@
  * storage, server) in the UI. The one status worth showing about an item is whether it is synced.
  */
 export const HOME_COPY = {
-  hello: (firstName: string): string => (firstName === "" ? "Hello" : `Hello, ${firstName}`),
+  title: "Home",
   search: "Search passwords, notes",
+  show: "Show",
   passwords: "Passwords",
   notes: "Notes",
-  recent: "RECENTLY OPENED",
-  clear: "Clear",
-  opened: (when: string): string => `Opened ${when}`,
   add: "Add",
   addTitle: "Add new",
   addPassword: "Password",
@@ -18,21 +16,10 @@ export const HOME_COPY = {
 } as const;
 
 export const LIST_COPY = {
-  passwordsTitle: "Passwords",
-  notesTitle: "Notes",
   passwordsMeta: (count: number): string => `${String(count)} ${count === 1 ? "item" : "items"}`,
   notesMeta: (count: number): string => `${String(count)} ${count === 1 ? "note" : "notes"}`,
-  filter: "Filter this list",
-  sort: "Sort",
-  tabRecent: "Recent",
-  tabAZ: "A-Z",
-  tabWeak: "Weak",
   addPassword: "Add a password",
   addNote: "Add a note",
-  noMatches: "No matches",
-  noMatchesBody: "Try a different search or filter.",
-  noWeak: "No weak passwords",
-  noWeakBody: "Every password here looks strong enough.",
   passwordsEmpty: "No passwords yet",
   passwordsEmptyBody: "Add your first login to get started.",
   restore: "Sync now",

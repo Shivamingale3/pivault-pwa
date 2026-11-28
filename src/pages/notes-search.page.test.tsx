@@ -31,22 +31,21 @@ afterEach(() => {
 
 describe("notes", () => {
   it("shows the empty state with a way to write one", async () => {
-    renderUnlocked(ROUTES.notes);
+    renderUnlocked(ROUTES.home);
     expect(await screen.findByRole("heading", { name: "No notes yet" })).toBeInTheDocument();
     await userEvent.setup().click(screen.getByRole("button", { name: "Write a note" }));
     expect(await screen.findByRole("textbox", { name: "Title" })).toBeInTheDocument();
     expect(screen.getByRole("toolbar", { name: "Formatting" })).toBeInTheDocument();
   });
 
-  it("lists notes with a count, filters by title and opens one", async () => {
+  it("lists every note on Home with the count, and opens one", async () => {
     await addEntry(note("Wifi codes"));
     await addEntry(note("Licence"));
-    renderUnlocked(ROUTES.notes);
+    renderUnlocked(ROUTES.home);
     const user = userEvent.setup();
-    expect(await screen.findByText("2 notes")).toBeInTheDocument();
-    await user.type(screen.getByRole("searchbox", { name: "Filter notes" }), "wifi");
     const list = await screen.findByRole("list", { name: "Notes" });
-    expect(within(list).getAllByRole("listitem")).toHaveLength(1);
+    expect(screen.getByRole("tab", { name: /Notes/ })).toHaveTextContent("2 notes");
+    expect(await within(list).findAllByRole("listitem")).toHaveLength(2);
     await user.click(within(list).getByRole("button", { name: /Wifi codes/ }));
     expect(await screen.findByRole("heading", { name: "Wifi codes" })).toBeInTheDocument();
     expect(screen.getByText(/^(Synced|Not synced yet)$/)).toBeInTheDocument();

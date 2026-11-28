@@ -1,13 +1,12 @@
 import { AuthStatus } from "@/enums/auth.enum";
+import { EntryKind } from "@/enums/vault.enum";
 
 /** Single source for route paths. `/reset-password` must also stay in `PWA_BYPASS_PATHS`. */
 export const ROUTES = {
   home: "/",
-  passwords: "/passwords",
   passwordNew: "/passwords/new",
   passwordDetail: "/passwords/:id",
   passwordEdit: "/passwords/:id/edit",
-  notes: "/notes",
   noteNew: "/notes/new",
   noteDetail: "/notes/:id",
   noteEdit: "/notes/:id/edit",
@@ -49,3 +48,10 @@ export const entryPath = {
   note: (id: string): string => `/notes/${id}`,
   noteEdit: (id: string): string => `/notes/${id}/edit`,
 } as const;
+
+/** Home keeps the picked list in the address, so Back lands on the same list. Notes is the default. */
+export const HOME_SHOW_PARAM = "show";
+
+/** Home showing the notes or the passwords: where "back to the list" goes. */
+export const homeList = (kind: EntryKind): string =>
+  kind === EntryKind.Note ? ROUTES.home : `${ROUTES.home}?${HOME_SHOW_PARAM}=${kind}`;

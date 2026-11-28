@@ -10,7 +10,7 @@ import { CRUD_COPY } from "@/constants/vault-design.constants";
 import { EntryKind } from "@/enums/vault.enum";
 import { useEntryDetail } from "@/hooks/use-entry-detail";
 import { useEntryRoute } from "@/hooks/use-entry-route";
-import { ROUTES, entryPath } from "@/routes/route-paths";
+import { entryPath, homeList } from "@/routes/route-paths";
 import { domainOf, formatDay } from "@/utils/date-format.utils";
 import { formatOpened } from "@/utils/time.utils";
 
@@ -18,13 +18,13 @@ import { formatOpened } from "@/utils/time.utils";
 export function PasswordDetailPage() {
   const { entry, loading, missing } = useEntryRoute(EntryKind.Password);
   const detail = useEntryDetail(entry?.id, EntryKind.Password);
-  if (missing) return <Navigate to={ROUTES.passwords} replace />;
+  if (missing) return <Navigate to={homeList(EntryKind.Password)} replace />;
   const domain = entry ? domainOf(entry.url) : "";
 
   return (
     <main className="flex min-h-full w-full justify-center bg-background">
       <div className="flex w-full max-w-md flex-col gap-5 px-5.5 pt-[max(--spacing(9.5),env(safe-area-inset-top))] pb-[max(--spacing(6.5),env(safe-area-inset-bottom))]">
-        <ScreenHeader backTo={ROUTES.passwords}>
+        <ScreenHeader backTo={homeList(EntryKind.Password)}>
           {entry && (
             <DetailActions editTo={entryPath.passwordEdit(entry.id)} onMore={detail.openActions} />
           )}
@@ -60,7 +60,7 @@ export function PasswordDetailPage() {
             <div className="mt-auto">
               <SyncChip id={entry.id} updatedAt={entry.updatedAt} />
             </div>
-            <DetailOverlays entry={entry} detail={detail} listPath={ROUTES.passwords} />
+            <DetailOverlays entry={entry} detail={detail} listPath={homeList(EntryKind.Password)} />
           </>
         )}
       </div>

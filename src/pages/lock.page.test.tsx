@@ -64,14 +64,14 @@ describe("PIN unlock", () => {
 
     expect(await screen.findByText("Unlocked")).toBeInTheDocument();
     expect(isUnlocked()).toBe(true);
-    expect(await heading("Hello, Jane")).toBeInTheDocument();
+    expect(await heading("Home")).toBeInTheDocument();
   });
 
   it("also takes digits from a physical keyboard", async () => {
     open();
     await heading("Welcome back, Jane");
     await userEvent.setup().keyboard(PIN);
-    expect(await heading("Hello, Jane")).toBeInTheDocument();
+    expect(await heading("Home")).toBeInTheDocument();
   });
 
   it("masks the digits until Show PIN is on", async () => {
@@ -99,7 +99,7 @@ describe("PIN unlock", () => {
     expect(isUnlocked()).toBe(false);
 
     await press(user, PIN);
-    expect(await heading("Hello, Jane")).toBeInTheDocument();
+    expect(await heading("Home")).toBeInTheDocument();
   });
 
   it("pauses PIN entry after five wrong PINs, with a live wait and a dead keypad", async () => {
@@ -182,7 +182,7 @@ describe("signed in on another device", () => {
     open();
     expect(await screen.findByText(/You signed in on another device/)).toBeInTheDocument();
     await press(userEvent.setup(), PIN);
-    expect(await heading("Hello, Jane")).toBeInTheDocument();
+    expect(await heading("Home")).toBeInTheDocument();
   });
 
   it("says nothing about the session otherwise", async () => {
@@ -205,7 +205,7 @@ describe("biometrics first", () => {
     open();
     expect(await screen.findByText("Unlocked")).toBeInTheDocument();
     expect(verify).toHaveBeenCalledWith("cred-1");
-    expect(await heading("Hello, Jane")).toBeInTheDocument();
+    expect(await heading("Home")).toBeInTheDocument();
   });
 
   it("shows the invitation while it waits for a tap, with no technical lines", async () => {
@@ -244,7 +244,7 @@ describe("biometrics first", () => {
     await user.click(await screen.findByRole("button", { name: "Enter PIN instead" }));
     expect(await heading("Welcome back, Jane")).toBeInTheDocument();
     await press(user, PIN);
-    expect(await heading("Hello, Jane")).toBeInTheDocument();
+    expect(await heading("Home")).toBeInTheDocument();
   });
 
   it("does not offer Face ID on a device without it", async () => {

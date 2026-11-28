@@ -266,15 +266,15 @@ describe("Settings › Sync", () => {
 });
 
 describe("sync in the unlocked zone", () => {
-  it("shows offline as a pill under the list header, never as a screen", async () => {
-    open(ROUTES.passwords);
-    expect(await screen.findByRole("heading", { name: "Passwords" })).toBeInTheDocument();
+  it("shows offline as a pill on Home, never as a screen", async () => {
+    open(ROUTES.home);
+    expect(await screen.findByRole("heading", { name: "Home" })).toBeInTheDocument();
     expect(screen.queryByRole("status", { name: /Sync status/ })).toBeNull();
     state$.next(stateWith({ status: "offline" }));
     expect(
       await screen.findByRole("status", { name: "Sync status: Offline · changes will sync later" }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Passwords" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Home" })).toBeInTheDocument();
   });
 
   it("starts once when unlocked, keeps running between screens, and stops on lock", async () => {
@@ -283,7 +283,7 @@ describe("sync in the unlocked zone", () => {
     await user.click(await screen.findByRole("link", { name: "Settings" }));
     await screen.findByRole("heading", { name: "Settings" });
     await user.click(screen.getByRole("button", { name: "Back" }));
-    await screen.findByRole("heading", { name: /^Hello/ });
+    await screen.findByRole("heading", { name: "Home" });
     expect(startVaultSync).toHaveBeenCalledTimes(1);
     expect(stop).not.toHaveBeenCalled();
 

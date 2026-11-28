@@ -40,7 +40,7 @@ const SCREEN_TITLES = {
   [ROUTES.setupAppLock]: "Set your app PIN",
   [ROUTES.setupRecoveryKey]: "Your recovery key",
   [ROUTES.lock]: "Welcome back, Jane",
-  [ROUTES.home]: "Hello, Jane",
+  [ROUTES.home]: "Home",
 } as const;
 
 type GuardedPath = keyof typeof SCREEN_TITLES;

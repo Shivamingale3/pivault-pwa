@@ -10,7 +10,7 @@ import { EntryKind } from "@/enums/vault.enum";
 import { useEntryDetail } from "@/hooks/use-entry-detail";
 import { useEntryRoute } from "@/hooks/use-entry-route";
 import { useNoteChecklist } from "@/hooks/use-note-checklist";
-import { ROUTES, entryPath } from "@/routes/route-paths";
+import { entryPath, homeList } from "@/routes/route-paths";
 import { formatOpened } from "@/utils/time.utils";
 
 /** A note, rendered. Checkboxes can be ticked right here; the tick is saved like any other edit. */
@@ -18,12 +18,12 @@ export function NoteReadPage() {
   const { entry, loading, missing } = useEntryRoute(EntryKind.Note);
   const detail = useEntryDetail(entry?.id, EntryKind.Note);
   const toggle = useNoteChecklist(entry);
-  if (missing) return <Navigate to={ROUTES.notes} replace />;
+  if (missing) return <Navigate to={homeList(EntryKind.Note)} replace />;
 
   return (
     <main className="flex min-h-full w-full justify-center bg-background">
       <div className="flex w-full max-w-md flex-col gap-5 px-5.5 pt-[max(--spacing(9.5),env(safe-area-inset-top))] pb-[max(--spacing(6.5),env(safe-area-inset-bottom))]">
-        <ScreenHeader backTo={ROUTES.notes}>
+        <ScreenHeader backTo={homeList(EntryKind.Note)}>
           {entry && (
             <DetailActions editTo={entryPath.noteEdit(entry.id)} onMore={detail.openActions} />
           )}
@@ -44,7 +44,7 @@ export function NoteReadPage() {
             <div className="mt-auto pt-2">
               <SyncChip id={entry.id} updatedAt={entry.updatedAt} />
             </div>
-            <DetailOverlays entry={entry} detail={detail} listPath={ROUTES.notes} />
+            <DetailOverlays entry={entry} detail={detail} listPath={homeList(EntryKind.Note)} />
           </>
         )}
       </div>

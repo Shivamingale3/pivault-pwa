@@ -82,9 +82,12 @@ describe("password detail", () => {
     expect(await screen.findByRole("heading", { name: "No passwords yet" })).toBeInTheDocument();
   });
 
-  it("goes back to the list when the item does not exist", async () => {
+  it("goes back to Home's password list when the item does not exist", async () => {
     renderUnlocked(entryPath.password("01HZZZZZZZZZZZZZZZZZZZZZZZ"));
-    expect(await screen.findByRole("heading", { name: "Passwords" })).toBeInTheDocument();
+    expect(await screen.findByRole("tab", { name: /Passwords/ })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
   });
 });
 
@@ -108,7 +111,7 @@ describe("sync marks", () => {
     const synced = await addEntry({ kind: EntryKind.Note, title: "Synced one", body: "" });
     await addEntry({ kind: EntryKind.Note, title: "Local one", body: "" });
     await recordServerVersions([{ id: synced.id, updatedAt: synced.updatedAt, _deleted: false }]);
-    renderUnlocked(ROUTES.notes);
+    renderUnlocked(ROUTES.home);
     const list = await screen.findByRole("list", { name: "Notes" });
     await waitFor(() => {
       expect(within(list).getAllByRole("img", { name: "Not synced yet" })).toHaveLength(1);

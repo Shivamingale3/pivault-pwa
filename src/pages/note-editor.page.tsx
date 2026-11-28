@@ -3,7 +3,7 @@ import { NoteEditor } from "@/components/modules/vault/note-editor";
 import { VaultLoading } from "@/components/modules/vault/vault-loading";
 import { EntryKind } from "@/enums/vault.enum";
 import { useEntryRoute } from "@/hooks/use-entry-route";
-import { ROUTES } from "@/routes/route-paths";
+import { homeList } from "@/routes/route-paths";
 
 /** A new note. */
 export function NoteNewPage() {
@@ -14,7 +14,7 @@ export function NoteNewPage() {
 export function NoteEditPage() {
   const { id } = useParams();
   const { entry, loading, missing } = useEntryRoute(EntryKind.Note);
-  if (missing) return <Navigate to={ROUTES.notes} replace />;
+  if (missing) return <Navigate to={homeList(EntryKind.Note)} replace />;
   if (loading || !entry) return <VaultLoading />;
   return <NoteEditor key={id} entry={entry} />;
 }

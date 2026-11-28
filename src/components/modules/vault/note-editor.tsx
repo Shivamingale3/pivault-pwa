@@ -13,7 +13,7 @@ import { useNoteFontSize } from "@/hooks/use-note-font-size";
 import { useNoteEditor } from "@/hooks/use-note-editor";
 import { useBack } from "@/hooks/use-back";
 import { cn } from "@/lib/utils";
-import { ROUTES, entryPath } from "@/routes/route-paths";
+import { entryPath, homeList } from "@/routes/route-paths";
 import type { NoteEntry } from "@/types/vault.types";
 
 /** The note editor: a borderless title and body, a formatting row, and no Save button. */
@@ -30,7 +30,7 @@ export function NoteEditor({ entry }: { entry: NoteEntry | null }) {
     // height, the body takes the rest and scrolls inside itself.
     <main className="flex h-dvh justify-center overflow-hidden bg-background">
       <div className="flex min-h-0 w-full max-w-md flex-col gap-4 px-5.5 pt-[max(--spacing(9.5),env(safe-area-inset-top))] pb-[max(--spacing(4),env(safe-area-inset-bottom))]">
-        <ScreenHeader backTo={entry ? entryPath.note(entry.id) : ROUTES.notes}>
+        <ScreenHeader backTo={entry ? entryPath.note(entry.id) : homeList(EntryKind.Note)}>
           <SaveChip status={editor.status} id={id} />
           {id && (
             <Button
@@ -90,7 +90,7 @@ export function NoteEditor({ entry }: { entry: NoteEntry | null }) {
           onDeleteFailed={editor.save.resume}
           // Opened from the item's screen: skip past it too, the item is gone.
           onDeleted={() => {
-            back(ROUTES.notes, fromView ? 2 : 1);
+            back(homeList(EntryKind.Note), fromView ? 2 : 1);
           }}
         />
       )}

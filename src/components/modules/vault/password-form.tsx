@@ -12,7 +12,7 @@ import { CRUD_COPY } from "@/constants/vault-design.constants";
 import { EntryKind } from "@/enums/vault.enum";
 import { usePasswordForm } from "@/hooks/use-password-form";
 import { useBack } from "@/hooks/use-back";
-import { ROUTES, entryPath } from "@/routes/route-paths";
+import { entryPath, homeList } from "@/routes/route-paths";
 import type { PasswordEntry } from "@/types/vault.types";
 
 /** The password form (new or existing). There is no Save button: it saves as you type. */
@@ -31,7 +31,7 @@ export function PasswordForm({ entry }: { entry: PasswordEntry | null }) {
         }}
         className="flex w-full max-w-md flex-col gap-4 px-5.5 pt-[max(--spacing(9.5),env(safe-area-inset-top))] pb-[max(--spacing(6.5),env(safe-area-inset-bottom))]"
       >
-        <ScreenHeader backTo={entry ? entryPath.password(entry.id) : ROUTES.passwords}>
+        <ScreenHeader backTo={entry ? entryPath.password(entry.id) : homeList(EntryKind.Password)}>
           <SaveChip status={form.status} id={id} />
         </ScreenHeader>
         <EyebrowField
@@ -126,7 +126,7 @@ export function PasswordForm({ entry }: { entry: PasswordEntry | null }) {
           onDeleteFailed={form.save.resume}
           // Opened from the item's screen: skip past it too, the item is gone.
           onDeleted={() => {
-            back(ROUTES.passwords, fromView ? 2 : 1);
+            back(homeList(EntryKind.Password), fromView ? 2 : 1);
           }}
         />
       )}
