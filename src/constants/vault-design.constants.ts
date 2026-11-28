@@ -3,13 +3,11 @@
  * storage, server) in the UI. The one status worth showing about an item is whether it is synced.
  */
 export const HOME_COPY = {
-  hello: (firstName: string): string => (firstName === "" ? "Hello" : `Hello, ${firstName}`),
+  title: "Home",
   search: "Search passwords, notes",
+  show: "Show",
   passwords: "Passwords",
   notes: "Notes",
-  recent: "RECENTLY OPENED",
-  clear: "Clear",
-  opened: (when: string): string => `Opened ${when}`,
   add: "Add",
   addTitle: "Add new",
   addPassword: "Password",

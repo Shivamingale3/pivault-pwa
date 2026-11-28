@@ -1,50 +1,50 @@
-import { KeyRoundIcon, NotebookTextIcon } from "lucide-react";
 import { useState } from "react";
 import { Fab } from "@/components/modules/kit/fab";
 import { AddEntrySheet } from "@/components/modules/vault/add-entry-sheet";
-import { CategoryCard } from "@/components/modules/vault/category-card";
-import { HomeHeader } from "@/components/modules/vault/home-header";
-import { RecentsSection } from "@/components/modules/vault/recents-section";
-import { SearchPill } from "@/components/modules/vault/search-pill";
+import { NotesPanel, PasswordsPanel } from "@/components/modules/vault/home-panels";
+import { HomeSwitch } from "@/components/modules/vault/home-switch";
+import { HomeTopBar } from "@/components/modules/vault/home-top-bar";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { HOME_COPY } from "@/constants/vault-design.constants";
-import { countLabel } from "@/constants/settings.constants";
-import { useDashboard } from "@/hooks/use-dashboard";
-import { ROUTES } from "@/routes/route-paths";
+import { EntryKind } from "@/enums/vault.enum";
+import { useHome } from "@/hooks/use-home";
 
-/** Home: a greeting, search, the counts, what is on this phone, and recently opened items. */
+const PANEL = "min-h-0 flex-1 overflow-y-auto overscroll-contain pb-24 scrollbar-none";
+
+/**
+ * Home: search, the Notes / Passwords switch (Notes first), and every item of the picked kind.
+ * The list scrolls inside the screen; + asks what to add.
+ */
 export function HomePage() {
-  const dashboard = useDashboard();
+  const home = useHome();
   const [adding, setAdding] = useState(false);
 
   return (
-    <main className="flex min-h-full w-full justify-center bg-canvas">
-      <div className="flex w-full max-w-md flex-col gap-5 px-5.5 pt-[max(--spacing(9.5),env(safe-area-inset-top))] pb-6">
-        <HomeHeader firstName={dashboard.firstName} name={dashboard.name} />
-        <SearchPill />
-        <div className="grid grid-cols-2 gap-2.5">
-          <CategoryCard
-            to={ROUTES.passwords}
-            icon={<KeyRoundIcon />}
-            title={HOME_COPY.passwords}
-            count={countLabel(dashboard.passwords, "item", "items")}
-          />
-          <CategoryCard
-            to={ROUTES.notes}
-            icon={<NotebookTextIcon />}
-            title={HOME_COPY.notes}
-            count={countLabel(dashboard.notes, "note", "notes")}
-          />
-        </div>
-        <RecentsSection
-          items={dashboard.recents}
-          onOpen={dashboard.openRecent}
-          onClear={dashboard.clearRecents}
-        />
+    <main className="flex h-full min-h-full w-full justify-center bg-canvas">
+      <div className="relative flex min-h-0 w-full max-w-md flex-col gap-4 px-5.5 pt-[max(--spacing(9.5),env(safe-area-inset-top))]">
+        <h1 className="sr-only">{HOME_COPY.title}</h1>
+        <HomeTopBar name={home.name} />
+        <Tabs
+          value={home.show}
+          onValueChange={(value: EntryKind) => {
+            home.setShow(value);
+          }}
+          className="min-h-0 flex-1 gap-4"
+        >
+          <HomeSwitch notes={home.notes.total} passwords={home.passwords.total} />
+          <TabsContent value={EntryKind.Note} className={PANEL}>
+            <NotesPanel screen={home.notes} />
+          </TabsContent>
+          <TabsContent value={EntryKind.Password} className={PANEL}>
+            <PasswordsPanel screen={home.passwords} />
+          </TabsContent>
+        </Tabs>
         <Fab
           label={HOME_COPY.add}
           onClick={() => {
             setAdding(true);
           }}
+          className="absolute right-5.5 bottom-[max(--spacing(6),env(safe-area-inset-bottom))] mt-0"
         />
       </div>
       {adding && (

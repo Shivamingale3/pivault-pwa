@@ -283,7 +283,7 @@ describe("sync in the unlocked zone", () => {
     await user.click(await screen.findByRole("link", { name: "Settings" }));
     await screen.findByRole("heading", { name: "Settings" });
     await user.click(screen.getByRole("button", { name: "Back" }));
-    await screen.findByRole("heading", { name: /^Hello/ });
+    await screen.findByRole("heading", { name: "Home" });
     expect(startVaultSync).toHaveBeenCalledTimes(1);
     expect(stop).not.toHaveBeenCalled();
 

@@ -26,7 +26,9 @@ export async function unlockVaultForTest(): Promise<void> {
 }
 
 /** Renders the whole unlocked app at `path` (or a path with router state). */
-export const renderUnlocked = (path: string | { pathname: string; state?: unknown }) =>
+export const renderUnlocked = (
+  path: string | { pathname: string; search?: string; state?: unknown },
+) =>
   render(
     <MemoryRouter initialEntries={[path]}>
       <AuthProvider initialStatus={AuthStatus.Unlocked}>

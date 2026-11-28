@@ -215,6 +215,6 @@ describe("passwords: sort", () => {
     expect(await screen.findByRole("button", { name: "Sort" })).toBeInTheDocument();
     expect(screen.queryByRole("group", { name: "Sort passwords" })).toBeNull();
     await user.click(screen.getByRole("button", { name: "Back" }));
-    expect(await screen.findByRole("heading", { name: "Hello, Jane" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Home" })).toBeInTheDocument();
   });
 });
